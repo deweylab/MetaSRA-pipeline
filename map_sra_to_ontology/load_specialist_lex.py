@@ -1,3 +1,9 @@
+###############################################################################
+#   Functionality for loading the NLM's SPECIALIST Lexicon 
+#   (https://www.nlm.nih.gov/pubs/factsheets/umlslex.html) into an in-memory
+#   a trie data structure. Allows for fast query of the lexicon.
+###############################################################################
+
 from optparse import OptionParser
 import os
 from os.path import join
@@ -8,25 +14,16 @@ import pkg_resources as pr
 
 resource_package = __name__
 
-LEX_LOC = "/tier2/deweylab/mnbernstein/LEX/"
-
 def main():
-    parser = OptionParser()
-    #parser.add_option("-a", "--a_descrip", action="store_true", help="This is a flat")
-    #parser.add_option("-b", "--b_descrip", help="This is an argument")
-    (options, args) = parser.parse_args()
-
-    #lexicon = load_lexicon()
-    #print json.dumps(lexicon, indent=4, separators=(',', ': '))
-
-    s = SpecialistLexicon(lex_loc="/scratch/mnbernstein/LEX")
+    # Test that module is functioning
+    s = SpecialistLexicon("/scratch/mnbernstein/LEX")
     print s.search('tumor')
 
 
 class SpecialistLexicon:
-    def __init__(self, lex_loc=None):
+    def __init__(self, lex_loc):
         print "loading SPECIALIST Lexicon..."
-        self.lexicon = load_lexicon(lex_loc=lex_loc)
+        self.lexicon = load_lexicon(lex_loc)
         self.eui_array = []
 
         print "building SPECIALIST Lexicon tre..."
@@ -92,9 +89,8 @@ class SpecialistLexicon:
                 noms = [x for x in self.lexicon[m]["nominalization"]]
         return noms
 
-def load_lexicon(lex_loc=None):
-
-    lexicon = parse_LEXICON()
+def load_lexicon(lex_loc):
+    lexicon = parse_LEXICON(lex_loc)
     lexicon = add_spelling_variants(lexicon)
     lexicon = add_inflection_variants(lexicon)
     lexicon = add_nominalization(lexicon)
@@ -180,7 +176,7 @@ def add_inflection_variants(lexicon):
     return lexicon
 
     
-def parse_LEXICON(lex_loc=None):
+def parse_LEXICON(lex_loc):
     def process_curr_lines(c_lines):
         if not c_lines:
             return     
@@ -207,9 +203,6 @@ def parse_LEXICON(lex_loc=None):
                 base = val
 
         return eui, base
-
-    if not lex_loc:
-        lex_loc = LEX_LOC    
 
     f_name = join(lex_loc, "LEXICON")
     with open(f_name, "r") as f:

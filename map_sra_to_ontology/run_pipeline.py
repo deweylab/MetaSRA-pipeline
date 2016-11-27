@@ -19,16 +19,25 @@ resource_package = __name__
 import ontology_graph
 import load_ontology as lo
 import predict_sample_type
-from predict_sample_type.run_on_entire_dataset import * 
+import config
+
+#def get_script_path():
+#    return os.path.dirname(realpath(sys.argv[0]))
+sys.path.append(pr.resource_filename(resource_package, "predict_sample_type"))
+import run_on_entire_dataset
+from run_on_entire_dataset import * 
+#from predict_sample_type.run_on_entire_dataset import * 
 import pipeline_components as pc
 
 def main():
     parser = OptionParser()
-    parser.add_option("-f", "--key_value_file", help="JSON file storing key-value pairs describing sample")
+    #parser.add_option("-f", "--key_value_file", help="JSON file storing key-value pairs describing sample")
     (options, args) = parser.parse_args()
-    
+   
+    input_f = args[0]
+     
     # Map key-value pairs to ontologies
-    with open(options.key_value_file, "r") as f:
+    with open(input_f, "r") as f:
         tag_to_val = json.load(f)
     mapping_data = run_pipeline(tag_to_val)
     
@@ -66,8 +75,8 @@ def main():
 
 def run_sample_type_prediction(tag_to_val, mapped_terms, real_props):
     # Load the dilled vectorizer and model
-    vectorizer_f = pr.resource_filename(resource_package, join("predict_sample_type", "sample_type_vectorizor.dill"))
-    classifier_f = pr.resource_filename(resource_package, join("predict_sample_type", "sample_type_classifier.dill"))
+    vectorizer_f = pr.resource_filename(resource_package, "sample_type_vectorizor.dill")
+    classifier_f = pr.resource_filename(resource_package, "sample_type_classifier.dill")
     with open(vectorizer_f, "rb") as f:
         vectorizer = dill.load(f)
     with open(classifier_f, "rb") as f:
@@ -96,7 +105,7 @@ def run_pipeline(tag_to_val):
     return mappings
     
 def p_41():
-    spec_lex = pc.SpecialistLexicon()
+    spec_lex = pc.SpecialistLexicon(config.specialist_lex_location())
     inflec_var = pc.SPECIALISTLexInflectionalVariants(spec_lex)
     spell_var = pc.SPECIALISTSpellingVariants(spec_lex)
     key_val_filt = pc.KeyValueFilter_Stage()

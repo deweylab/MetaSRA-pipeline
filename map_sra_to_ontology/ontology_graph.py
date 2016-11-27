@@ -171,10 +171,8 @@ class MappableOntologyGraph(OntologyGraph):
                 string_identifiers.add(syn.syn_str)
         #self.bk_tree = BKTree(edit_distance, string_identifiers) 
 
-    # TODO Deprecated. Remove
     def get_mappable_term_ids(self):
         return self.mappable_term_ids
-        #return Set(self.id_to_term.keys()).difference(self.nonmappable_terms)
 
     def get_mappable_terms(self):
         return [y for x,y in self.id_to_term.iteritems() if x not in self.nonmappable_terms]
@@ -472,7 +470,7 @@ def parse_entity(lines, restrict_to_idspaces):
         """
         Args:
             raw_syns: all of the lines of the OBO file corresponding to synonyms
-            of a given term.
+                of a given term.
         Returns:
             A set of tuples where the first element is the synonym string and 
             the second element is the synonym type (e.g. 'EXACT' or 'NARROW')

@@ -469,32 +469,6 @@ class Lowercase_Stage:
         return text_mining_graph
 
 
-#class RemoveTrailingAlphanumeric_Stage():
-#    """
-#    Remove non-alphanumeric characters from ends of 
-#    token. e.g. '(hi)' will be turned into 'hi'
-#    """
-#
-#    def __init__(self):
-#        self.name = "remove_trailing_alphanumeric"
-#
-#    def run(self, tokens):
-#        new_tokens = Set()
-#        regex = "[0-9a-zA-Z]+.*[0-9a-zA-Z]+"
-#        for t in tokens:
-#            t_str = t.t_str.encode('utf-8')
-#            m = re.search(regex, t_str)
-#            if m:
-#                match = m.group(0)
-#                if match != t_str:
-#                    history = list(t.history)
-#                    history.append((self.name, match))
-#                    new_tokens.add(Token(match, history))
-#            else: 
-#                print "Regex failed on %s" % t_str                
-#
-#        tokens.update(new_tokens)
-#        return tokens
 
 class PropertySpecificSynonym_Stage:
 
@@ -515,7 +489,6 @@ class PropertySpecificSynonym_Stage:
                         key_term_nodes.update( text_mining_graph.downstream_nodes(t_node))
 
             key_term_nodes = [x for x in key_term_nodes if isinstance(x, OntologyTermNode) and x.term_id in self.property_id_to_syn_sets]
-            print "WOOHOO Found keys with possible value-synonyms: %s" % key_term_nodes
 
             if len(key_term_nodes) == 0:
                 continue
