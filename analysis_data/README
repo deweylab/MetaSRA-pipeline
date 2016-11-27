@@ -1,0 +1,20 @@
+This directory stores the hand-annotated datasets used for analysis 
+in the paper. Each file in this directory is described below:
+
+./term_mapping/test_ontology_mapping_data.json 
+
+Stores metadata with hand-annotated mapped ontology terms. This
+was the data used for testing the computational 
+pipeline's ability to map each sample to ontology terms. Results
+were described in the paper.
+
+./predict_sample_type/train_data.json
+
+Stores samples labelled with their sample-type. This dataset
+was used for training the one-vs-rest classifier.
+
+./predict_sample_type/test_data.json
+
+Stores samples labelled with their sample-type. This dataset
+was used as a test set for evaluating the machine learning
+classifier.  Results were described in the paper.

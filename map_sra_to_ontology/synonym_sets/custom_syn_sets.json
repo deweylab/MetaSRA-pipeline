@@ -1,0 +1,119 @@
+[
+    [
+        "tumor", 
+        "tumour", 
+        "neoplasm"
+    ], 
+    [
+        "Alzheimers disease", 
+        "alzheimers",
+        "alzheimer",
+        "Alzheimers", 
+        "Alzheimer's"
+    ], 
+    [
+        "sex", 
+        "gender"
+    ],
+    [
+        "epithelial",
+        "epithelial cell"
+    ],
+    [
+        "fetal",
+        "fetus",
+        "late embryo"
+    ],
+    [
+        "neural progenitor cell",
+        "neural stem cell",
+        "neuronal progenitor cell"
+    ],
+    [
+        "lymphoblastoid",
+        "lymphoblastoid cell line"
+    ],
+    [
+        "hiPSCs",
+        "hiPSC",
+        "iPSC",
+        "iPSCs",
+        "induced pluripotent stem cell"
+    ],
+    [
+        "ESCs",
+        "ESC",
+        "hESC",
+        "hESCs",
+        "embryonic stem cell"
+    ],
+    [
+        "newborn",
+        "neonate"
+    ],
+    [
+        "metastasis",
+        "metastatic"
+    ],
+    [
+        "colonic",
+        "colon"
+    ],
+    [
+        "dermal",
+        "dermis"
+    ],
+    [
+        "diabetic",
+        "diabetes",
+        "diabetes mellitus"
+    ],
+    [
+        "clear cell renal carcinoma",
+        "renal clear cell"
+    ],
+    [
+        "treatment",
+        "therapy"
+    ],
+    [
+        "pathology",
+        "disease"
+    ],
+    [
+        "passage",
+        "passages",
+        "passage number"
+    ],
+    [
+        "culture",
+        "co-culture",
+        "cell culture"
+    ],
+    [
+        "metastatic",
+        "metastasis"
+    ],
+    [
+        "testicular germ",
+        "male germ cell",
+        "germ cell"
+    ],
+    [
+        "cancerous",
+        "cancer"
+    ],
+    [
+        "amyotrophic lateral sclerosis",
+        "ALS",
+        "sALS"
+    ],
+    [
+        "cell line",
+        "CellLine"
+    ],
+    [
+        "cell type",
+        "CellType"
+    ]
+]

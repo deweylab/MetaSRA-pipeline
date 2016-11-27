@@ -1,0 +1,44 @@
+{
+   "EFO_PATO:0000047": [
+        [
+            "m", 
+            "male",
+            "man"
+        ],
+        [
+            "f",
+            "female",
+            "woman"
+        ]
+    ],
+    "EFO:0000721": [
+        [
+            "min",
+            "mins",
+            "minute"
+        ],
+        [
+            "hr",
+            "hour"
+        ],
+        [
+            "d",
+            "day"
+        ]
+    ],
+    "EFO:0000724": [
+        [
+            "min",
+            "mins",
+            "minute"
+        ],
+        [
+            "hr",
+            "hour"
+        ],
+        [
+            "d",
+            "day"
+        ]
+    ]
+}

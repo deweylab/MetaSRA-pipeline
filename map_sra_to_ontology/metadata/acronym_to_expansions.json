@@ -1,0 +1,22 @@
+{
+    "hESC": [
+        "human embryonic stem cell",
+        "embryonic stem cell",
+        "stem cell"
+    ],
+    "ESC": [
+        "embryonic stem cell",
+        "stem cell"
+    ],
+    "iPSC": [
+        "induced pluripotent stem cell",
+        "pluripotent stem cell",
+        "stem cell"
+    ],
+    "ALS": [
+        "amyotrophic lateral sclerosis"
+    ],
+    "sALS": [
+        "amyotrophic lateral sclerosis"
+    ] 
+}
