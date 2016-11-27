@@ -1,1 +1,1 @@
-# MetaSRA: normalized sample-specific metadata forthe Sequence Read Archive
+# MetaSRA: normalized sample-specific metadata for the Sequence Read Archive
