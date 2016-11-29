@@ -12,7 +12,7 @@ import pickle
 
 #import map_to_ontology as mto
 import load_ontology
-from text_mining_graph import *
+from text_reasoning_graph import *
 import ball_tree_distance
 
 import query_metadata 
@@ -97,7 +97,7 @@ class Pipeline:
         self.scoring_strategy = scoring_strategy
 
     def run(self, tag_to_val):
-        tm_graph = TextMiningGraph(prohibit_cycles=False)
+        tm_graph = TextReasoningGraph(prohibit_cycles=False)
                 
         # Create initial text-mining-graph
         tokens = Set()
@@ -231,58 +231,58 @@ class InitKeyValueTokens_Stage:
 
 
 
-class InitKeyValueTokens_Stage_NEW:
-    def run(self, text_mining_graph):
-        curr_index = 0
-        for kv_node in text_mining_graph.key_val_nodes:
-
-            n_grams, intervals = get_ngrams(kv_node.key, 1)
-            ind_start = curr_index
-            #ind_end = curr_index + intervals[-1][1]
-            ind_end = curr_index + len(kv_node.key)
-            key_node = TokenNode(kv_node.key, ind_start, ind_end)
-            print "KEY NODE %s HAS STARTING INTERVALS %d - %d" % (key_node, ind_start, ind_end)
-            text_mining_graph.add_edge(kv_node, key_node, DerivesInto("key"))
-
-            curr_index = ind_end
-            #grams = get_ngrams(kv_node.value, 1)
-            n_grams, intervals = get_ngrams(kv_node.value, 1)
-            if not n_grams:
-                continue
-            ind_start = curr_index
-            #ind_end = curr_index + intervals[-1][1]
-            ind_end = curr_index + len(kv_node.value)
-            val_node = TokenNode(kv_node.value, ind_start, ind_end)
-            print "VAL NODE %s HAS STARTING INTERVALS %d - %d" % (val_node, ind_start, ind_end)
-            text_mining_graph.add_edge(kv_node, val_node, DerivesInto("val"))
-
-            curr_index = ind_end
-        return text_mining_graph
-
-
-
-class InitKeyValueTokens_Stage_OLD:
-    def run(self, text_mining_graph):
-        n_gram_index = 0
-        for kv_node in text_mining_graph.key_val_nodes:
-
-            grams = get_ngrams(kv_node.key, 1)
-            gram_start = n_gram_index
-            gram_end = n_gram_index + len(grams)
-            key_node = TokenNode(kv_node.key, gram_start, gram_end)
-            print "KEY NODE %s HAS GRAMS %d - %d" % (key_node, gram_start, gram_end)
-            text_mining_graph.add_edge(kv_node, key_node, DerivesInto("key"))
-
-            n_gram_index = gram_end
-            grams = get_ngrams(kv_node.value, 1)
-            gram_start = n_gram_index
-            gram_end = n_gram_index + len(grams)
-            val_node = TokenNode(kv_node.value, gram_start, gram_end)
-            print "VAL NODE %s HAS GRAMS %d - %d" % (val_node, gram_start, gram_end)
-            text_mining_graph.add_edge(kv_node, val_node, DerivesInto("val"))
-
-            n_gram_index = gram_end
-        return text_mining_graph
+#class InitKeyValueTokens_Stage_NEW:
+#    def run(self, text_mining_graph):
+#        curr_index = 0
+#        for kv_node in text_mining_graph.key_val_nodes:
+#
+#            n_grams, intervals = get_ngrams(kv_node.key, 1)
+#            ind_start = curr_index
+#            #ind_end = curr_index + intervals[-1][1]
+#            ind_end = curr_index + len(kv_node.key)
+#            key_node = TokenNode(kv_node.key, ind_start, ind_end)
+#            print "KEY NODE %s HAS STARTING INTERVALS %d - %d" % (key_node, ind_start, ind_end)
+#            text_mining_graph.add_edge(kv_node, key_node, DerivesInto("key"))
+#
+#            curr_index = ind_end
+#            #grams = get_ngrams(kv_node.value, 1)
+#            n_grams, intervals = get_ngrams(kv_node.value, 1)
+#            if not n_grams:
+#                continue
+#            ind_start = curr_index
+#            #ind_end = curr_index + intervals[-1][1]
+#            ind_end = curr_index + len(kv_node.value)
+#            val_node = TokenNode(kv_node.value, ind_start, ind_end)
+#            print "VAL NODE %s HAS STARTING INTERVALS %d - %d" % (val_node, ind_start, ind_end)
+#            text_mining_graph.add_edge(kv_node, val_node, DerivesInto("val"))
+#
+#            curr_index = ind_end
+#        return text_mining_graph
+#
+#
+#
+#class InitKeyValueTokens_Stage_OLD:
+#    def run(self, text_mining_graph):
+#        n_gram_index = 0
+#        for kv_node in text_mining_graph.key_val_nodes:
+#
+#            grams = get_ngrams(kv_node.key, 1)
+#            gram_start = n_gram_index
+#            gram_end = n_gram_index + len(grams)
+#            key_node = TokenNode(kv_node.key, gram_start, gram_end)
+#            print "KEY NODE %s HAS GRAMS %d - %d" % (key_node, gram_start, gram_end)
+#            text_mining_graph.add_edge(kv_node, key_node, DerivesInto("key"))
+#
+#            n_gram_index = gram_end
+#            grams = get_ngrams(kv_node.value, 1)
+#            gram_start = n_gram_index
+#            gram_end = n_gram_index + len(grams)
+#            val_node = TokenNode(kv_node.value, gram_start, gram_end)
+#            print "VAL NODE %s HAS GRAMS %d - %d" % (val_node, gram_start, gram_end)
+#            text_mining_graph.add_edge(kv_node, val_node, DerivesInto("val"))
+#
+#            n_gram_index = gram_end
+#        return text_mining_graph
 
 
 class KeyValueFilter_Stage:
@@ -423,40 +423,6 @@ class HierarchicalNGram_Stage:
 
 
       
-class HierarchicalNGram_Stage_OLD:
-    def __init__(self):
-        self.n_thresh = 8
-
-    def run(self, text_mining_graph):
-        edge = DerivesInto("N-Gram")                # All edges will be of this type
-        tnode_to_edges = defaultdict(lambda: [])    # Buffer to store new edges
-        
-        curr_t_nodes = text_mining_graph.token_nodes
-        while len(curr_t_nodes) > 0:
-            new_nodes = []
-            for t_node in curr_t_nodes:
-
-                # Compute the length of each gram
-                grams = get_ngrams(t_node.token_str, 1)
-                n = min(self.n_thresh, len(grams) - 1)
-                if n < 1:
-                    continue
-
-                n_gram_strs = get_ngrams(t_node.token_str, n)
-                for i, g_str in enumerate(n_gram_strs):
-                    new_t_node = TokenNode(g_str, t_node.origin_gram_start + i, t_node.origin_gram_start + i + n)
-                    new_nodes.append(new_t_node)
-                    tnode_to_edges[t_node].append(new_t_node)
-
-            curr_t_nodes = new_nodes
-
-        for source_node, target_nodes in tnode_to_edges.iteritems():
-            for target_node in target_nodes:
-                text_mining_graph.add_edge(source_node, target_node, edge)
-
-        return text_mining_graph
-
-
 class Lowercase_Stage:
     def run(self, text_mining_graph):
         edge = DerivesInto("Lowercase")
@@ -714,40 +680,6 @@ class Delimit_Stage:
         return text_mining_graph
 
 
-class Delimit_Stage_OLD:
-    """
-    Delimits each token by a given regex and sequence
-    of delimited substrings are used to generate new
-    set of tokens.
-    """
-    def __init__(self, delimiter):
-        self.delimiter = delimiter
-
-    def run(self, text_mining_graph):
-        node_to_next_nodes = defaultdict(lambda: [])
-        for t_node in text_mining_graph.token_nodes:
-            split_t_strs = t_node.token_str.split(self.delimiter)
-            if len(split_t_strs) == 1:
-                continue    
-            
-            curr_interval_begin = t_node.origin_gram_start
-            for split_t_str in split_t_strs:
-                split_grams, split_intervals = get_ngrams(split_t_str, 1)
-                if not split_grams:
-                    curr_interval_begin += 1
-                    continue
-                new_t_node = TokenNode(split_t_str, curr_interval_begin, curr_interval_begin + split_intervals[-1][1])
-                node_to_next_nodes[t_node].append(new_t_node)
-                curr_interval_begin += len(split_t_str) + len(self.delimiter)    
-                
-        edge = DerivesInto("delimited by '%s'" % self.delimiter)
-        for s_node, next_nodes in node_to_next_nodes.iteritems():
-            for t_node in next_nodes:
-                text_mining_graph.add_edge(s_node, t_node, edge)
-
-        return text_mining_graph
-
-
 
 class FilterOntologyMatchesByPriority_Stage:
     
@@ -797,53 +729,6 @@ class FilterOntologyMatchesByPriority_Stage:
                     #    text_mining_graph.delete_node(n)
 
         return text_mining_graph
-
-
-class FilterOntologyMatchesByPriority_Stage_OLD:
-    
-    def run(self, text_mining_graph):
-        def is_edge_direct_match(edge):
-            return edge.match_target == "TERM_NAME" \
-                or edge.match_target == "EXACT_SYNONYM"
-
-        def is_edge_to_node_a_match(edge, targ_node):
-            return isinstance(edge, FuzzyStringMatch) \
-                and isinstance(targ_node, OntologyTermNode)
-
-        for t_node in text_mining_graph.token_nodes:
-
-            # Detect whether this token matched to a term-name or exact-synonym
-            discard = False
-            for edge, target_nodes in text_mining_graph.forward_edges[t_node].iteritems():
-                for targ_node in target_nodes:
-                    if is_edge_to_node_a_match(edge, targ_node) and is_edge_direct_match(edge):
-                        discard = True
-                        break
-                if discard:
-                    break
-
-            # If match to term-name or exact synonym, then delete all non-term-name and 
-            # non-exact-synonym matches
-            if discard:
-                del_edges = []
-                for edge, target_nodes in text_mining_graph.forward_edges[t_node].iteritems():
-                    for targ_node in target_nodes:
-                        if is_edge_to_node_a_match(edge, targ_node) and not is_edge_direct_match(edge):
-                            del_edges.append((t_node, targ_node, edge))
-        
-                for e in del_edges:
-                    text_mining_graph.delete_edge(e[0], e[1], e[2])
-            
-                # Remove orphan ontology-term-nodes
-                del_nodes = []
-                for o_node in text_mining_graph.ontology_term_nodes:
-                    if o_node not in text_mining_graph.reverse_edges:
-                        print "DELETING ORPHAN ONTOLOGY TERM NODE! %s" % o_node
-                        del_nodes.append(o_node)
-                for n in del_nodes:
-                    text_mining_graph.delete_node(n)
-
-        return text_mining_graph 
 
 
 
@@ -2200,31 +2085,6 @@ def get_ngrams(text, n):
         intervals.append((text_char_begin, text_char_end+1))       
 
     return n_grams, intervals    
-
-
-# TODO Deprecated. Remove
-def get_ngrams_OLD(text, n):
-
-    words = nltk.word_tokenize(text)
-    intervals = []
-    curr_begin = 0
-    for word in words:
-        intervals.append((curr_begin, curr_begin+len(word)))
-        curr_begin += len(word)
-    
-    n_grams = []
-    n_gram_intervals = []
-    for i in range(0, len(words)-n+1):
-        grams = words[i:i+n]
-        gram_interval = (intervals[i][0], intervals[i+n-1][1])
-        n_grams.append(' '.join(grams))
-        n_gram_intervals.append(gram_interval)
-
-    return n_grams, n_gram_intervals
-
-def get_ngrams_OLD(text, n):
-    n_grams = ngrams(nltk.word_tokenize(text), n)
-    return [' '.join(grams) for grams in n_grams]
 
 
 

@@ -1,0 +1,19 @@
+This directory contains the code implementing the ontology mapping 
+pipeline as well as the sample-type classifier.
+
+The pipeline can be run on a set of sample-specific key-value pairs
+using the run_pipeline.py script. This script is used as follows:
+
+    python run_pipeline.py <input key-value pairs JSON>
+
+The script accepts as input a JSON file storing the key value pairs.
+To provide an example, the pipeline will accept:
+
+{   
+    "ID": "P352_141",
+    "age": "48",
+    "bmi": "24",
+    "gender": "female",
+    "source_name": "vastus lateralis muscle_female",
+    "tissue": "vastus lateralis muscle"
+}

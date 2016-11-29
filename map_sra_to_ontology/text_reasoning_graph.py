@@ -1,3 +1,8 @@
+#########################################################################
+#   Implements the Text Reasoning Graph
+#########################################################################
+
+
 from optparse import OptionParser
 from sets import Set
 import math
@@ -250,7 +255,7 @@ class RealValuePropertyNode(ENode):
 
 
 
-class TextMiningGraph:
+class TextReasoningGraph:
     def __init__(self, prohibit_cycles=True):
         self.token_nodes = Set()
         self.key_val_nodes = Set()
