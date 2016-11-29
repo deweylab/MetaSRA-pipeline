@@ -12,20 +12,24 @@ import sys
 from collections import defaultdict, deque
 import json
 import dill
+import os
+from os.path import join
 
 import pkg_resources as pr
 resource_package = __name__
 
 import ontology_graph
-import load_ontology as lo
+import load_ontology
 import predict_sample_type
 import config
 
 #def get_script_path():
 #    return os.path.dirname(realpath(sys.argv[0]))
 sys.path.append(pr.resource_filename(resource_package, "predict_sample_type"))
-import run_on_entire_dataset
-from run_on_entire_dataset import * 
+#import run_on_entire_dataset
+#from run_on_entire_dataset import *
+import learn_classifier
+from learn_classifier import * 
 #from predict_sample_type.run_on_entire_dataset import * 
 import pipeline_components as pc
 
@@ -75,8 +79,8 @@ def main():
 
 def run_sample_type_prediction(tag_to_val, mapped_terms, real_props):
     # Load the dilled vectorizer and model
-    vectorizer_f = pr.resource_filename(resource_package, "sample_type_vectorizor.dill")
-    classifier_f = pr.resource_filename(resource_package, "sample_type_classifier.dill")
+    vectorizer_f = pr.resource_filename(resource_package, join("predict_sample_type", "sample_type_vectorizor.dill"))
+    classifier_f = pr.resource_filename(resource_package, join("predict_sample_type", "sample_type_classifier.dill"))
     with open(vectorizer_f, "rb") as f:
         vectorizer = dill.load(f)
     with open(classifier_f, "rb") as f:
