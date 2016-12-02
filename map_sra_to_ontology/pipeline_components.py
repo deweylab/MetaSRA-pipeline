@@ -1,23 +1,12 @@
-######################################################################################################3
+###########################################################################
 #   Components for building metadata mapping pipelines. 
-#################################################################################################################
+###########################################################################
 
-from optparse import OptionParser
 import json
-import sys
 from collections import defaultdict, deque, Counter
-import copy
 import re
 import pickle
 
-#import map_to_ontology as mto
-import load_ontology
-from text_reasoning_graph import *
-import ball_tree_distance
-
-import query_metadata 
-import ontology_graph
-#import specialist_lex as sl
 import numpy as np
 import nltk
 from nltk.tokenize import word_tokenize
@@ -33,17 +22,29 @@ import json
 from sets import Set
 import os
 from os.path import join
-from load_specialist_lex import SpecialistLexicon
 
+import load_ontology
+from text_reasoning_graph import *
+import ball_tree_distance
+from load_specialist_lex import SpecialistLexicon
 
 import bk_tree
 from bk_tree import BKTree
 import marisa_trie as mt
 
-
+# Relative paths to resources
 resource_package = __name__
 FILTER_KEYS_JSON = pr.resource_filename(resource_package, join("metadata", "filter_key_val_rules.json"))
 CELL_LINE_FILTER_KEYS_JSON = pr.resource_filename(resource_package, join("metadata", "cell_line_filter_key_val_rules.json"))
+PROPERTY_SPECIFIC_SYNONYMS_JSON = pr.resource_filename(resource_package, join("metadata", "has_val_syn_term_ids.json"))
+TERM_TO_LINKED_ANCESTOR_JSON =  pr.resource_filename(resource_package, join("metadata", "term_to_superterm_linked_terms.json"))
+NOUN_PHRASES_JSON = pr.resource_filename(resource_package, join("metadata", "noun_phrases.json"))
+CELL_LINE_TO_IMPLIED_DISEASE_JSON = pr.resource_filename(resource_package, join("metadata", "cellline_to_disease_implied_terms.json"))
+ACRONYM_TO_EXPANSION_JSON = pr.resource_filename(resource_package, join("metadata", "acronym_to_expansions.json"))
+REAL_VALUE_PROPERTIES = pr.resource_filename(resource_package, join("metadata", "real_valued_properties.json"))
+CUST_TERM_TO_CONSEQ_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "custom_term_to_consequent_terms.json"))
+CELL_LINE_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "cvcl_mappings.json"))
+
 
 TOKEN_SCORING_STRATEGY = defaultdict(lambda: 1) # TODO We want an explicit score dictionary
 
@@ -168,13 +169,10 @@ class Pipeline:
         exclude_ids = Set([x.property_term_id for x in text_mining_graph.real_value_nodes])
         exclude_nodes = Set([x for x in text_mining_graph.ontology_term_nodes if x.term_id in exclude_ids])
         for o_node in text_mining_graph.ontology_term_nodes:
-            #if o_node in exclude_nodes:
-            #    continue
             r = extract_mapping(o_node)
             if r:
                 consequent = is_consequent(o_node)
                 mapped_terms.append(MappedTerm(o_node.term_id, consequent, r[0], r[1], r[2]))
-                #mapped_terms.append(MappedTerm(o_node.term_id, o_node.consequent, r[0], r[1], r[2]))
         
         real_value_properties = []
         for rv_node in text_mining_graph.real_value_nodes:
@@ -218,8 +216,6 @@ class InitKeyValueTokens_Stage:
             text_mining_graph.add_edge(kv_node, key_node, DerivesInto("key"))
 
             curr_index = ind_end
-            #if not n_grams:
-            #    continue
             ind_start = curr_index
             ind_end = curr_index + len(kv_node.value)
             val_node = TokenNode(kv_node.value, ind_start, ind_end)
@@ -228,61 +224,6 @@ class InitKeyValueTokens_Stage:
 
             curr_index = ind_end
         return text_mining_graph
-
-
-
-#class InitKeyValueTokens_Stage_NEW:
-#    def run(self, text_mining_graph):
-#        curr_index = 0
-#        for kv_node in text_mining_graph.key_val_nodes:
-#
-#            n_grams, intervals = get_ngrams(kv_node.key, 1)
-#            ind_start = curr_index
-#            #ind_end = curr_index + intervals[-1][1]
-#            ind_end = curr_index + len(kv_node.key)
-#            key_node = TokenNode(kv_node.key, ind_start, ind_end)
-#            print "KEY NODE %s HAS STARTING INTERVALS %d - %d" % (key_node, ind_start, ind_end)
-#            text_mining_graph.add_edge(kv_node, key_node, DerivesInto("key"))
-#
-#            curr_index = ind_end
-#            #grams = get_ngrams(kv_node.value, 1)
-#            n_grams, intervals = get_ngrams(kv_node.value, 1)
-#            if not n_grams:
-#                continue
-#            ind_start = curr_index
-#            #ind_end = curr_index + intervals[-1][1]
-#            ind_end = curr_index + len(kv_node.value)
-#            val_node = TokenNode(kv_node.value, ind_start, ind_end)
-#            print "VAL NODE %s HAS STARTING INTERVALS %d - %d" % (val_node, ind_start, ind_end)
-#            text_mining_graph.add_edge(kv_node, val_node, DerivesInto("val"))
-#
-#            curr_index = ind_end
-#        return text_mining_graph
-#
-#
-#
-#class InitKeyValueTokens_Stage_OLD:
-#    def run(self, text_mining_graph):
-#        n_gram_index = 0
-#        for kv_node in text_mining_graph.key_val_nodes:
-#
-#            grams = get_ngrams(kv_node.key, 1)
-#            gram_start = n_gram_index
-#            gram_end = n_gram_index + len(grams)
-#            key_node = TokenNode(kv_node.key, gram_start, gram_end)
-#            print "KEY NODE %s HAS GRAMS %d - %d" % (key_node, gram_start, gram_end)
-#            text_mining_graph.add_edge(kv_node, key_node, DerivesInto("key"))
-#
-#            n_gram_index = gram_end
-#            grams = get_ngrams(kv_node.value, 1)
-#            gram_start = n_gram_index
-#            gram_end = n_gram_index + len(grams)
-#            val_node = TokenNode(kv_node.value, gram_start, gram_end)
-#            print "VAL NODE %s HAS GRAMS %d - %d" % (val_node, gram_start, gram_end)
-#            text_mining_graph.add_edge(kv_node, val_node, DerivesInto("val"))
-#
-#            n_gram_index = gram_end
-#        return text_mining_graph
 
 
 class KeyValueFilter_Stage:
@@ -340,23 +281,6 @@ class ManuallyAnnotatedSynonyms_Stage(Synonyms_Stage):
     def __init__(self):
         super(ManuallyAnnotatedSynonyms_Stage, self).__init__("Manually Annotated", "custom_syn_sets.json")
 
-
-
-class NGram_NLTK_Stage:
-    def run(self, text_mining_graph):
-
-        edge = DerivesInto("N-Gram")             # All edges will be of this type
-        tnode_to_edges = defaultdict(lambda: []) # Buffer to store new edges
-        
-        for t_node in text_mining_graph.token_nodes: 
-            n_gram_strs =  all_nltk_n_grams(t_node.token_str)
-            for n_g_str in n_gram_strs:
-                tnode_to_edges[t_node].append(TokenNode(n_g_str))
-
-        for source_node, target_nodes in tnode_to_edges.iteritems():
-            for target_node in target_nodes:
-                text_mining_graph.add_edge(source_node, target_node, edge)
-        return text_mining_graph
 
 
 class NGram_Stage:
@@ -437,16 +361,13 @@ class Lowercase_Stage:
 
 
 class PropertySpecificSynonym_Stage:
-
     def __init__(self):
-        real_val_f = pr.resource_filename(resource_package, join("metadata", "has_val_syn_term_ids.json"))
-        with open(real_val_f, "r") as f:
+        with open(PROPERTY_SPECIFIC_SYNONYMS_JSON, "r") as f:
             self.property_id_to_syn_sets = json.load(f)
 
     def run(self, text_mining_graph):
 
         for kv_node in text_mining_graph.key_val_nodes:
-
             # Find all downstream nodes of the 'key' token-nodes 
             key_term_nodes = Set()
             for edge in text_mining_graph.forward_edges[kv_node]:
@@ -467,7 +388,6 @@ class PropertySpecificSynonym_Stage:
                     if isinstance(edge, DerivesInto) and edge.derivation_type == "val":
                         for t_node in text_mining_graph.forward_edges[kv_node][edge]:
                             for down_node in text_mining_graph.downstream_nodes(t_node):
-                                print "LOOKING AT DOWNSTREAM %s" % t_node
                                 if isinstance(down_node, TokenNode):
                                     for syn_set in self.property_id_to_syn_sets[key_term_node.term_id]:
                                         if down_node.token_str in syn_set:
@@ -488,8 +408,7 @@ class BlockCellLineNonCellLineKey_Stage:
 
         # Cell line terms are all CVCL terms and those terms in the EFO they link to
         self.cell_line_terms = Set(cvcl_og.id_to_term.keys())
-        term_to_suplinked_f = pr.resource_filename(resource_package, join("metadata", "term_to_superterm_linked_terms.json"))
-        with open(term_to_suplinked_f, "r") as f:
+        with open(TERM_TO_LINKED_ANCESTOR_JSON, "r") as f:
             term_to_suplinked = json.load(f)
             for t_id in cvcl_og.id_to_term:
                 if t_id in term_to_suplinked:
@@ -973,7 +892,6 @@ class FuzzyStringMatching_Stage_OLD:
                 #print "Comparing edit distance to %d ontology terms..." % len(mappable_terms)
                 #c = 1 
                 for term in mappable_terms:
-                    # REMOVE #######
                     #if c == 500:
                     #    print "Compared to %d/%d terms" % (c, len(mappable_terms))
                     #c += 1
@@ -1628,8 +1546,7 @@ class RemoveSubIntervalOfMatched_Stage:
 
 class ExactMatchCustomTargets_Stage:
     def __init__(self):
-        noun_phrases_f = pr.resource_filename(resource_package, join("metadata", "noun_phrases.json"))
-        with open(noun_phrases_f, "r") as f:
+        with open(NOUN_PHRASES_JSON, "r") as f:
             self.noun_phrases = Set(json.load(f)) 
      
     def run(self, text_mining_graph):
@@ -1767,8 +1684,7 @@ class RemoveDownstreamEdgesOfMappedTokenNodes_Stage_OLD:
 
 class CellLineToImpliedDisease_Stage:
     def __init__(self):
-        term_to_implied_f = pr.resource_filename(resource_package, join("metadata", "cellline_to_disease_implied_terms.json"))
-        with open(term_to_implied_f, "r") as f:
+        with open(CELL_LINE_TO_IMPLIED_DISEASE_JSON, "r") as f:
             self.term_to_implied_terms = json.load(f)
 
     def run(self, text_mining_graph):
@@ -1778,12 +1694,6 @@ class CellLineToImpliedDisease_Stage:
         for ont_node in text_mining_graph.ontology_term_nodes:
             if ont_node.term_id in self.term_to_implied_terms:
                 for implied_term_id in self.term_to_implied_terms[ont_node.term_id]:
-
-                    # REMOVE #####
-                    if ont_node.term_id == "EFO:0002885":
-                        print "WOO, well I'm looking at a node %s implying %s" % (ont_node.term_id, implied_term_id)
-                    # REMOVE #####
-
                     new_ont_node = OntologyTermNode(implied_term_id)
                     node_to_new_edges[ont_node].append((new_ont_node, edge))
 
@@ -1795,8 +1705,7 @@ class CellLineToImpliedDisease_Stage:
 
 class AcronymToExpansion_Stage:
     def __init__(self):
-        acr_to_expansions_f = pr.resource_filename(resource_package, join("metadata", "acronym_to_expansions.json"))
-        with open(acr_to_expansions_f, "r") as f:
+        with open(ACRONYM_TO_EXPANSION_JSON, "r") as f:
             self.acr_to_expansions = json.load(f)
 
     def run(self, text_mining_graph):
@@ -1851,15 +1760,17 @@ class ATCCKeyValueFilter_Stage:
 class ExtractRealValue_Stage:
 
     def __init__(self):
-        real_val_f = pr.resource_filename(resource_package, join("metadata", "real_valued_properties.json"))
-        with open(real_val_f, "r") as f:
+        with open(REAL_VALUE_PROPERTIES, "r") as f:
             j = json.load(f)
             self.real_val_tids = j["property_term_ids"]
             self.default_units = j["default_units"]
 
     def run(self, text_mining_graph):
-
+        print
+        print "Extracting real-value properties..."
+    
         for kv_node in text_mining_graph.key_val_nodes:
+            print "Checking whether key-value pair node %s encodes a real-value property."
 
             # Find ontology-terms that refer to real-valued properties 
             real_val_term_nodes = Set()
@@ -1869,8 +1780,8 @@ class ExtractRealValue_Stage:
                         real_val_term_nodes.update( text_mining_graph.downstream_nodes(t_node))
 
             real_val_term_nodes = [x for x in real_val_term_nodes if isinstance(x, OntologyTermNode) and x.term_id in self.real_val_tids]
-            print "SET OF TERMS WE WANT TO FIND: %s" % self.real_val_tids
-            print "REAL VALUE TERM NODES: %s" % real_val_term_nodes
+            print "Set of real-value properties we are searching for: %s" % self.real_val_tids
+            print "Found property nodes: %s" % real_val_term_nodes
             if len(real_val_term_nodes) == 0:
                 continue
         
@@ -1881,9 +1792,12 @@ class ExtractRealValue_Stage:
                     for t_node in text_mining_graph.forward_edges[kv_node][edge]:
                         real_val_candidates.update(text_mining_graph.downstream_nodes(t_node))    
 
+            print "The real-value candidates are: %s" % real_val_candidates
             numeric_nodes = [x for x in real_val_candidates if isinstance(x, TokenNode) and is_number(x.token_str)]
+            print "Found numeric nodes: %s" % numeric_nodes
             unit_nodes = [x for x in real_val_candidates if isinstance(x, OntologyTermNode) and x.term_id.split(":")[0] == "UO"]
-            
+            print "Found unit nodes: %s" % unit_nodes
+
             # If there is one real-value ontology term, one numeric token, and one unit node, then create real-value-property node
             edge = DerivesInto("Real-value extraction") # TODO should use a different edge-type
             if len(real_val_term_nodes) == 1 and len(numeric_nodes) == 1:
@@ -1918,8 +1832,7 @@ class ExtractRealValue_Stage:
 
 class CustomConsequentTerms_Stage:
     def __init__(self):
-        term_to_consequent_f = pr.resource_filename(resource_package, join("metadata", "custom_term_to_consequent_terms.json"))
-        with open(term_to_consequent_f, "r") as f:
+        with open(CUST_TERM_TO_CONSEQ_TERMS_JSON, "r") as f:
             self.term_to_consequent = json.load(f)
 
     def run(self, text_mining_graph):
@@ -1942,8 +1855,7 @@ class CustomConsequentTerms_Stage:
 
 class LinkedTermsOfSuperterms_Stage:
     def __init__(self):
-        term_to_implied_f = pr.resource_filename(resource_package, join("metadata", "term_to_superterm_linked_terms.json"))
-        with open(term_to_implied_f, "r") as f:
+        with open(TERM_TO_LINKED_ANCESTOR_JSON, "r") as f:
             self.term_to_implied_terms = json.load(f)
 
     def run(self, text_mining_graph):
@@ -2002,8 +1914,7 @@ class ImpliedDevelopmentalStageFromAge_Stage:
 class InferCellLineTerms_Stage:
 
     def __init__(self):
-        cell_line_terms_f = pr.resource_filename(resource_package, "/metadata/cvcl_mappings.json")
-        with open(cell_line_terms_f, "r") as f:
+        with open(CELL_LINE_TERMS_JSON, "r") as f:
             self.cvcl_to_mappings = json.load(f)
 
     def run(self, text_mining_graph):
@@ -2028,8 +1939,6 @@ class InferCellLineTerms_Stage:
 #####################################
 #   Helper methods
 #####################################
-
-
 
 def is_number(q_str):
     try:

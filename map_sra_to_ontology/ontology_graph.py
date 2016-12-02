@@ -157,19 +157,7 @@ class MappableOntologyGraph(OntologyGraph):
             self.nonmappable_terms = Set()
         else:
             self.nonmappable_terms = Set(nonmappable_terms)
-
         self.mappable_term_ids = Set(self.id_to_term.keys()).difference(self.nonmappable_terms)
-
-        #self.str_to_terms = defaultdict(lambda: [])
-        self.str_to_terms = defaultdict(self.empty_list)
-        string_identifiers = Set()
-        for term in self.id_to_term.values():
-            self.str_to_terms[term.name].append(term)
-            string_identifiers.add(term.name)
-            for syn in term.synonyms:
-                self.str_to_terms[syn.syn_str].append(term)    
-                string_identifiers.add(syn.syn_str)
-        #self.bk_tree = BKTree(edit_distance, string_identifiers) 
 
     def get_mappable_term_ids(self):
         return self.mappable_term_ids
@@ -177,42 +165,7 @@ class MappableOntologyGraph(OntologyGraph):
     def get_mappable_terms(self):
         return [y for x,y in self.id_to_term.iteritems() if x not in self.nonmappable_terms]
  
-    def search_ontology(self, query, edit_thresh):
-        words = self.bk_tree.query(query, edit_thresh)
-        results = []
-        for w in words:
-            results += self.str_to_terms[w[1]]
-        return results
 
-
-class MappableOntologies:
-    def __init__(self, ontology_graphs):
-
-        print "Building trie..."
-        tups = deque()
-        self.terms_array = deque()
-        curr_i = 0
-        for og in ontology_graphs:
-            for term in og.get_mappable_terms():
-                self.terms_array.append(term)
-                tups.append((term.name.decode('utf-8'), [curr_i]))
-                for syn in term.synonyms:
-                    tups.append((syn.syn_str.decode('utf-8'), [curr_i]))
-                curr_i += 1
-        self.map_trie = mt.RecordTrie("<H", tups)
-
-    def map_string(self, query):
-        mapped = []
-        try:
-            results = self.map_trie[query]
-            for r in results:
-                term = self.term_indices[r[0]]
-                mapped.append(term)
-        except KeyError:
-            #print "Query '%s' not in trie" % query
-            pass
-        return mapped
- 
 
 def load_ontology(include_ontologies, restrict_to_idspaces=None, include_obsolete=False, 
     restrict_to_roots=None, exclude_terms=None):
@@ -273,9 +226,6 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False
         # Get the subterms of terms that we want to keep
         for root_id in restrict_to_roots:
             keep_ids.update(og.recursive_subterms(root_id))
-
-        # Remove terms that we want to exclude TODO make this the set of non-mappable-terms
-        #keep_ids = keep_ids.difference(Set(exclude_terms))
 
         # Build the ontology-graph object
         id_to_term = {}
@@ -587,9 +537,4 @@ def parse_entity(lines, restrict_to_idspaces):
     else:
         print "Unable to parse chunk: %s" % lines
        
-def main():
-    pass
-
-if __name__ == "__main__":
-    main()
         
