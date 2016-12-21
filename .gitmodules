@@ -1,0 +1,6 @@
+[submodule "bktree"]
+	path = bktree
+	url = https://github.com/ahupp/bktree
+[submodule "map_sra_to_ontology/bktree"]
+	path = map_sra_to_ontology/bktree
+	url = https://github.com/ahupp/bktree
