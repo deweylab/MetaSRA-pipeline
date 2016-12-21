@@ -28,8 +28,8 @@ ENTITY_EXCLUDED_TERM = "EXCLUDED_TERM"
 
 class Synonym:
     """
-    Represents a synonym of a term. Stores both the synonym string
-    and synonym type.
+    Represents a synonym of a term. Stores both the 
+    synonym string and synonym type.
     """
     def __init__(self, syn_str, syn_type):
         self.syn_str = syn_str
@@ -39,16 +39,22 @@ class Synonym:
         return str((self.syn_str, self.syn_type))
 
 class Term:
-    def __init__(self, id, name, definition=None, synonyms=[], comment=None, xrefs=None, relationships={}, property_values=[], subsets=[]):
+    def __init__(self, id, name, definition=None, 
+        synonyms=[], comment=None, xrefs=None, 
+        relationships={}, property_values=[], subsets=[]):
         """
         Args:
             id: term identifier (e.g. 'CL:0000555')
             name: name of term
             definition: term definition
-            synonym: list of Synonym objects representing synonyms of the term
-            xrefs: list of URIs of external definitions of this term
-            relationships: a dictionary mapping a relationship type to term id's related to 
-                this term through that type
+            synonyms: list of Synonym objects representing 
+                synonyms of the term
+            comment: comment about the term
+            xrefs: list of URIs of external definitions of 
+                this term
+            relationships: a dictionary mapping a relationship 
+                type to term id's related to this term through 
+                that type
         """
         self.id = id
         self.name = name
@@ -83,7 +89,8 @@ class Term:
             return []
 
 class OntologyGraph:
-    def __init__(self, id_to_term, enriched_synonyms_file=None):
+    def __init__(self, id_to_term, 
+        enriched_synonyms_file=None):
         self.id_to_term = id_to_term
 
     def subtype_names(self, supertype_name):
@@ -104,7 +111,8 @@ class OntologyGraph:
             visited_ids.add(curr_id)                    
             for sub_id in self.id_to_term[curr_id].inv_is_a():
                 if not sub_id in visited_ids:
-                    g.add_edge(self.id_to_term[curr_id].name, self.id_to_term[sub_id].name)
+                    g.add_edge(self.id_to_term[curr_id].name, 
+                        self.id_to_term[sub_id].name)
                     q.put(sub_id)
         print str(g)
      
@@ -166,38 +174,13 @@ class MappableOntologyGraph(OntologyGraph):
         return [y for x,y in self.id_to_term.iteritems() if x not in self.nonmappable_terms]
  
 
+def build_ontology(ont_to_loc, restrict_to_idspaces=None, 
+    include_obsolete=False, restrict_to_roots=None, 
+    exclude_terms=None):
 
-def load_ontology(include_ontologies, restrict_to_idspaces=None, include_obsolete=False, 
-    restrict_to_roots=None, exclude_terms=None):
-    """
-    Load the ontology. 
-    Args:
-        include_ontologies: A list of ontology name's that should be included
-            in the ontology.
-        restrcit_to_idspaces: A list of ID spaces (e.g. ['UBERON', 'CL']).
-            Restrict the ontology to terms in a list of ID spaces. If none,
-            use  all terms. 
-        include_obsolete: True, if obsolete terms should be included in the ontology
-            object. False, otherwise.
-        restrict_to_roots: A list of IDs that will act as parents for which to 
-            root the graph.  Any nodes above these nodes will be discarded.
-        exclude_terms: A set of terms to exclude from the ontology 
-    """
-    if not include_ontologies: # If ontologies are not specified, use them all
-        include_ontologies = config.ontology_name_to_location().keys()
-
-    ont_to_loc = {x:y for x,y in config.ontology_name_to_location().iteritems() if x in include_ontologies}
-    if not include_ontologies:
-        ont_to_loc = config.ontology_name_to_location()
-
-    return  build_ontology(ont_to_loc, restrict_to_idspaces=restrict_to_idspaces, 
-        include_obsolete=include_obsolete, restrict_to_roots=restrict_to_roots,
-         exclude_terms= exclude_terms)
-
-def build_ontology(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False,
-    restrict_to_roots=None, exclude_terms=None):
-
-    og = parse_obos(ont_to_loc, restrict_to_idspaces=restrict_to_idspaces, include_obsolete=include_obsolete)
+    og = parse_obos(ont_to_loc, 
+        restrict_to_idspaces=restrict_to_idspaces, 
+        include_obsolete=include_obsolete)
 
     # Add enriched synonyms
     cvcl_syns_f = pr.resource_filename(resource_package, join("metadata", "term_to_extra_synonyms.json"))
@@ -245,12 +228,12 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False
 
 def most_specific_terms(term_ids, og, sup_relations=["is_a"]):
     """
-    Given a set of terms S, this method returns all terms that have
-    no children in S. 
+    Given a set of terms S, this method returns all terms that 
+    have no children in S. 
     Args:
         og: the ontology graph object
-        sup_relations: the relationship types through which to 
-            define children
+        sup_relations: the relationship types through which 
+            to define children
     """
     term_ids = Set([x for x in term_ids if x in og.id_to_term])
 
@@ -300,8 +283,8 @@ def parse_obos(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False):
                 name_to_ids[name] = ids
             else:
                 name_to_ids[name].update(ids)
-
-    return OntologyGraph(id_to_term, name_to_ids)
+    #return OntologyGraph(id_to_term, name_to_ids)
+    return OntologyGraph(id_to_term)
 
 def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
     """
