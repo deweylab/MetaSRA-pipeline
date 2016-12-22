@@ -4,6 +4,16 @@ This repository contains the code implementing the pipeline used to construct th
 http://biorxiv.org/content/early/2016/12/19/090506.
 This pipeline re-annotates key-value descriptions of biological samples using biomedical ontologies.
 
+##Dependencies
+
+This project requires the following Python libraries:
+- numpy (http://www.numpy.org)
+- scipy (https://www.scipy.org/scipylib/)
+- scikit-learn (http://scikit-learn.org/stable/)
+- setuptools (https://pypi.python.org/pypi/setuptools)
+- marisa-trie (https://pypi.python.org/pypi/marisa-trie)
+
+
 ##Setup
 
 In order to run the pipeline, a few external resources must be downloaded and configured.  First, set up the PYTHONPATH environment variable to point to the directory containing the map_sra_to_ontology directory as well as to the bktree directory.  Then, to set up the pipeline, run the following commands:
