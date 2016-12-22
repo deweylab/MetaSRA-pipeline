@@ -15,23 +15,15 @@ import dill
 import os
 from os.path import join
 
-import pkg_resources as pr
-resource_package = __name__
-
-import ontology_graph
-import load_ontology
-import predict_sample_type
-import config
-
-#def get_script_path():
-#    return os.path.dirname(realpath(sys.argv[0]))
-sys.path.append(pr.resource_filename(resource_package, "predict_sample_type"))
-#import run_on_entire_dataset
-#from run_on_entire_dataset import *
-import learn_classifier
-from learn_classifier import * 
-#from predict_sample_type.run_on_entire_dataset import * 
-import pipeline_components as pc
+import map_sra_to_ontology
+from map_sra_to_ontology import ontology_graph
+from map_sra_to_ontology import load_ontology
+from map_sra_to_ontology import predict_sample_type
+from map_sra_to_ontology import config
+from map_sra_to_ontology import predict_sample_type
+from map_sra_to_ontology import run_sample_type_predictor
+from predict_sample_type.learn_classifier import *
+from map_sra_to_ontology import pipeline_components as pc
 
 def main():
     parser = OptionParser()
@@ -68,7 +60,7 @@ def main():
             "property_id":real_val_data["property_id"]}
         real_val_props.append(real_val_prop)
    
-    predicted, confidence = run_sample_type_prediction(tag_to_val, mapped_terms, real_val_props)
+    predicted, confidence = run_sample_type_predictor.run_sample_type_prediction(tag_to_val, mapped_terms, real_val_props)
 
     mapping_data = {
         "mapped ontology terms": mapped_terms, 
@@ -76,27 +68,6 @@ def main():
         "sample type": predicted, 
         "sample-type confidence": confidence}
     print json.dumps(mapping_data, indent=4, separators=(',', ': '))
-
-def run_sample_type_prediction(tag_to_val, mapped_terms, real_props):
-    # Load the dilled vectorizer and model
-    vectorizer_f = pr.resource_filename(resource_package, join("predict_sample_type", "sample_type_vectorizor.dill"))
-    classifier_f = pr.resource_filename(resource_package, join("predict_sample_type", "sample_type_classifier.dill"))
-    with open(vectorizer_f, "rb") as f:
-        vectorizer = dill.load(f)
-    with open(classifier_f, "rb") as f:
-        model = dill.load(f)
-
-    # Make sample-type prediction
-    feat_v = vectorizer.convert_to_features(
-        get_ngrams_from_tag_to_val(tag_to_val),
-        mapped_terms)
-    predicted, confidence = model.predict(
-        feat_v,
-        mapped_terms,
-        real_props)
-
-    return predicted, confidence
-
 
 
 def run_pipeline(tag_to_val):

@@ -28,8 +28,8 @@ from text_reasoning_graph import *
 import ball_tree_distance
 from load_specialist_lex import SpecialistLexicon
 
-import bk_tree
-from bk_tree import BKTree
+import bktree
+from bktree import BKTree
 import marisa_trie as mt
 
 # Relative paths to resources
@@ -44,6 +44,7 @@ ACRONYM_TO_EXPANSION_JSON = pr.resource_filename(resource_package, join("metadat
 REAL_VALUE_PROPERTIES = pr.resource_filename(resource_package, join("metadata", "real_valued_properties.json"))
 CUST_TERM_TO_CONSEQ_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "custom_term_to_consequent_terms.json"))
 CELL_LINE_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "cvcl_mappings.json"))
+TWO_CHAR_MAPPINGS_JSON = pr.resource_filename(resource_package, join("metadata", "two_char_mappings.json"))
 
 
 TOKEN_SCORING_STRATEGY = defaultdict(lambda: 1) # TODO We want an explicit score dictionary
@@ -246,6 +247,21 @@ class KeyValueFilter_Stage:
                 text_mining_graph.delete_node(kv_node)
         return text_mining_graph
 
+
+class TwoCharMappings_Stage():
+    def __init__(self):
+        with open(TWO_CHAR_MAPPINGS_JSON, "r") as f:
+            self.str_to_mappings = json.load(f)
+    
+    def run(self, text_mining_graph):
+        for t_node in text_mining_graph.token_nodes:
+            if t_node.token_str in self.str_to_mappings:
+                for t_id in self.str_to_mappings[t_node.token_str]:
+                    match_node = OntologyTermNode(t_id) 
+                    edge = FuzzyStringMatch(t_node.token_str, t_node.token_str, "CUSTOM_TWO_CHAR_MATCH")
+                    text_mining_graph.add_edge(t_node, match_node, edge)
+        return text_mining_graph
+        
 
 class Synonyms_Stage(object):
     def __init__(self, syn_set_name, syn_f):
@@ -1800,27 +1816,27 @@ class ExtractRealValue_Stage:
 
             # If there is one real-value ontology term, one numeric token, and one unit node, then create real-value-property node
             edge = DerivesInto("Real-value extraction") # TODO should use a different edge-type
-            if len(real_val_term_nodes) == 1 and len(numeric_nodes) == 1:
+            if len(real_val_term_nodes) == 1:
                 prop_term_node = list(real_val_term_nodes)[0]
-                numeric_node = list(numeric_nodes)[0]
-                if len(unit_nodes) == 1:
-                    unit_node = list(unit_nodes)[0]
-                    rv_node = RealValuePropertyNode(prop_term_node.term_id, float(numeric_node.token_str), unit_node.term_id)
-                    text_mining_graph.add_edge(prop_term_node, rv_node, edge)
-                    text_mining_graph.add_edge(numeric_node, rv_node, edge)
-                    text_mining_graph.add_edge(unit_node, rv_node, edge)
-                elif len(unit_nodes) == 0:
-                    if prop_term_node.term_id in self.default_units:
-                        default_unit_id = self.default_units[prop_term_node.term_id]
+                for numeric_node in numeric_nodes:
+                    if len(unit_nodes) == 1:
+                        unit_node = list(unit_nodes)[0]
+                        rv_node = RealValuePropertyNode(prop_term_node.term_id, float(numeric_node.token_str), unit_node.term_id)
+                        text_mining_graph.add_edge(prop_term_node, rv_node, edge)
+                        text_mining_graph.add_edge(numeric_node, rv_node, edge)
+                        text_mining_graph.add_edge(unit_node, rv_node, edge)
+                    elif len(unit_nodes) == 0:
+                        if prop_term_node.term_id in self.default_units:
+                            default_unit_id = self.default_units[prop_term_node.term_id]
+                        else:
+                            default_unit_id = "missing"
+                        rv_node = RealValuePropertyNode(prop_term_node.term_id, float(numeric_node.token_str), default_unit_id)
+                        text_mining_graph.add_edge(prop_term_node, rv_node, edge)
+                        text_mining_graph.add_edge(numeric_node, rv_node, edge)  
                     else:
-                        default_unit_id = "missing"
-                    rv_node = RealValuePropertyNode(prop_term_node.term_id, float(numeric_node.token_str), default_unit_id)
-                    text_mining_graph.add_edge(prop_term_node, rv_node, edge)
-                    text_mining_graph.add_edge(numeric_node, rv_node, edge)  
-                else:
-                    rv_node = RealValuePropertyNode(prop_term_node.term_id, float(numeric_node.token_str), None)
-                    text_mining_graph.add_edge(prop_term_node, rv_node, edge)
-                    text_mining_graph.add_edge(numeric_node, rv_node, edge)
+                        rv_node = RealValuePropertyNode(prop_term_node.term_id, float(numeric_node.token_str), None)
+                        text_mining_graph.add_edge(prop_term_node, rv_node, edge)
+                        text_mining_graph.add_edge(numeric_node, rv_node, edge)
                     
         return text_mining_graph       
 

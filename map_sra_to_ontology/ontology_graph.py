@@ -18,8 +18,6 @@ import os
 from os.path import join
 import json
 
-from bk_tree import BKTree
-
 resource_package = __name__
 
 ENTITY_TERM = "TERM"
