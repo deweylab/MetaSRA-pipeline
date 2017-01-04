@@ -75,14 +75,14 @@ class Term:
         return str(rep)
 
     def is_a(self):
-        if "is_a" in self.relationships:
-            return self.relationships["is_a"]
-        else:
-            return []
+        return self.get_related_terms("is_a")
 
     def inv_is_a(self):
-        if "inv_is_a" in self.relationships:
-            return self.relationships["inv_is_a"]
+        return self.get_related_terms("inv_is_a")
+
+    def get_related_terms(self, relation):
+        if relation in self.relationships:
+            return self.relationships[relation]
         else:
             return []
 
@@ -310,6 +310,23 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
                     name_to_ids[term.name]= Set()
                 name_to_ids[term.name].add(term.id)
 
+    def add_inverse_relationship_to_parents(term, relation, inverse_relation):
+        for sup_term_id in [x for x in term.get_related_terms(relation)]:
+            if sup_term_id in id_to_term:
+                sup_term = id_to_term[sup_term_id]
+                if inverse_relation not in sup_term.relationships:
+                    sup_term.relationships[inverse_relation] = []
+                sup_term.relationships[inverse_relation].append(term.id)
+            else:
+                print "Warning! Attempted to create inverse edge in term %s. \
+                    Not found in not in the ontology" % sup_term_id
+                # Remove superterm from term's relationship list because it 
+                # is not in the current ontology
+                while sup_term_id in term.relationships[relation]:
+                    term.relationships[relation].remove(sup_term_id)
+                if not term.relationships[relation]:
+                    del term.relationships[relation]
+        
 
     header_info = {}
     print "Loading ontology from %s ..." % obo_file
@@ -335,24 +352,10 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
             process_chunk_of_lines(curr_lines, restrict_to_idspaces,
                 name_to_ids, id_to_term)
         
-
-        # Create inverse "is_a" edges between terms
+        # Create inverse "is_a" and "part_of" edges between terms
         for term in id_to_term.values():
-            for sup_term_id in [x for x in term.is_a()]:
-                if sup_term_id in id_to_term: 
-                    sup_term = id_to_term[sup_term_id]
-                    if "inv_is_a" not in sup_term.relationships:
-                        sup_term.relationships["inv_is_a"] = []
-                else:
-                    print "Warning! Attempted to create inverse edge in term %s. \
-                        Not found in not in the ontology" % sup_term_id
-                
-                    # Remove from term's is_a list
-                    while sup_term_id in term.relationships["is_a"]:
-                        term.relationships["is_a"].remove(sup_term_id) 
-                    if not term.relationships["is_a"]:
-                        del term.relationships["is_a"]
-                sup_term.relationships["inv_is_a"].append(term.id) 
+            add_inverse_relationship_to_parents(term, "is_a", "inv_is_a")
+            add_inverse_relationship_to_parents(term, "part_of", "inv_part_of")
 
     return id_to_term, name_to_ids    
 
