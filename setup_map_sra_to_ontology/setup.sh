@@ -12,6 +12,10 @@
 echo "Downloading ontologies..."
 python download_ontologies.py
 
+# Reformat Cellosaurus
+echo "Reformating Cellosaurus..."
+python reformat_cellosaurus.py
+
 # Download SPECIALIST Lexicon
 echo "Downloading SPECIALIST Lexicon..."
 python download_specialist_lexicon.py 
