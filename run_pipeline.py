@@ -59,7 +59,14 @@ def main():
             "value":real_val_data["value"], 
             "property_id":real_val_data["property_id"]}
         real_val_props.append(real_val_prop)
-   
+
+    # Add super-terms of mapped terms to the list of ontology term features   
+    sup_terms = Set()
+    for og in ont_id_to_og.values():
+        for term_id in mapped_terms:
+            sup_terms.update(og.recursive_relationship(term_id, ['is_a', 'part_of']))
+    mapped_terms = list(sup_terms)
+
     predicted, confidence = run_sample_type_predictor.run_sample_type_prediction(tag_to_val, mapped_terms, real_val_props)
 
     mapping_data = {
@@ -137,6 +144,65 @@ def p_41():
         cell_culture]
     return pc.Pipeline(stages, defaultdict(lambda: 1.0))
 
+def p_47():
+    spec_lex = pc.SpecialistLexicon(config.specialist_lex_location())
+    inflec_var = pc.SPECIALISTLexInflectionalVariants(spec_lex)
+    spell_var = pc.SPECIALISTSpellingVariants(spec_lex)
+    key_val_filt = pc.KeyValueFilter_Stage()
+    init_tokens_stage = pc.InitKeyValueTokens_Stage()
+    ngram = pc.NGram_Stage()
+    lower_stage = pc.Lowercase_Stage()
+    man_at_syn = pc.ManuallyAnnotatedSynonyms_Stage()
+    infer_cell_line = pc.InferCellLineTerms_Stage()
+    prop_spec_syn = pc.PropertySpecificSynonym_Stage()
+    infer_dev_stage = pc.ImpliedDevelopmentalStageFromAge_Stage()
+    linked_super = pc.LinkedTermsOfSuperterms_Stage()
+    cell_culture = pc.ConsequentCulturedCell_Stage()
+    filt_match_priority = pc.FilterOntologyMatchesByPriority_Stage()
+    real_val = pc.ExtractRealValue_Stage()
+    match_cust_targs = pc.ExactMatchCustomTargets_Stage()
+    cust_conseq = pc.CustomConsequentTerms_Stage()
+    delimit_plus = pc.Delimit_Stage('+')
+    delimit_underscore = pc.Delimit_Stage('_')
+    delimit_dash = pc.Delimit_Stage('-')
+    delimit_slash = pc.Delimit_Stage('/')
+    block_cell_line_key = pc.BlockCellLineNonCellLineKey_Stage()
+    subphrase_linked = pc.RemoveSubIntervalOfMatchedBlockAncestralLink_Stage()
+    cellline_to_implied_disease = pc.CellLineToImpliedDisease_Stage()
+    acr_to_expan = pc.AcronymToExpansion_Stage()
+    exact_match = pc.ExactStringMatching_Stage(["1", "2", "4", "5", "7", "8", "9"], query_len_thresh=3)
+    fuzzy_match = pc.FuzzyStringMatching_Stage(0.1, query_len_thresh=3)
+    two_char_match = pc.TwoCharMappings_Stage()
+
+    stages = [
+        key_val_filt,
+        init_tokens_stage,
+        ngram,
+        lower_stage,
+        delimit_plus,
+        delimit_underscore,
+        delimit_dash,
+        delimit_slash,
+        inflec_var,
+        spell_var,
+        man_at_syn,
+        acr_to_expan,
+        exact_match,
+        two_char_match,
+        prop_spec_syn,
+        fuzzy_match,
+        match_cust_targs,
+        block_cell_line_key,
+        linked_super,
+        cellline_to_implied_disease,
+        subphrase_linked,
+        cust_conseq,
+        real_val,
+        filt_match_priority,
+        infer_cell_line,
+        infer_dev_stage,
+        cell_culture]
+    return pc.Pipeline(stages, defaultdict(lambda: 1.0))
 
 
 if __name__ == "__main__":
