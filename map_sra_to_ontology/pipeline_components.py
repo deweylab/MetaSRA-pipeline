@@ -418,7 +418,7 @@ class PropertySpecificSynonym_Stage:
 class BlockCellLineNonCellLineKey_Stage:
     def __init__(self):
         self.cell_line_keys = Set(["EFO:0000322", "EFO:0000324"])
-        self.cell_line_phrases = Set(["source name"])
+        self.cell_line_phrases = Set(["source_name"])
 
         cvcl_og, x,y = load_ontology.load("4") 
 
