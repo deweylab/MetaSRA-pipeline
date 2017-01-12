@@ -757,11 +757,16 @@ class FuzzyStringMatching_Stage:
 
     def _edit_below_thresh(self, query):
 
+        matched = []
+
         print "Searching for '%s' in the BK-Tree..." % query
-        within_edit_thresh = self.bk_tree.query(query, 2)
-        
+        try:
+            within_edit_thresh = self.bk_tree.query(query, 2)
+        except UnicodeDecodeError:
+            print "Encoding error querying BK-tree for query: '%s'" % query        
+            return matched
+
         str1 = query
-        matched = [] # Stores the match data
         for result in within_edit_thresh:
             
             str2 = result[1]
@@ -1328,7 +1333,7 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
                         print "Target node from the current node, %s, can reach a node that we want to keep as mappable: %s" % (targ_node, reachable_from_targ_node.intersection(keep_as_mappable))
 
             for d in del_edges:
-                print "This edge did not make the cut! %s --%s--> %s" % (t_node, edge, targ_node)
+                #print "This edge did not make the cut! %s --%s--> %s" % (t_node, edge, targ_node)
                 text_mining_graph.delete_edge(d[0], d[1], d[2])
             
 
@@ -1964,7 +1969,6 @@ def is_number(q_str):
         return False
 
 def get_ngrams(text, n):
-
     words = nltk.word_tokenize(text)
     new_words = []
     for word in words:
@@ -1987,7 +1991,6 @@ def get_ngrams(text, n):
 
     word_to_indices = defaultdict(lambda: [])
     for text_i in range(len(text)):
-        
         if word_char_i == len(words[word_i]):
             word_i += 1
             word_char_i = 0
