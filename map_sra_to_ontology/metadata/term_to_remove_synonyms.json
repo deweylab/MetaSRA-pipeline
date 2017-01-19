@@ -754,5 +754,11 @@
         "exclude_synonyms": [
             "ALL"
         ]
-    }    
+    },
+    "EFO:1000058": {
+        "name": "nasopharyngeal squamous cell carcinoma",
+        "exclude_synonyms": [
+            "nasopharyngeal carcinoma"
+        ]
+    }
 }

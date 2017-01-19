@@ -6,19 +6,11 @@
             "EFO:0004343": "waist-hip ratio",
             "EFO:0004340": "body mass index",
             "EFO:0005056": "age at death",
-            "EFO:0000724": "timepoint"
+            "EFO:0000724": "timepoint",
+            "EFO:0000410": "disease staging"
     },
     "default_units": {
         "EFO:0007061": "UO:0000189"
-    },
-    "TODO": {
-        "EFO:0000724": "timepoint",
-        "EFO:0000724": "UO:0000033",
-        "EFO:0000246": "UO:0000036",
-        "EFO:0004918": "UO:0000036",
-        "EFO:0004343": "UO:0000190",
-        "EFO:0004340": "UO:0000086",
-        "EFO:0005056": "UO:0000036" 
     }
 }
 
