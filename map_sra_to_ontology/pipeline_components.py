@@ -798,7 +798,7 @@ class FuzzyStringMatching_Stage:
         print "Mapping %d token nodes" % len(text_mining_graph.token_nodes)
         for t_node in text_mining_graph.token_nodes:
             c += 1
-            print "Mapped %d nodes" % c
+            print "Searched %d nodes in the BK-tree." % c
 
             print "Attempting to map token node '%s'" % t_node.token_str
 
@@ -1290,7 +1290,6 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
                     #matched_intervals.append((source_node.origin_gram_start, source_node.origin_gram_end))
 
         for t_node in mapped_t_nodes:
-
             superphrase_nodes = Set()
             for mapped_t_node in mapped_t_nodes:
                 if is_superphrase(mapped_t_node, t_node):
@@ -1310,9 +1309,7 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
             
             keep_as_mappable = Set()
             for mft in mapped_from_t:
-                
- 
-                # Check if this reachable node from this token node is also reachable from all superphrase nodes.
+                # Check if this mapped node from this token node is also reachable from all superphrase nodes.
                 # If so, we want to maintain its reachability from the current token node.
                 reachable_from_all_supernodes = True
                 for superphrase_node, reachable_from_superphrase in superphrase_node_to_reachable.iteritems():
@@ -1846,6 +1843,57 @@ class ExtractRealValue_Stage:
         return text_mining_graph       
 
 
+class ParseTimeWithUnit_Stage:
+    """Parse artifacts that represent units of time and look 
+    something like '48h'. That is, expand '48h' to '48 hour'."""
+
+    def __init__(self):
+        self.regex = r'^([0-9]*)\s*(h|hr|mo|d|min)$'
+        self.unit_to_expansion = {
+            "hr": "hour",
+            "h": "hour",
+            "mo": "month",
+            "d": "day",
+            "min": "minute"
+        }
+
+    def run(self, text_mining_graph):
+        tnode_to_edges = defaultdict(lambda: [])
+        unit_t_nodes = Set()
+        for t_node in text_mining_graph.token_nodes:
+            m = re.search(self.regex, t_node.token_str)
+            try:
+                value = m.group(1)
+                unit = m.group(2)
+                value_start = t_node.origin_gram_start
+                value_end = t_node.origin_gram_start + len(value)
+                unit_start = t_node.origin_gram_end - len(unit)
+                unit_end = t_node.origin_gram_end
+                value_t_node = TokenNode(value, value_start, value_end)
+                unit_t_node = TokenNode(unit, unit_start, unit_end)
+                tnode_to_edges[t_node].append(value_t_node)
+                tnode_to_edges[t_node].append(unit_t_node)
+                unit_t_nodes.add(unit_t_node)
+            except AttributeError as e:
+                pass
+        
+        parse_edge = DerivesInto("Parse time and unit")
+        for source_node, target_nodes in tnode_to_edges.iteritems():
+            for target_node in target_nodes:
+                text_mining_graph.add_edge(source_node, target_node, parse_edge)
+
+        unit_edge = DerivesInto("Parse as unit synonym")
+        for unit_t_node in unit_t_nodes:
+            expanded_unit = self.unit_to_expansion[unit_t_node.token_str]
+            syn_unit_t_node = TokenNode(
+                expanded_unit, 
+                unit_t_node.origin_gram_start,
+                unit_t_node.origin_gram_end)       
+            text_mining_graph.add_edge(unit_t_node, syn_unit_t_node, unit_edge)
+           
+        return text_mining_graph 
+
+
 #######################################
 #   Stages for mapping 'consequent'
 #   terms
@@ -2078,42 +2126,6 @@ def edit_below_thresh(str1, str2, thresh):
     return norm_dist <= thresh
 
 
-def edit_below_thresh_precomputed_OLD(str1, str2, thresh, str_to_char_freq):
-    len1 = len(str1)
-    len2 = len(str2)
-    max_len = max([len1, len2])
-
-    # If the length difference between the two strings 
-    # is greater than the threshold, we can return false.
-    len_diff = abs(len1-len2)
-    if len_diff / max_len > thresh:
-        return False
-
-    # Compute lower bound edit distance based on character
-    # frequency
-    c1 = Counter(str1)
-    c2 = str_to_char_freq[str2]
-    lowerbound_dist = 0
-    for ch, fr in c1.iteritems():
-        if ch not in c2:
-            lowerbound_dist += (0.5 * fr)
-        else:
-            lowerbound_dist += (0.5 * abs(c1[ch] - c2[ch]))
-
-    for ch, fr in c2.iteritems():
-        if ch not in c1:
-            lowerbound_dist += (0.5 * fr)
-
-    if lowerbound_dist / max_len > thresh:
-        return False
-
-    print "Attempting to compute edit distance..."
-    dist = edit_distance(str1, str2)
-    print "Edit distance is %s" % str(dist)
-    norm_dist = float(dist)/float(max_len)
-    return norm_dist <= thresh
-
-
 def edit_below_thresh_precomputed(str1, str2, thresh, str1_char_freqs, str_to_char_freq):
     len1 = len(str1)
     len2 = len(str2)
@@ -2292,45 +2304,17 @@ def main():
 
     #tag_to_val = {
     #    "disease": "head and neck squamous cell carcinoma"}
+
     tag_to_val = {
-        "cell line": "HeLa",
-        "age": "24"}
+        "timepoint": "48hr"
+    }
 
 
-    #tag_to_val = {
-    #    "blahblah": "mural granulosa cell"}
-    
-    #tag_to_val = {
-    #    "blahblah": "induced pluripotent stem cell"}
-    
-
-    #tag_to_val = {
-    #    "sex": "m"}
-    
-    #tag_to_val = {
-    #    "tissue": "left ventricle",
-    #    "age": "29 year"
-    #    }
-
-    #tag_to_val = {
-    #    "cell line": "breast cancer cell line MCF-7/TAMR-4",
-    #    "source_name": "Breast cancer cell line"}
-
-    #tag_to_val = {"hi": "a+b c de f"}
-    #tag_to_val = {"hi": "a c-d+e"}
-    #tag_to_val = {"cell type": "human GBM-derived \"stem-like\" cells"}
-    #tag_to_val = {"culture conditions": "+BMP2+ChIRON"}
-    
-    spec_lex = SpecialistLexicon()
     key_val_filt = KeyValueFilter_Stage()
     init_tokens_stage = InitKeyValueTokens_Stage()
-    ngram_stage = NGram_NLTK_Stage() 
     hier_ngram = HierarchicalNGram_Stage()
     ngram = NGram_Stage()
     lower_stage = Lowercase_Stage()
-    #inflec_var = SPECIALISTToolsInflectionalVariantsNoAcronym_Stage(tag_to_val)
-    inflec_var = SPECIALISTLexInflectionalVariants(spec_lex)
-    spell_var = SPECIALISTSpellingVariants(spec_lex)
     destem = RemoveStem_Stage()
     cvcl_syn = CellosaurusSynonyms_Stage()
     man_at_syn = ManuallyAnnotatedSynonyms_Stage()
@@ -2341,7 +2325,6 @@ def main():
     subphrase = RemoveSubIntervalOfMatched_Stage()   
     filt_match_priority = FilterOntologyMatchesByPriority_Stage()
     match_cust_targs = ExactMatchCustomTargets_Stage()
-    implied = ImpliedTerms_Stage()   
     cellline_to_implied_disease = CellLineToImpliedDisease_Stage() 
     infer_dev_stage = ImpliedDevelopmentalStageFromAge_Stage() 
     cell_culture = ConsequentCulturedCell_Stage()
@@ -2352,8 +2335,8 @@ def main():
     block_cell_line_key = BlockCellLineNonCellLineKey_Stage()
     subphrase_linked = RemoveSubIntervalOfMatchedBlockAncestralLink_Stage()
     acr_to_expan = AcronymToExpansion_Stage()
+    time_unit = ParseTimeWithUnit_Stage()
 
-    # matching stages
     #efo_og, x, y = load_ontology.load("13") 
     #fuzzy_match_EFO = FuzzyStringMatching_Stage(efo_og, 0.1, query_len_thresh=3)
 
@@ -2361,38 +2344,17 @@ def main():
     #fuzzy_match_CVCL = FuzzyStringMatching_Stage(cvcl_og, 0.1, query_len_thresh=3)
     
 
-    #p = Pipeline([init_tokens_stage, ngram_stage, fuzzy_match_EFO], defaultdict(lambda: 1.0))
-    #p = Pipeline([init_tokens_stage, hier_ngram, inflec_var], defaultdict(lambda: 1.0))
-    #p = Pipeline([init_tokens_stage, cvcl_syn, fuzzy_match_EFO], defaultdict(lambda: 1.0))
-    #p = Pipeline([init_tokens_stage, man_at_syn, fuzzy_match_EFO], defaultdict(lambda: 1.0))
-    #p = Pipeline([key_val_filt, init_tokens_stage], defaultdict(lambda: 1.0))
-    #p = Pipeline([init_tokens_stage, fuzzy_match_EFO], defaultdict(lambda: 1.0)) 
-    #p = Pipeline([init_tokens_stage, filt_match_priority], defaultdict(lambda: 1.0))   
-    #p =  Pipeline([init_tokens_stage, hier_ngram], defaultdict(lambda: 1.0))
-    #p = Pipeline([init_tokens_stage, fuzzy_match_EFO, fuzzy_match_CVCL, infer_cell_line], defaultdict(lambda: 1.0))
-
-    #p = Pipeline([init_tokens_stage, hier_ngram, fuzzy_match_EFO, subphrase], defaultdict(lambda: 1.0))
-    #p = Pipeline([init_tokens_stage, hier_ngram, fuzzy_match_EFO], defaultdict(lambda: 1.0))
-
-    #p = Pipeline([key_val_filt, init_tokens_stage, hier_ngram, lower_stage, inflec_var, cvcl_syn, fuzzy_match_EFO, subphrase, filt_match_priority], defaultdict(lambda: 1.0))
-
-
     #exact_match = ExactStringMatching_Stage(["1", "2", "4", "5", "7", "8", "9"], query_len_thresh=3)
-    fuzzy_match = FuzzyStringMatching_Stage(["1", "2", "4", "5", "7", "8", "9"], 0.1, query_len_thresh=2)
+    fuzzy_match = FuzzyStringMatching_Stage(0.1, query_len_thresh=3)
     real_val = ExtractRealValue_Stage()
 
 
-    #stages = [key_val_filt, init_tokens_stage, hier_ngram, lower_stage,
-    #    hier_ngram, destem, inflec_var, spell_var, exact_match, prop_spec_syn, exact_match,
-    #    downstream, subphrase, implied, linked_super, real_val, filt_match_priority, infer_cell_line,
-    #    infer_dev_stage, cell_culture]    
     #stages = [init_tokens_stage, hier_ngram, delimit, delimit2]
     #stages = [init_tokens_stage, hier_ngram, exact_match, match_cust_targs, block_cell_line_key]
     #stages = [init_tokens_stage, hier_ngram, exact_match, cellline_to_implied_disease]   
-    stages = [init_tokens_stage, ngram, fuzzy_match, infer_cell_line, real_val]
- 
     #stages = [init_tokens_stage, acr_to_expan]
-
+    
+    stages = [init_tokens_stage, time_unit, fuzzy_match, real_val]
 
     p = Pipeline(stages, defaultdict(lambda: 1.0))
     
