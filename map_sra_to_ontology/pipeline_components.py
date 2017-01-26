@@ -3,7 +3,7 @@
 ###########################################################################
 
 import json
-from collections import defaultdict, deque, Counter
+from collections import defaultdict, deque
 import re
 import pickle
 
@@ -11,11 +11,7 @@ import numpy as np
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
-from nltk.stem import PorterStemmer
 from nltk.metrics.distance import edit_distance
-from scipy.spatial import KDTree
-import sklearn
-from sklearn.neighbors import BallTree
 
 import pkg_resources as pr
 import json
@@ -46,8 +42,9 @@ CUST_TERM_TO_CONSEQ_TERMS_JSON = pr.resource_filename(resource_package, join("me
 CELL_LINE_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "cvcl_mappings.json"))
 TWO_CHAR_MAPPINGS_JSON = pr.resource_filename(resource_package, join("metadata", "two_char_mappings.json"))
 
-
 TOKEN_SCORING_STRATEGY = defaultdict(lambda: 1) # TODO We want an explicit score dictionary
+
+VERBOSE = False
 
 class MappedTerm:
     def __init__(self, term_id, consequent, orig_key, orig_val, mapping_path):
@@ -111,14 +108,10 @@ class Pipeline:
         for stage in self.stages:
             tm_graph = stage.run(tm_graph)
 
-        print
-        print "---------GRAPH----------"
-        print tm_graph
-        print "------------------------"
-        print 
-        #print "---------Graphviz-------"
-        #print tm_graph.graphviz()
-        #print "------------------------"
+        if VERBOSE:
+            print "\n---------GRAPH----------"
+            print tm_graph
+            print "------------------------\n"
 
         return self.extract_mapped_terms(tm_graph)
 
@@ -143,17 +136,18 @@ class Pipeline:
             orig_kv_node = m[0]
             path_weight = m[1]
 
-            # Exctract path from key-value to node TODO This might not work for all matches
+            # Extract path from key-value to node TODO This might not work for all matches
             path = []
             c_node = orig_kv_node
             while c_node != mapped_node:
                 path.append((c_node, prev[c_node][1], prev[c_node][0]))
                 c_node = prev[c_node][0]
-         
-            try:
-                print "Path from Ontology node '%s' to closest key-value %s is %s" % (str(mapped_node).encode('utf-8'), str(orig_kv_node).encode('utf-8'), str(path).encode('utf-8'))
-            except:
-                pass
+        
+            if VERBOSE: 
+                try:
+                    print "Path from Ontology node '%s' to closest key-value %s is %s" % (str(mapped_node).encode('utf-8'), str(orig_kv_node).encode('utf-8'), str(path).encode('utf-8'))
+                except:
+                    pass
 
             return path[0][0].key, path[0][0].value, path
 
@@ -190,40 +184,29 @@ class Pipeline:
 #   Graph transformation stages
 #########################################################################################
 
-class InitKeyValueTokens_Stage_OLD:
-    """
-    From each key-value node, create a token node for the key and a token node for the 
-    value with a DerivesInto edge between the key-value node and each new token node.
-    """
-    def run(self, text_mining_graph):
-        for kv_node in text_mining_graph.key_val_nodes:
-            key_node = TokenNode(kv_node.key)
-            val_node = TokenNode(kv_node.value)
-            text_mining_graph.add_edge(kv_node, key_node, DerivesInto("key"))
-            text_mining_graph.add_edge(kv_node, val_node, DerivesInto("val"))
-        return text_mining_graph
-
-
-
 class InitKeyValueTokens_Stage:
     def run(self, text_mining_graph):
+        print "Initializing text reasoning graph..."
         curr_index = 0
         for kv_node in text_mining_graph.key_val_nodes:
 
             ind_start = curr_index
             ind_end = curr_index + len(kv_node.key)
             key_node = TokenNode(kv_node.key, ind_start, ind_end)
-            print "KEY NODE %s HAS STARTING INTERVALS %d - %d" % (key_node, ind_start, ind_end)
             text_mining_graph.add_edge(kv_node, key_node, DerivesInto("key"))
 
             curr_index = ind_end
             ind_start = curr_index
             ind_end = curr_index + len(kv_node.value)
             val_node = TokenNode(kv_node.value, ind_start, ind_end)
-            print "VAL NODE %s HAS STARTING INTERVALS %d - %d" % (val_node, ind_start, ind_end)
             text_mining_graph.add_edge(kv_node, val_node, DerivesInto("val"))
 
             curr_index = ind_end
+
+            if VERBOSE:
+                print "Generated key node: %s" % (key_node)
+                print "Generated value node: %s" % (val_node)
+
         return text_mining_graph
 
 
@@ -237,6 +220,7 @@ class KeyValueFilter_Stage:
             self.perform_filter_values = perform_filter_values
 
     def run(self, text_mining_graph):
+        print "Filtering key-value pairs..."
         if self.perform_filter_keys:
             remove_kv_nodes = [x for x in text_mining_graph.key_val_nodes if x.key in self.filter_keys]
             for kv_node in remove_kv_nodes:
@@ -254,6 +238,7 @@ class TwoCharMappings_Stage():
             self.str_to_mappings = json.load(f)
     
     def run(self, text_mining_graph):
+        print "Matching specified two-character artifacts..."
         for t_node in text_mining_graph.token_nodes:
             if t_node.token_str in self.str_to_mappings:
                 for t_id in self.str_to_mappings[t_node.token_str]:
@@ -271,6 +256,7 @@ class Synonyms_Stage(object):
             self.syn_sets = [Set(x) for x in json.load(f)]
 
     def run(self, text_mining_graph):
+        print "Searching for synonyms..."
         edge = DerivesInto("synonym via %s synonym set" % self.syn_set_name)
         tnode_to_edges = defaultdict(lambda: []) # Buffer to store new edges
         for t_node in text_mining_graph.token_nodes:
@@ -304,6 +290,7 @@ class NGram_Stage:
         self.n_thresh = 8
 
     def run(self, text_mining_graph):
+        print "Generating N-grams..."
         edge = DerivesInto("N-Gram")                # All edges will be of this type
         tnode_to_edges = defaultdict(lambda: [])    # Buffer to store new edges
 
@@ -326,45 +313,10 @@ class NGram_Stage:
         return text_mining_graph
 
 
-class HierarchicalNGram_Stage:
-    def __init__(self):
-        self.n_thresh = 8
-
-    def run(self, text_mining_graph):
-        edge = DerivesInto("N-Gram")                # All edges will be of this type
-        tnode_to_edges = defaultdict(lambda: [])    # Buffer to store new edges
-
-        curr_t_nodes = text_mining_graph.token_nodes
-        while len(curr_t_nodes) > 0:
-            new_nodes = []
-            for t_node in curr_t_nodes:
-
-                # Compute the length of each gram
-                grams, intervals = get_ngrams(t_node.token_str, 1)
-                n = min(self.n_thresh, len(grams) - 1)
-                if n < 1:
-                    continue
-
-                n_gram_strs, intervals = get_ngrams(t_node.token_str, n)
-                for i in range(len(n_gram_strs)):
-                    g_str = n_gram_strs[i]
-                    interval = intervals[i]
-                    new_t_node = TokenNode(g_str, t_node.origin_gram_start + interval[0], t_node.origin_gram_start + interval[1])
-                    new_nodes.append(new_t_node)
-                    tnode_to_edges[t_node].append(new_t_node)
-
-            curr_t_nodes = new_nodes
-
-        for source_node, target_nodes in tnode_to_edges.iteritems():
-            for target_node in target_nodes:
-                text_mining_graph.add_edge(source_node, target_node, edge)
-
-        return text_mining_graph
-
-
       
 class Lowercase_Stage:
     def run(self, text_mining_graph):
+        print "Generating lower-cased artifacts..."
         edge = DerivesInto("Lowercase")
         tnode_to_edges = defaultdict(lambda: [])
         for t_node in text_mining_graph.token_nodes:
@@ -382,7 +334,7 @@ class PropertySpecificSynonym_Stage:
             self.property_id_to_syn_sets = json.load(f)
 
     def run(self, text_mining_graph):
-
+        print "Searching for property-specific synonyms..."
         for kv_node in text_mining_graph.key_val_nodes:
             # Find all downstream nodes of the 'key' token-nodes 
             key_term_nodes = Set()
@@ -431,7 +383,7 @@ class BlockCellLineNonCellLineKey_Stage:
                     self.cell_line_terms.update(term_to_suplinked[t_id])
 
     def run(self, text_mining_graph):
-
+        print "Checking cell line terms for proper context..."
         kv_nodes_cellline_val = deque()
         for kv_node in text_mining_graph.key_val_nodes:
             # Find children of the key that indicate they encode a cell-line value 
@@ -441,11 +393,8 @@ class BlockCellLineNonCellLineKey_Stage:
                     for t_node in text_mining_graph.forward_edges[kv_node][edge]:
                         key_term_nodes.update( text_mining_graph.downstream_nodes(t_node))
 
-            print "KEY TERM NODES ARE: %s" % key_term_nodes
-
             key_term_nodes = [x for x in key_term_nodes if (isinstance(x, OntologyTermNode) and x.term_id in self.cell_line_keys) or (isinstance(x, CustomMappingTargetNode) and x.rep_str in self.cell_line_phrases)]
 
-            print "FOUND CELL-LINE KEYS: %s" % key_term_nodes
             if len(key_term_nodes) > 0:
                 kv_nodes_cellline_val.append(kv_node)
 
@@ -482,38 +431,12 @@ class BlockCellLineNonCellLineKey_Stage:
 
 
 
-class RemoveStem_Stage:
-
-    def run(self, text_mining_graph):
-        stemmer = PorterStemmer()
-        edge = DerivesInto("Remove stem")
-        tnode_to_edges = defaultdict(lambda: [])
-        for t_node in text_mining_graph.token_nodes:
-            unigrams = nltk_n_grams(t_node.token_str, 1)
-            if len(unigrams) == 0: # TODO make sure this can't happen 
-                continue
-            gram_replace = unigrams[-1]
-            len_last_gram = len(gram_replace)
-            try:
-                destemmed = t_node.token_str[:-len_last_gram] + stemmer.stem(gram_replace).encode('utf-8') 
-                tnode_to_edges[t_node].append(TokenNode(destemmed, t_node.origin_gram_start, t_node.origin_gram_end))
-            except KeyError:
-                print "%s not found in stemming dictionary" % gram_replace
-            except UnicodeDecodeError:
-                print "Error decoding gram"        
-
-        for source_node, target_nodes in tnode_to_edges.iteritems():
-            for target_node in target_nodes:
-                text_mining_graph.add_edge(source_node, target_node, edge)
-        return text_mining_graph
-
-
 class SPECIALISTLexInflectionalVariants:
     def __init__(self, specialist_lex):
         self.specialist_lex = specialist_lex
 
     def run(self, text_mining_graph):
-        
+        print "Generating inflectional variants..." 
         edge = DerivesInto("Inflectional variant")
         tnode_to_edges = defaultdict(lambda: [])
         for t_node in text_mining_graph.token_nodes:
@@ -538,7 +461,7 @@ class SPECIALISTSpellingVariants:
         self.specialist_lex = specialist_lex
 
     def run(self, text_mining_graph):
-
+        print "Generating spelling variants..."
         edge = DerivesInto("Spelling variant")
         tnode_to_edges = defaultdict(lambda: [])
         for t_node in text_mining_graph.token_nodes:
@@ -560,41 +483,18 @@ class SPECIALISTSpellingVariants:
 
 
 
-class AnnotatedSynonyms_Stage:
-    """
-    Maps a token to a synonym from a specified 
-    synonym mapping.
-    """
-    def __init__(self, synonyms):
-        """
-        Args:
-            synonyms: dictionary mapping a string to its
-            set of synonyms
-        """
-        self.name = "annotated_synonym"
-        self.syns = synonyms
-
-    def run(self, tokens):
-        new_tokens = Set()
-        for t in tokens:
-            if t.t_str in self.syns:
-                for syn in self.syns[t.t_str]:
-                    history = list(t.history)
-                    history.append((self.name, syn))
-                    new_tokens.add(Token(syn, history))
-        tokens.update(new_tokens)
-        return tokens    
 
 class Delimit_Stage:
     """
-    Delimits each token by a given regex and sequence
+    Delimits each artifact by a given regex and sequence
     of delimited substrings are used to generate new
-    set of tokens.
+    set of artifacts.
     """
     def __init__(self, delimiter):
         self.delimiter = delimiter
 
     def run(self, text_mining_graph):
+        print "Delimiting artifacts on special character '%s'..." % self.delimiter
         node_to_next_nodes = defaultdict(lambda: [])
         for t_node in text_mining_graph.token_nodes:
             split_t_strs = t_node.token_str.split(self.delimiter)
@@ -629,6 +529,7 @@ class FilterOntologyMatchesByPriority_Stage:
                 and isinstance(targ_node, OntologyTermNode) \
                 and targ_node.term_id.split(":")[0] == id_space
 
+        print "Filtering synonym matches by semantic similarity to term..."
         id_spaces = Set([x.term_id.split(":")[0] for x in text_mining_graph.ontology_term_nodes])
         for id_space in id_spaces:
             for t_node in text_mining_graph.token_nodes:
@@ -669,13 +570,17 @@ class FilterOntologyMatchesByPriority_Stage:
 
 
 class ExactStringMatching_Stage:
+    """
+    Perform exact-string matching for all artifacts against
+    the ontologies. Uses a trie data structure.
+    """
     def __init__(self, target_og_ids, query_len_thresh=None, match_numeric=False):
           
         #self.mappable_ogs = load_mappable_ontologies(target_og_ids)
         self.query_len_thresh = query_len_thresh
         self.match_numeric = match_numeric
-
-        print "Building trie..."
+        if VERBOSE:
+            print "Building trie..."
         tups = deque()
         self.terms_array = deque()
         curr_i = 0
@@ -689,7 +594,8 @@ class ExactStringMatching_Stage:
                     try:
                         tups.append((syn.syn_str.decode('utf-8'), [curr_i]))
                     except UnicodeEncodeError:
-                        print "Warning! Unable to decode unicode of a synonym for term %s" % term.id
+                        if VERBOSE:
+                            print "Warning! Unable to decode unicode of a synonym for term %s" % term.id
                 curr_i += 1
         self.map_trie = mt.RecordTrie("<i", tups)
 
@@ -707,14 +613,8 @@ class ExactStringMatching_Stage:
         return mapped
 
     def run(self, text_mining_graph):
-        c = 0
-
+        print "Performing exact string matching..."
         for t_node in text_mining_graph.token_nodes:
-
-            if c % 1000 == 0:
-                print "Processed %d/%d token nodes..." % (c, len(text_mining_graph.token_nodes))
-            c += 1
-
             # Skip matching tokens according to fuzzy-matching parameters
             if self.query_len_thresh and len(t_node.token_str) < self.query_len_thresh:
                 continue
@@ -738,8 +638,10 @@ class ExactStringMatching_Stage:
 
 
 class FuzzyStringMatching_Stage:
-    # USE PRECONSTRUCTED BK TREE TO PERFORM FUZZY MATCHING
-    
+    """
+    Use a pre-constructed BK-tree to perform fuzzy matching
+    for all artifacts against the ontologies.
+    """
     def __init__(self, thresh, query_len_thresh=None, match_numeric=False):
        
         fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_string_data.json"))
@@ -759,7 +661,6 @@ class FuzzyStringMatching_Stage:
 
         matched = []
 
-        print "Searching for '%s' in the BK-Tree..." % query
         try:
             within_edit_thresh = self.bk_tree.query(query, 2)
         except UnicodeDecodeError:
@@ -775,7 +676,8 @@ class FuzzyStringMatching_Stage:
             if dist > 2:
                 continue
         
-            print "Retrieved '%s' from BK-tree. It has edit distance of %f" % (str2.encode('utf-8'), dist)
+            if VERBOSE:
+                print "Retrieved '%s' from BK-tree. It has edit distance of %f" % (str2.encode('utf-8'), dist)
             len1 = len(str1)
             len2 = len(str2)
             max_len = max([len1, len2])
@@ -794,13 +696,14 @@ class FuzzyStringMatching_Stage:
         return matched
 
     def run(self, text_mining_graph):
+        print "Performing fuzzy string matching..."
         c = 0
-        print "Mapping %d token nodes" % len(text_mining_graph.token_nodes)
+        if VERBOSE:
+            print "%d total nodes to be matched" % len(text_mining_graph.token_nodes)
         for t_node in text_mining_graph.token_nodes:
             c += 1
-            print "Searched %d nodes in the BK-tree." % c
-
-            print "Attempting to map token node '%s'" % t_node.token_str
+            if VERBOSE:
+                print "Searching %dth node in the BK-tree: '%s'" % (c, t_node.token_str)
 
             # Skip matching tokens according to fuzzy-matching parameters
             if self.query_len_thresh and len(t_node.token_str) <= self.query_len_thresh:
@@ -823,447 +726,19 @@ class FuzzyStringMatching_Stage:
                     continue
 
                 match_node = OntologyTermNode(term_id)
-                print "Mapping %s to %s" % (matched_str, term_id)
+                if VERBOSE:
+                    print "Mapping artifact '%s' to term %s" % (matched_str, term_id)
                 text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, matched_str, match_type))
 
         return text_mining_graph
 
     
-
-
-
-
-
-class FuzzyStringMatching_Stage_THRESH_EDIT:
-    def __init__(self, target_og, thresh, query_len_thresh=None, match_numeric=False):
-        """
-        Args:
-            target_og: target ontology graph
-            thresh: the edit-distance threshold for which   
-                if edit_dist < thresh, then call it a match
-            query_len_thresh: the threshold for which if a token-node's
-                token-string is less than or equal to this threshold, it won't be 
-                matched
-            match_numberic: if False, then don't match a token-string that is
-                numeric. Otherwise, perform matching as usual
-        """
-        self.target_og = target_og
-        self.thresh = thresh
-        self.query_len_thresh = query_len_thresh
-        self.match_numeric = match_numeric
-
-    def run(self, text_mining_graph):
-        c = 0
-        for t_node in text_mining_graph.token_nodes:
-
-            # Skip matching tokens according to fuzzy-matching parameters
-            if self.query_len_thresh and len(t_node.token_str) <= self.query_len_thresh:
-                continue
-            if not self.match_numeric and is_number(t_node.token_str):
-                continue
-
-            for term in self.target_og.get_mappable_terms():
-                matched = edit_below_thresh(t_node.token_str, term.name, self.thresh)
-                if matched:
-                    match_node = OntologyTermNode(term.id)
-                    text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, term.name, "TERM_NAME"))
-                for syn in term.synonyms:
-                    matched = edit_below_thresh(t_node.token_str, syn.syn_str, self.thresh)
-                    if matched:
-                        match_node = OntologyTermNode(term.id)
-                        text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, term.name, "%s_SYNONYM" % syn.syn_type))
-        return text_mining_graph
-
-
-class FuzzyStringMatching_Stage_OLD:
-    def __init__(self, ontology_ids, thresh, query_len_thresh=None, match_numeric=False):
-        """
-        Args:
-            ontology_ids: list of ontology ids this stage will map to
-            thresh: the edit-distance threshold for which   
-                if edit_dist < thresh, then call it a match
-            query_len_thresh: the threshold for which if a token-node's
-                token-string is less than or equal to this threshold, it won't be 
-                matched
-            match_numberic: if False, then don't match a token-string that is
-                numeric. Otherwise, perform matching as usual
-        """
-        self.ontology_graphs = [load_ontology.load(x)[0] for x in ontology_ids]
-        self.thresh = thresh
-        self.query_len_thresh = query_len_thresh
-        self.match_numeric = match_numeric
-
-    def run(self, text_mining_graph):
-        c = 0
-        print "Mapping %d token nodes" % len(text_mining_graph.token_nodes)
-        for t_node in text_mining_graph.token_nodes:
-            c += 1
-            print "Mapped %d nodes" % c
-
-            print "Attempting to map token node '%s'" % t_node.token_str
-
-            # Skip matching tokens according to fuzzy-matching parameters
-            if self.query_len_thresh and len(t_node.token_str) <= self.query_len_thresh:
-                continue
-            if not self.match_numeric and is_number(t_node.token_str):
-                continue
-
-            for og in self.ontology_graphs:
-                mappable_terms = og.get_mappable_terms()
-                #print "Comparing edit distance to %d ontology terms..." % len(mappable_terms)
-                #c = 1 
-                for term in mappable_terms:
-                    #if c == 500:
-                    #    print "Compared to %d/%d terms" % (c, len(mappable_terms))
-                    #c += 1
-                    # REMOVE #######
-                    matched = edit_below_thresh(t_node.token_str, term.name, self.thresh)
-                    if matched:
-                        match_node = OntologyTermNode(term.id)
-                        text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, term.name, "TERM_NAME"))
-                    for syn in term.synonyms:
-                        matched = edit_below_thresh(t_node.token_str, syn.syn_str, self.thresh)
-                        if matched:
-                            match_node = OntologyTermNode(term.id)
-                            text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, term.name, "%s_SYNONYM" % syn.syn_type))
-        return text_mining_graph
-
-
-class FuzzyStringMatching_Stage_NEW:
-    # PRECOMPUTE ONTOLOGY TERM CHARACTER FREQUENCIES
-    def __init__(self, ontology_ids, thresh, query_len_thresh=None, match_numeric=False):
-        """
-        Args:
-            ontology_ids: list of ontology ids this stage will map to
-            thresh: the edit-distance threshold for which   
-                if edit_dist < thresh, then call it a match
-            query_len_thresh: the threshold for which if a token-node's
-                token-string is less than or equal to this threshold, it won't be 
-                matched
-            match_numberic: if False, then don't match a token-string that is
-                numeric. Otherwise, perform matching as usual
-        """
-        self.ontology_graphs = [load_ontology.load(x)[0] for x in ontology_ids]
-        
-        print "Precomputing character frequencies for terms in ontologies..."
-        self.str_to_char_freq = {}
-        for og in self.ontology_graphs:
-            for id, term in og.id_to_term.iteritems():
-                self.str_to_char_freq[term.name] = Counter(term.name)
-                for syn in term.synonyms:
-                    self.str_to_char_freq[syn.syn_str] = Counter(syn.syn_str) 
-
-        self.thresh = thresh
-        self.query_len_thresh = query_len_thresh
-        self.match_numeric = match_numeric
-
-    def run(self, text_mining_graph):
-        c = 0
-        print "Mapping %d token nodes" % len(text_mining_graph.token_nodes)
-        for t_node in text_mining_graph.token_nodes:
-            c += 1
-            print "Mapped %d nodes" % c
-
-            print "Attempting to map token node '%s'" % t_node.token_str
-
-            # Skip matching tokens according to fuzzy-matching parameters
-            if self.query_len_thresh and len(t_node.token_str) <= self.query_len_thresh:
-                continue
-            if not self.match_numeric and is_number(t_node.token_str):
-                continue
-
-            for og in self.ontology_graphs:
-                mappable_terms = og.get_mappable_terms()
-                #print "Comparing edit distance to %d ontology terms..." % len(mappable_terms)
-                #c = 1 
-                for term in mappable_terms:
-                    term_char_freqs = Counter(t_node.token_str)
-                    matched = edit_below_thresh_precomputed(t_node.token_str, term.name, self.thresh, term_char_freqs, self.str_to_char_freq)
-                    #matched = edit_below_thresh_precomputed(t_node.token_str, term.name, self.thresh, self.str_to_char_freq)
-                    if matched:
-                        match_node = OntologyTermNode(term.id)
-                        text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, term.name, "TERM_NAME"))
-                    for syn in term.synonyms:
-                        matched = edit_below_thresh_precomputed(t_node.token_str, syn.syn_str, self.thresh, term_char_freqs, self.str_to_char_freq)
-                        #matched = edit_below_thresh_precomputed(t_node.token_str, syn.syn_str, self.thresh, self.str_to_char_freq)
-                        if matched:
-                            match_node = OntologyTermNode(term.id)
-                            text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, term.name, "%s_SYNONYM" % syn.syn_type))
-        return text_mining_graph
-
-
-class FuzzyStringMatching_Stage_KDTREE:
-    # USE KD-TREE TO FIND CANDIDATE CLOSEST POINTS. LOAD KD_TREE FROM PICKLE FILE
-    def __init__(self, thresh, query_len_thresh=None, match_numeric=False):
-        """
-        Args:
-            thresh: the edit-distance threshold for which   
-                if edit_dist < thresh, then call it a match
-            query_len_thresh: the threshold for which if a token-node's
-                token-string is less than or equal to this threshold, it won't be 
-                matched
-            match_numberic: if False, then don't match a token-string that is
-                numeric. Otherwise, perform matching as usual
-        """
-
-        fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_string_data.json"))
-        with open(fname, "r") as f:
-            self.string_data = json.load(f)
-
-        fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_ball_tree.pickle"))
-        with open(fname, "r") as f:
-            self.ball_tree = pickle.load(f)
-        
-        self.vec_scaffold = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890,./:;'()"
-        self.thresh = thresh
-        self.query_len_thresh = query_len_thresh
-        self.match_numeric = match_numeric
-
-    def _vectorize_string(self, stri):
-        freqs = Counter(stri)
-        vec = np.zeros(len(self.vec_scaffold))
-        for i,c in enumerate(self.vec_scaffold):
-            if c in freqs:
-                vec[i] = freqs[c]
-        return vec
-
-    def _edit_below_thresh(self, stri, thresh):
-
-        print
-        print
-        print "Matching '%s' to KD-Tree..." % stri
-
-        # Get all strings within edit distance of 2 from query string
-        stri_vec = self._vectorize_string(stri)
-        print "The vector is %s" % stri_vec
-
-        rad = 2.0
-        within_rad = self.ball_tree.query_radius([stri_vec], r=2)
-
-        str1 = stri
-        matched = []
-        for str2_i in within_rad[0]:
-
-            str2 = self.string_data[str2_i][0]
-            print "Retrieved '%s' from kd-tree" % str2.encode('utf-8')
-
-            len1 = len(str1)
-            len2 = len(str2)
-            max_len = max([len1, len2])
-
-            # If the length difference between the two strings 
-            # is greater than the threshold, we can return false.
-            len_diff = abs(len1-len2)
-            if len_diff / max_len > thresh:
-                continue
-
-            print "Attempting to compute edit distance..."
-            dist = edit_distance(str1, str2)
-            print "Edit distance is %s" % str(dist)
-            norm_dist = float(dist)/float(max_len)
-            if norm_dist <= thresh:
-                matched.append((str2, dist, str2_i))
-
-        return matched
-
-    def run(self, text_mining_graph):
-        c = 0
-        print "Mapping %d token nodes" % len(text_mining_graph.token_nodes)
-        for t_node in text_mining_graph.token_nodes:
-            c += 1
-            print "Mapped %d nodes" % c
-            print "Attempting to map token node '%s'" % t_node.token_str
-
-            # Skip matching tokens according to fuzzy-matching parameters
-            if self.query_len_thresh and len(t_node.token_str) < self.query_len_thresh:
-                continue
-            if not self.match_numeric and is_number(t_node.token_str):
-                continue
-
-            matched = self._edit_below_thresh(t_node.token_str, 0.1)
-            print "Matced are %s" % matched
-            if len(matched) == 0:
-                continue
-            min_edit = min([m[1] for m in matched])
-            for m in matched:
-                matched_str = m[0]
-                edit_dist = m[1]
-                str_i = m[2]
-               
-                # Only map to the best matches
-                if edit_dist > min_edit:
-                    continue 
-
-                og_id = self.string_data[str_i][1]
-                term_id = self.string_data[str_i][2]
-                match_type = self.string_data[str_i][3]
-
-                match_node = OntologyTermNode(term_id)
-                print "Mapping %s to %s" % (matched_str, term_id)
-                text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, matched_str, match_type))
-
-        return text_mining_graph
-
-
-
-class FuzzyStringMatching_Stage_KD_TREE_OLD:
-    # USE KD-TREE TO FIND CANDIDATE CLOSEST POINTS
-    def __init__(self, ontology_ids, thresh, query_len_thresh=None, match_numeric=False):
-        """
-        Args:
-            ontology_ids: list of ontology ids this stage will map to
-            thresh: the edit-distance threshold for which   
-                if edit_dist < thresh, then call it a match
-            query_len_thresh: the threshold for which if a token-node's
-                token-string is less than or equal to this threshold, it won't be 
-                matched
-            match_numberic: if False, then don't match a token-string that is
-                numeric. Otherwise, perform matching as usual
-        """
-        self.vec_scaffold = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890,./:;'()"
-
-        self.ontology_graphs = [load_ontology.load(x)[0] for x in ontology_ids]
-
-        self.str_to_char_freq = {}
-        
-        print "Constructing string-vectors from ontologies..."
-        self.ont_strings = deque()
-        vecs = deque()
-        self.terms = deque()
-        for og in self.ontology_graphs:
-            for id, term in og.id_to_term.iteritems():
-                vec = self._vectorize_string(term.name)
-                self.ont_strings.append(term.name)
-                vecs.append(vec)
-                self.terms.append(term)
-                for syn in term.synonyms:   
-                    vec = self._vectorize_string(syn.syn_str)
-                    self.ont_strings.append(syn.syn_str)
-                    vecs.append(vec)
-                    self.terms.append(term)
-
-        print "Building KD-Tree..."
-        #self.kd_tree = KDTree(vecs)
-        self.ball_tree = BallTree(vecs, metric='manhattan')
-
-        self.thresh = thresh
-        self.query_len_thresh = query_len_thresh
-        self.match_numeric = match_numeric
-
-    def _vectorize_string(self, stri):
-        freqs = Counter(stri)
-        vec = np.zeros(len(self.vec_scaffold))
-        for i,c in enumerate(self.vec_scaffold):
-            if c in freqs:
-                vec[i] = freqs[c]
-        return vec 
-
-
-    def _edit_below_thresh(self, stri, thresh):
-
-        print 
-        print
-        print "Matching '%s' to KD-Tree..." % stri
-
-        # Get all strings within edit distance of 3 from
-        # target string
-
-        stri_vec = self._vectorize_string(stri)
-
-        rad = 2.0
-        #within_rad = self.kd_tree.query_ball_point([stri_vec], rad, p=1)
-        within_rad = self.ball_tree.query_radius([stri_vec], r=2)
-        #print "WITHIN_RAD: %s" % str(within_rad)  
-    
- 
-        str1 = stri
-
-        matched = []
-        for str2_i in within_rad[0]:
-
-            str2 = self.ont_strings[str2_i]
-            print "Retrieved '%s' from kd-tree" % str2
-
-            len1 = len(str1)
-            len2 = len(str2)
-            max_len = max([len1, len2])
-
-            # If the length difference between the two strings 
-            # is greater than the threshold, we can return false.
-            len_diff = abs(len1-len2)
-            if len_diff / max_len > thresh:
-                continue
- 
-
-            #c1 = str1_char_freqs
-            #c2 = str_to_char_freq[str2]
-            #lowerbound_dist = 0
-            #for ch, fr in c1.iteritems():
-            #    if ch not in c2:
-            #        lowerbound_dist += (0.5 * fr)
-            #    else:
-            #        lowerbound_dist += (0.5 * abs(c1[ch] - c2[ch]))
-            #
-            #for ch, fr in c2.iteritems():
-            #    if ch not in c1:
-            #      lowerbound_dist += (0.5 * fr)
-            #
-            #if lowerbound_dist / max_len > thresh:
-            #    continue
-
-            print "Attempting to compute edit distance..."
-            dist = edit_distance(str1, str2)
-            print "Edit distance is %s" % str(dist)
-            norm_dist = float(dist)/float(max_len)
-            if norm_dist <= thresh:
-                matched.append((str2, dist, str2_i))
-
-        return matched
-
-
-    def run(self, text_mining_graph):
-        c = 0
-        print "Mapping %d token nodes" % len(text_mining_graph.token_nodes)
-        for t_node in text_mining_graph.token_nodes:
-            c += 1
-            print "Mapped %d nodes" % c
-
-            print "Attempting to map token node '%s'" % t_node.token_str
-
-            # Skip matching tokens according to fuzzy-matching parameters
-            if self.query_len_thresh and len(t_node.token_str) <= self.query_len_thresh:
-                continue
-            if not self.match_numeric and is_number(t_node.token_str):
-                continue
-
-            matched = self._edit_below_thresh(t_node.token_str, 0.1)
-            print "Matced are %s" % matched
-            for m in matched:
-                matched_str = m[0]
-                edit_dist = m[1]
-                term_i = m[2]
-
-
-                term = self.terms[term_i]
-                match_node = OntologyTermNode(term.id)
-                if matched_str == term.name:
-                    print "Mapping %s to %s" % (matched_str, term.id)
-                    text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, term.name, "TERM_NAME"))
-                else:
-                    for syn in term.synonyms:
-                        if matched_str == syn.syn_str:
-                            print "Mapping %s to %s" % (matched_str, term.id)
-                            text_mining_graph.add_edge(t_node, match_node, FuzzyStringMatch(t_node.token_str, term.name, "%s_SYNONYM" % syn.syn_type))
-                            break
-                            
-        return text_mining_graph
 
 
 
 
 class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
     def run(self, text_mining_graph):
-
         def is_superphrase(super_node, sub_node):
             matched_interval = (super_node.origin_gram_start, super_node.origin_gram_end)
             if sub_node.origin_gram_start == matched_interval[0] and sub_node.origin_gram_end < matched_interval[1]:
@@ -1277,7 +752,8 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
                 return True
             else:
                 return False
-
+        
+        print "Blocking subphrases of mapped superphrases..."
         mapped_t_nodes = deque()
         for mt_node in text_mining_graph.mapping_target_nodes:
             if not mt_node in text_mining_graph.reverse_edges:
@@ -1297,10 +773,8 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
             if len(superphrase_nodes) == 0:
                 continue
 
-
-            print
-            print
-            print "Node %s has superphrase nodes: %s" % (t_node, superphrase_nodes)
+            if VERBOSE:
+                print "\n\nNode %s has superphrase nodes: %s" % (t_node, superphrase_nodes)
 
             exclude_edges = Set([DerivesInto("N-Gram"),  DerivesInto("Delimiter")])
             superphrase_node_to_reachable = {x:text_mining_graph.downstream_nodes(x, exclude_edges=exclude_edges) for x in superphrase_nodes}
@@ -1317,7 +791,8 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
                         reachable_from_all_supernodes = False
                         break
                 if reachable_from_all_supernodes:
-                    print "The node %s that is reachable from the token node is reachable from all of the superphrase nodes." % mft
+                    if VERBOSE:
+                        print "The node %s that is reachable from the token node is reachable from all of the superphrase nodes." % mft
                     keep_as_mappable.add(mft)
 
             del_edges = deque()
@@ -1327,7 +802,8 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
                     if len(reachable_from_targ_node.intersection(keep_as_mappable)) == 0:
                         del_edges.append((t_node, targ_node, edge))
                     else:
-                        print "Target node from the current node, %s, can reach a node that we want to keep as mappable: %s" % (targ_node, reachable_from_targ_node.intersection(keep_as_mappable))
+                        if VERBOSE:
+                            print "Target node from the current node, %s, can reach a node that we want to keep as mappable: %s" % (targ_node, reachable_from_targ_node.intersection(keep_as_mappable))
 
             for d in del_edges:
                 #print "This edge did not make the cut! %s --%s--> %s" % (t_node, edge, targ_node)
@@ -1337,230 +813,6 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
         return text_mining_graph
 
 
-# TODO Deprecated. Remove this
-class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage_OLD:
-    def run(self, text_mining_graph):
-
-        def is_superphrase(super_node, sub_node):
-            matched_interval = (super_node.origin_gram_start, super_node.origin_gram_end)
-            if sub_node.origin_gram_start == matched_interval[0] and sub_node.origin_gram_end < matched_interval[1]:
-                print "1. sub_node %s in interval (%s, %s)" % (sub_node, matched_interval[0], matched_interval[1])
-                return True
-            elif sub_node.origin_gram_start > matched_interval[0] and sub_node.origin_gram_end == matched_interval[1]:
-                print "2. sub_node %s in interval (%s, %s)" % (sub_node, matched_interval[0], matched_interval[1])
-                return True
-            elif sub_node.origin_gram_start > matched_interval[0] and sub_node.origin_gram_end < matched_interval[1]:
-                print "3. sub_node %s in interval (%s, %s)" % (sub_node, matched_interval[0], matched_interval[1])
-                return True
-            else:
-                return False
-
-
-        # Get matches that are achieved through linked-ancestral terms
-        #dont_remove = Set()
-        #for o_node in text_mining_graph.ontology_term_nodes:
-        #    for edge in text_mining_graph.reverse_edges[o_node]:
-        #        if isinstance(edge, Inference) and edge.inference_type == "Linked term of superterm":
-        #            print "Don't remove %s. It has a %s edge to %s" % (o_node, edge, text_mining_graph.reverse_edges[o_node][edge])
-        #            dont_remove.add(o_node)
-        #matched_intervals = deque()
-
-        mapped_t_nodes = deque()
-        for mt_node in text_mining_graph.mapping_target_nodes:
-            if not mt_node in text_mining_graph.reverse_edges:
-                continue
-            for edge in text_mining_graph.reverse_edges[mt_node]:
-                for source_node in text_mining_graph.reverse_edges[mt_node][edge]:
-                    if not isinstance(source_node, TokenNode):
-                        continue
-                    mapped_t_nodes.append(source_node)
-                    #matched_intervals.append((source_node.origin_gram_start, source_node.origin_gram_end))
-
-        to_remove = deque()
-        for t_node in text_mining_graph.token_nodes:
-            remove_maps = False
-            for mapped_t_node in mapped_t_nodes:
-                if is_superphrase(mapped_t_node, t_node):
-                    remove_maps = True
-                    break
-                    
-
-            #for matched_interval in matched_intervals:
-            #    if t_node.origin_gram_start == matched_interval[0] and t_node.origin_gram_end < matched_interval[1]:
-            #        print "1. t_node %s in interval (%s, %s)" % (t_node, matched_interval[0], matched_interval[1])
-            #        remove_maps = True
-            #        break
-            #    elif t_node.origin_gram_start > matched_interval[0] and t_node.origin_gram_end == matched_interval[1]:
-            #        print "2. t_node %s in interval (%s, %s)" % (t_node, matched_interval[0], matched_interval[1])
-            #        remove_maps = True
-            #        break
-            #    elif t_node.origin_gram_start > matched_interval[0] and t_node.origin_gram_end < matched_interval[1]:
-            #        print "3. t_node %s in interval (%s, %s)" % (t_node, matched_interval[0], matched_interval[1])
-            #        remove_maps = True
-            #        break
-
-            if remove_maps:
-                
-                # Find all nodes the current token node maps to
-                mapped_targets_w_edges = []
-                for edge in text_mining_graph.forward_edges[t_node]:
-                    for targ_node in text_mining_graph.forward_edges[t_node][edge]:
-                        if isinstance(targ_node, MappingTargetNode):
-                            mapped_targets_w_edges.append((targ_node, edge))
- 
-                dont_remove = False # If this is true, we leave the mappings from the current token node alone
-                                    # Otherwise, we delete mapping edges from this token node
-
-                # Look at all the nodes that this target maps to. For each of target node, check which other mapping
-                # targets in the graph consequently map to this target node. For each of the nodes that consequently map to a
-                # target node, check which token nodes derive into them. If that token node is a superphrase
-                # of the current token node, then we leave the current token node alone and don't delete its 
-                # mappings.
-                for mapped_node, edge in mapped_targets_w_edges:
-                    for edge in text_mining_graph.reverse_edges[mapped_node]:
-                        if isinstance(edge, Inference):  
-                            print "1. Mapped node %s is mapped to via the edge %s" % (mapped_node, edge)
-                            for linked_super_node in text_mining_graph.reverse_edges[mapped_node][edge]:
-                                print "2. From node %s" % linked_super_node
-                                for linked_super_edge in text_mining_graph.reverse_edges[linked_super_node]:
-                                    if isinstance(linked_super_edge, FuzzyStringMatch):
-                                        print "3. That node is then mapped to via the fuzzy string match edge %s" % linked_super_edge
-                                        for in_linked_super_node in text_mining_graph.reverse_edges[linked_super_node][linked_super_edge]:
-                                            print "4. Which maps from %s" % in_linked_super_node
-                                            if isinstance(in_linked_super_node, TokenNode) and is_superphrase(in_linked_super_node, t_node):
-                                                print "5. Well it turns out to be a token-node and also a superphrase! We don't want to remove this!!"
-                                                dont_remove = True
-                                                break
-                                        else:
-                                            continue  # executed if the loop ended normally (no break)
-                                        break  
-                                else:
-                                    continue
-                                break  
-                            else:
-                                continue
-                            break
-                    else:
-                        continue
-                    break            
-
-                if not dont_remove:
-                    for targ_node, edge in mapped_targets_w_edges:
-                        print "Node %s has a larger mapping token node. Deleting edge %s --%s--> %s" % (t_node, t_node, edge, targ_node)
-                        text_mining_graph.delete_edge(t_node, targ_node, edge)
-
-        #print "BLOCK REMOVAL FROM: %s" % dont_remove
-        #print "Will be removing the nodes: %s" % to_remove
-        #for node in to_remove:
-        #    dont_remove = False
-        #    for edge in text_mining_graph.reverse_edges[node]:
-        #        if isinstance(edge, Inference) and edge.inference_type == "Linked term of superterm":
-        #            for o_node in text_mining_graph.reverse_edges[node][edge]:
-        #                for o_node_edge in text_mining_graph.reverse_edges[o_node]:
-        #                    for t_node in [x for x in text_mining_graph.reverse_edges[o_node][o_node_edge] if isinstance(x, TokenNode)]:
-        #                 
-        #
-        #    if node not in dont_remove:
-        #        text_mining_graph.delete_node(node)
-
-        return text_mining_graph
-
-
-# TODO Deprecated. Remove this
-class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage_OLD:
-    def run(self, text_mining_graph):
-
-        # Get matches that are achieved through linked-ancestral terms
-        dont_remove = Set()
-        for o_node in text_mining_graph.ontology_term_nodes:
-            for edge in text_mining_graph.reverse_edges[o_node]:
-                if isinstance(edge, Inference) and edge.inference_type == "Linked term of superterm":
-                    print "Don't remove %s. It has a %s edge to %s" % (o_node, edge, text_mining_graph.reverse_edges[o_node][edge])
-                    dont_remove.add(o_node)
-        
-
-        matched_intervals = deque()
-
-        for mt_node in text_mining_graph.mapping_target_nodes:
-            if not mt_node in text_mining_graph.reverse_edges:
-                continue
-            for edge in text_mining_graph.reverse_edges[mt_node]:
-                for source_node in text_mining_graph.reverse_edges[mt_node][edge]:
-                    if not isinstance(source_node, TokenNode):
-                        continue
-                    matched_intervals.append((source_node.origin_gram_start, source_node.origin_gram_end))
-
-        to_remove = deque()
-        for t_node in text_mining_graph.token_nodes:
-            remove_maps = False
-            for matched_interval in matched_intervals:
-                if t_node.origin_gram_start == matched_interval[0] and t_node.origin_gram_end < matched_interval[1]:
-                    print "1. t_node %s in interval (%s, %s)" % (t_node, matched_interval[0], matched_interval[1])
-                    remove_maps = True
-                    #to_remove.append(t_node)
-                    break
-                elif t_node.origin_gram_start > matched_interval[0] and t_node.origin_gram_end == matched_interval[1]:
-                    print "2. t_node %s in interval (%s, %s)" % (t_node, matched_interval[0], matched_interval[1])
-                    remove_maps = True
-                    #to_remove.append(t_node)
-                    break
-                elif t_node.origin_gram_start > matched_interval[0] and t_node.origin_gram_end < matched_interval[1]:
-                    print "3. t_node %s in interval (%s, %s)" % (t_node, matched_interval[0], matched_interval[1])
-                    remove_maps = True
-                    #to_remove.append(t_node)
-                    break
-            if remove_maps:
-                for edge in text_mining_graph.forward_edges[t_node]:
-                    for targ_node in text_mining_graph.forward_edges[t_node][edge]:
-                        if isinstance(targ_node, MappingTargetNode):
-                            to_remove.append(targ_node)
-
-        print "BLOCK REMOVAL FROM: %s" % dont_remove
-        print "Will be removing the nodes: %s" % to_remove
-        for node in to_remove:
-            if node not in dont_remove:
-                text_mining_graph.delete_node(node)
-
-        return text_mining_graph
-
-
-# TODO Deprecated. Remove this
-class RemoveSubIntervalOfMatched_Stage:
-    def run(self, text_mining_graph):
-
-        matched_intervals = deque()
-
-        for mt_node in text_mining_graph.mapping_target_nodes:
-            if not mt_node in text_mining_graph.reverse_edges:
-                continue
-            for edge in text_mining_graph.reverse_edges[mt_node]:
-                for source_node in text_mining_graph.reverse_edges[mt_node][edge]:
-                    if not isinstance(source_node, TokenNode):
-                        continue
-                    matched_intervals.append((source_node.origin_gram_start, source_node.origin_gram_end))
-
-        to_remove = deque()
-        for t_node in text_mining_graph.token_nodes:
-            for matched_interval in matched_intervals:
-                if t_node.origin_gram_start == matched_interval[0] and t_node.origin_gram_end < matched_interval[1]:
-                    print "1. t_node %s in interval (%s, %s)" % (t_node, matched_interval[0], matched_interval[1])
-                    to_remove.append(t_node)
-                    break
-                elif t_node.origin_gram_start > matched_interval[0] and t_node.origin_gram_end == matched_interval[1]:
-                    print "2. t_node %s in interval (%s, %s)" % (t_node, matched_interval[0], matched_interval[1])
-                    to_remove.append(t_node)
-                    break
-                elif t_node.origin_gram_start > matched_interval[0] and t_node.origin_gram_end < matched_interval[1]:
-                    print "3. t_node %s in interval (%s, %s)" % (t_node, matched_interval[0], matched_interval[1])
-                    to_remove.append(t_node)
-                    break
-      
-        print "Will be removing the nodes: %s" % to_remove  
-        for node in to_remove:
-            text_mining_graph.delete_node(node)
-
-        return text_mining_graph
-
 
 class ExactMatchCustomTargets_Stage:
     def __init__(self):
@@ -1568,6 +820,7 @@ class ExactMatchCustomTargets_Stage:
             self.noun_phrases = Set(json.load(f)) 
      
     def run(self, text_mining_graph):
+        print "Matching to custom noun-phrases..."
         for t_node in text_mining_graph.token_nodes:
             if t_node.token_str in self.noun_phrases:
                 c_node = CustomMappingTargetNode(t_node.token_str)
@@ -1576,137 +829,13 @@ class ExactMatchCustomTargets_Stage:
         return text_mining_graph 
         
 
-class RemoveDownstreamEdgesOfMappedTokenNodes_Stage:
-    def run(self, text_mining_graph):
-
-        def get_source_key_val_nodes(node):
-            """
-            Get the key-value nodes for which there exists a path from the node
-            to that key-value node in the text mining graph.
-            """
-            source_kv_nodes = Set()
-            dist, prev = text_mining_graph.shortest_path(node, use_reverse_edges=True)
-            for kv_node in text_mining_graph.key_val_nodes:
-                if kv_node in dist and dist[kv_node] < float('inf'):
-                    source_kv_nodes.add(kv_node)
-            return source_kv_nodes
-
-        to_remove = Set()
-        deletion_occured = True
-        while deletion_occured:
-            deletion_occured = False
-
-            for kv_node in text_mining_graph.key_val_nodes:
-
-                breadth_first_nodes = text_mining_graph.downstream_nodes(kv_node, depth_first=False)
-                breadth_first_nodes = [x for x in breadth_first_nodes if isinstance(x, TokenNode)]
-
-                for t_node in breadth_first_nodes:
-
-                    #matched_to_ontology = False
-                    matched_mt_nodes = Set()
-                    for edge in text_mining_graph.forward_edges[t_node]:
-                        for targ_node in text_mining_graph.forward_edges[t_node][edge]:
-                            if isinstance(targ_node, MappingTargetNode):
-                                matched_mt_nodes.add(targ_node)
-                    if len(matched_mt_nodes) == 0:
-                        continue
-
-                    print "Node %s matched to ontology terms %s! Removing downstream edges of this node..." % (t_node, matched_mt_nodes)
-
-                    # Get the key-value nodes that derive into this node
-                    source_kv_nodes = get_source_key_val_nodes(t_node)
-
-                    # Remove all downstream nodes without a path to any other key-value node            
-                    # besides the key value node that derives into this node
-                    downstream_nodes = text_mining_graph.downstream_nodes(t_node)
-                    print "Downstream nodes are: %s" % downstream_nodes
-
-                    for d_node in downstream_nodes:
-                        if d_node in matched_mt_nodes or d_node == t_node:
-                            continue
-
-                        d_source_kv_nodes = get_source_key_val_nodes(d_node)
-                        d_source_kv_nodes = d_source_kv_nodes - source_kv_nodes
-                        if len(d_source_kv_nodes) == 0:
-                        #    print "Deleted node %s..." % d_node
-                            text_mining_graph.delete_node(d_node)
-                            deletion_occured = True
-                            break
-
-                    if deletion_occured:
-                        break 
-                if deletion_occured:
-                    break
-                #deletion_occured = False
-           
-
-        return text_mining_graph
-
-
-class RemoveDownstreamEdgesOfMappedTokenNodes_Stage_OLD:
-    def run(self, text_mining_graph):
-
-        def get_source_key_val_nodes(node):
-            """
-            Get the key-value nodes for which there exists a path from the node
-            to that key-value node in the text mining graph.
-            """
-            source_kv_nodes = Set()
-            dist, prev = text_mining_graph.shortest_path(node, use_reverse_edges=True)
-            for kv_node in text_mining_graph.key_val_nodes:
-                if kv_node in dist and dist[kv_node] < float('inf'):
-                    source_kv_nodes.add(kv_node)
-            return source_kv_nodes
-
-        to_remove = Set()
-        for t_node in text_mining_graph.token_nodes:
-            #matched_to_ontology = False
-            matched_o_nodes = Set()
-            for edge in text_mining_graph.forward_edges[t_node]:
-                for targ_node in text_mining_graph.forward_edges[t_node][edge]:
-                    if isinstance(targ_node, MappingTargetNode):
-                        matched_o_nodes.add(targ_node)
-            if len(matched_o_nodes) == 0:
-                continue
-
-            print "Node %s matched to ontology terms %s! Removing downstream edges of this node..." % (t_node, matched_o_nodes) 
-
-            # Get the key-value nodes that derive into this node
-            source_kv_nodes = get_source_key_val_nodes(t_node)
-
-            # Remove all downstream nodes without a path to any other key-value node            
-            # besides the key value node that derives into this node
-            downstream_nodes = text_mining_graph.downstream_nodes(t_node)
-
-            #print "The downstream nodes are: %s" % downstream_nodes
-
-            for d_node in downstream_nodes:
-                if d_node in matched_o_nodes or d_node == t_node:
-                    continue
-
-                d_source_kv_nodes = get_source_key_val_nodes(d_node)
-                d_source_kv_nodes = d_source_kv_nodes - source_kv_nodes
-                if len(d_source_kv_nodes) == 0:
-                    print "We want to remove %s..." % d_node
-                    to_remove.add(d_node)
-
-        print "The nodes we really want to remove are %s" % to_remove
-        
-        for node in to_remove:
-            print "Deleted node %s..." % node
-            text_mining_graph.delete_node(node)
-
-        return text_mining_graph
-
-
 class CellLineToImpliedDisease_Stage:
     def __init__(self):
         with open(CELL_LINE_TO_IMPLIED_DISEASE_JSON, "r") as f:
             self.term_to_implied_terms = json.load(f)
 
     def run(self, text_mining_graph):
-
+        print "Finding disease terms implied by cell line terms..."
         node_to_new_edges = defaultdict(lambda: [])
         edge = Inference("Cell line to implied disease")
         for ont_node in text_mining_graph.ontology_term_nodes:
@@ -1722,11 +851,17 @@ class CellLineToImpliedDisease_Stage:
         return text_mining_graph
 
 class AcronymToExpansion_Stage:
+    """
+    Expand acronyms to their full name. For example,
+    'iPSC' will be expanded to 'induced pluripotent
+    stem cell'. 
+    """
     def __init__(self):
         with open(ACRONYM_TO_EXPANSION_JSON, "r") as f:
             self.acr_to_expansions = json.load(f)
 
     def run(self, text_mining_graph):
+        print "Generating acronym expansions..."
         node_to_new_edges = defaultdict(lambda: [])
         edge = Inference("Acronym to expansion")
 
@@ -1776,6 +911,15 @@ class ATCCKeyValueFilter_Stage:
 #####################################
 
 class ExtractRealValue_Stage:
+    """
+    Extract numeric properties as tuples of the form:
+    (property, value, unit)
+   
+    This is accomplished by searching the graph emanating
+    from the key for a property ontology term. If found, we
+    search the graph emanating from the value for a number
+    and for a unit ontology term. 
+    """
 
     def __init__(self):
         with open(REAL_VALUE_PROPERTIES, "r") as f:
@@ -1784,11 +928,11 @@ class ExtractRealValue_Stage:
             self.default_units = j["default_units"]
 
     def run(self, text_mining_graph):
-        print
         print "Extracting real-value properties..."
     
         for kv_node in text_mining_graph.key_val_nodes:
-            print "Checking whether key-value pair node %s encodes a real-value property."
+            if VERBOSE:
+                print "Checking whether key-value pair node %s encodes a real-value property." % kv_node
 
             # Find ontology-terms that refer to real-valued properties 
             real_val_term_nodes = Set()
@@ -1798,8 +942,9 @@ class ExtractRealValue_Stage:
                         real_val_term_nodes.update( text_mining_graph.downstream_nodes(t_node))
 
             real_val_term_nodes = [x for x in real_val_term_nodes if isinstance(x, OntologyTermNode) and x.term_id in self.real_val_tids]
-            print "Set of real-value properties we are searching for: %s" % self.real_val_tids
-            print "Found property nodes: %s" % real_val_term_nodes
+            if VERBOSE:
+                print "Set of real-value properties we are searching for: %s" % self.real_val_tids
+                print "Found property nodes: %s" % real_val_term_nodes
             if len(real_val_term_nodes) == 0:
                 continue
         
@@ -1810,11 +955,14 @@ class ExtractRealValue_Stage:
                     for t_node in text_mining_graph.forward_edges[kv_node][edge]:
                         real_val_candidates.update(text_mining_graph.downstream_nodes(t_node))    
 
-            print "The real-value candidates are: %s" % real_val_candidates
+            if VERBOSE:
+                print "The real-value candidates are: %s" % real_val_candidates
             numeric_nodes = [x for x in real_val_candidates if isinstance(x, TokenNode) and is_number(x.token_str)]
-            print "Found numeric nodes: %s" % numeric_nodes
+            if VERBOSE:
+                print "Found numeric nodes: %s" % numeric_nodes
             unit_nodes = [x for x in real_val_candidates if isinstance(x, OntologyTermNode) and x.term_id.split(":")[0] == "UO"]
-            print "Found unit nodes: %s" % unit_nodes
+            if VERBOSE:
+                print "Found unit nodes: %s" % unit_nodes
 
             # If there is one real-value ontology term, one numeric token, and one unit node, then create real-value-property node
             edge = DerivesInto("Real-value extraction") # TODO should use a different edge-type
@@ -1844,9 +992,10 @@ class ExtractRealValue_Stage:
 
 
 class ParseTimeWithUnit_Stage:
-    """Parse artifacts that represent units of time and look 
-    something like '48h'. That is, expand '48h' to '48 hour'."""
-
+    """
+    Parse artifacts that represent units of time and look 
+    something like '48h'. That is, expand '48h' to '48 hour'.
+    """
     def __init__(self):
         self.regex = r'^([0-9]*)\s*(h|hr|mo|d|min)$'
         self.unit_to_expansion = {
@@ -1948,9 +1097,12 @@ class LinkedTermsOfSuperterms_Stage:
 
 
 class ConsequentCulturedCell_Stage:
-    
+    """
+    If the sample maps to a Cellosaurus cell line 
+    term, then we infer the sample is a cultured 
+    cell.
+    """ 
     def run(self, text_mining_graph):
-
         edge = Inference("Cell culture from cell line")
         new_o_node_cl = OntologyTermNode("CL:0000010")
         new_o_node_bto = OntologyTermNode("EFO_BTO:0000214")
@@ -1966,7 +1118,6 @@ class ConsequentCulturedCell_Stage:
         return text_mining_graph
 
 class ImpliedDevelopmentalStageFromAge_Stage:
-    
     def run(self, text_mining_graph):
         for real_node in text_mining_graph.real_value_nodes:
             if real_node.property_term_id == "EFO:0000246" \
@@ -1981,7 +1132,6 @@ class ImpliedDevelopmentalStageFromAge_Stage:
 
 
 class InferCellLineTerms_Stage:
-
     def __init__(self):
         with open(CELL_LINE_TERMS_JSON, "r") as f:
             self.cvcl_to_mappings = json.load(f)
@@ -2074,236 +1224,14 @@ def nltk_n_grams(in_str, n):
             match = m.group(0)
             result_grams.append(match)
         else:
-            print "Regex failed on %s" % gram
+            if VERBOSE:
+                print "Regex failed on %s" % gram
     return result_grams
-
-
-
-def all_nltk_n_grams(in_str):
-    thresh = 8
-    result_grams = Set()
-    for n in range(1, thresh):
-        n_grams = nltk_n_grams(in_str, n)
-        for gram in n_grams: 
-            result_grams.add(gram)
-    print result_grams
-    return list(result_grams)
-
-
-def edit_below_thresh(str1, str2, thresh):
-    len1 = len(str1)
-    len2 = len(str2)
-    max_len = max([len1, len2])
-
-    # If the length difference between the two strings 
-    # is greater than the threshold, we can return false.
-    len_diff = abs(len1-len2)
-    if len_diff / max_len > thresh:
-        return False
-
-    # Compute lower bound edit distance based on character
-    # frequency
-    c1 = Counter(str1)
-    c2 = Counter(str2)
-    lowerbound_dist = 0
-    for ch, fr in c1.iteritems():
-        if ch not in c2:
-            lowerbound_dist += (0.5 * fr)
-        else:
-            lowerbound_dist += (0.5 * abs(c1[ch] - c2[ch]))
-
-    for ch, fr in c2.iteritems():
-        if ch not in c1:
-            lowerbound_dist += (0.5 * fr)
-
-    if lowerbound_dist / max_len > thresh:
-        return False
-
-    print "Attempting to compute edit distance..."
-    dist = edit_distance(str1, str2)
-    print "Edit distance is %s" % str(dist)
-    norm_dist = float(dist)/float(max_len)
-    return norm_dist <= thresh
-
-
-def edit_below_thresh_precomputed(str1, str2, thresh, str1_char_freqs, str_to_char_freq):
-    len1 = len(str1)
-    len2 = len(str2)
-    max_len = max([len1, len2])
-
-    # If the length difference between the two strings 
-    # is greater than the threshold, we can return false.
-    len_diff = abs(len1-len2)
-    if len_diff / max_len > thresh:
-        return False
-
-    # Compute lower bound edit distance based on character
-    # frequency
-    c1 = str1_char_freqs
-    c2 = str_to_char_freq[str2]
-    lowerbound_dist = 0
-    for ch, fr in c1.iteritems():
-        if ch not in c2:
-            lowerbound_dist += (0.5 * fr)
-        else:
-            lowerbound_dist += (0.5 * abs(c1[ch] - c2[ch]))
-
-    for ch, fr in c2.iteritems():
-        if ch not in c1:
-            lowerbound_dist += (0.5 * fr)
-
-    if lowerbound_dist / max_len > thresh:
-        return False
-
-    print "Attempting to compute edit distance..."
-    dist = edit_distance(str1, str2)
-    print "Edit distance is %s" % str(dist)
-    norm_dist = float(dist)/float(max_len)
-    return norm_dist <= thresh
 
 
 
  
 def main():
-
-    #print get_ngrams("Lonza Walkersville, Inc (Walkersville, MD)", 2)
-    #return
-
-    #print nltk_n_grams("polysubstance abuse (NO diabetes, hypertension, coronary artery disease, cancer)")
-
-
-    #tag_to_val = {"BioSampleModel": "Human",
-    #    "Fusion": "Negative",
-    #    "age": "15",
-    #    "biomaterial provider": "Memorial Sloan Kettering Cancer Center",
-    #    "disease": "Embryonal rhabdomyosarcoma",
-    #    "isolate": "RMS66",
-    #    "sample type": "Metastatic (recurrence)",
-    #    "sex": "Unknown",
-    #    "tissue": "Tumor",
-    #    "cell line": "HeLa-S3",
-    #    "cell type": "fibroblast"}
-
-    #tag_to_val = {
-    #    "disease": "head and neck squamus cell carcinoma"}
-
-    #tag_to_val = {
-    #    "blahahaldksfj": "cord blood derived cells",
-    #    "lkajsdl;kfjsd": "whole blood"
-    #}
-
-    #tag_to_val = {
-    #    "cell line": "U2OS"
-    #}
-
-    #tag_to_val = {
-    #    "AA BB CC": "DD EE FF GG"}
-
-    #tag_to_val = {
-    #    "cell line": "HeLa-S3",
-    #    "organism": "Homo sapiens",
-    #    "treatment": "Amanitin (RNA pol II inhibitor)"}
-
-    #tag_to_val = {
-    #    "disease": "Breast Cancers",
-    #    "Tissue": "Breast Tumor Tissue"}
-
-    #tag_to_val = {
-    #    "Cell type": "Human Umbilical Vein Endothelial Cells"
-    #}
-
-    #tag_to_val = {
-    #    "cell line": "HeLa"}
-
-    #tag_to_val = {
-    #    "source name": "HeLa"}
-    
-    #tag_to_val = {
-    #    "blahaha": "HeLa",
-    #    "haha": "HeLa"}
-
-    #tag_to_val = {"haha": "iPSC"}
-
-    #tag_to_val = {
-    #    "source": "foreskin fibroblast"}
-
-    #tag_to_val = {
-    #    "age": "24 year"
-    #}
-
-
-    #tag_to_val = {
-    #    "BioSampleModel": "Generic",
-    #    "age at diagnosis": "11",
-    #    "deep ulcer": "No",
-    #    "diagnosis": "CD",
-    #    "gender": "Male",
-    #    "histopathology": "Normal",
-    #    "paris age at diagnosis": "A1b",
-    #    "source_name": "cCD with Normal histopathology in A1b Male"
-    #}
-
-    #tag_to_val = {
-    #    "blood type": "A+",
-    #    "description": "poly(A)+"
-    #}
-
-    #tag_to_val = {
-    #    "sample": "culture fibroblast"
-    #}
-
-    #tag_to_val = {
-    #    "age at diagnosis": "11",
-    #    "paris age at diagnosis": "A1b"
-    #}
-
-    #tag_to_val = {
-    #    "cell line": "K562",
-    #    "grna target": "globin HS2 enhancer",
-    #    "source_name": "Cultured K562 cells",
-    #    "transduced gene": "dCas9-KRAB"
-    #}
-
-    #tag_to_val = {
-    #    "a": "1111 2222 3333 4444 5555 6666 7777 8888 9999 10101010 11111111",
-    #}
-
-    #tag_to_val = {
-    #    "a": "AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH IIII JJJJ KKKK"
-    #}
-
-    #tag_to_val = {
-    #    "Cell type": "Human Umbilical Vein Endothelial Cells",
-    #    "Cell type abbr.": "HUVEC",
-    #    "Donor age": "newborn",
-    #    "Donor cause-of-death": "-",
-    #    "Donor gender": "male",
-    #    "Donor race": "Arabic",
-    #    "Internal label": "WadaLab-IHEC30",
-    #    "Lot. no.": "03321",
-    #    "Manufacture Date": "01-JUN-2013",
-    #    "Provider": "Lonza Walkersville, Inc (Walkersville, MD)",
-    #    "Sample type": "Cell",
-    #    "Source name": "Human Umbilical Vein Endothelial Cells (HUVEC) Lot.03321",
-    #    "Total cell count": "380000",
-    #    "Total cell count unit": "cell per mili-litter",
-    #    "Valid until": "Not applicable when stored below -150 degrees celsius",
-    #    "Viability": "93%"}
-
-    #tag_to_val = {
-    #    "BioSourceType": "frozen_sample",
-    #    "DiseaseLocation": "oropharynx",
-    #    "MetastasisFreeSurvivalDelay": "8 month",
-    #    "MetastasisFreeSurvivalEvent": "1",
-    #    "Organism": "Homo sapiens",
-    #    "age": "56 year",
-    #    "disease": "head and neck squamous cell carcinoma",
-    #    "disease staging": "4",
-    #    "organism part": "oropharynx",
-    #    "sex": "male"}
-
-    #tag_to_val = {
-    #    "disease": "head and neck squamous cell carcinoma"}
 
     tag_to_val = {
         "timepoint": "48hr"

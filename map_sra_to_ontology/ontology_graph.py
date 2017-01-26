@@ -9,11 +9,8 @@ try:
 except:
     print "Unable to import pygraphviz. Visualization is disabled."
 import config
-#import marisa_trie
 
-from nltk.metrics.distance import edit_distance
 import pkg_resources as pr
-from collections import defaultdict, deque, Counter
 import os
 from os.path import join
 import json
@@ -23,6 +20,8 @@ resource_package = __name__
 ENTITY_TERM = "TERM"
 ENTITY_TYPE_DEF = "TYPE_DEF"
 ENTITY_EXCLUDED_TERM = "EXCLUDED_TERM"
+
+VERBOSE = False
 
 class Synonym:
     """
@@ -300,7 +299,8 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
         name_to_ids, id_to_term):
         entity = parse_entity(curr_lines, restrict_to_idspaces)
         if not entity:
-            print "ERROR!"
+            if VERBOSE:
+                print "ERROR!"
         elif entity[0] == ENTITY_TERM:
             term = entity[1]
             is_obsolete = entity[2]
@@ -318,8 +318,9 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
                     sup_term.relationships[inverse_relation] = []
                 sup_term.relationships[inverse_relation].append(term.id)
             else:
-                print "Warning! Attempted to create inverse edge in term %s. \
-                    Not found in not in the ontology" % sup_term_id
+                if VERBOSE:
+                    print "Warning! Attempted to create inverse edge in term %s. \
+                        Not found in not in the ontology" % sup_term_id
                 # Remove superterm from term's relationship list because it 
                 # is not in the current ontology
                 while sup_term_id in term.relationships[relation]:
@@ -519,6 +520,7 @@ def parse_entity(lines, restrict_to_idspaces):
         return (ENTITY_TYPE_DEF, None, None)
 
     else:
-        print "Unable to parse chunk: %s" % lines
+        if VERBOSE:
+            print "Unable to parse chunk: %s" % lines
        
         

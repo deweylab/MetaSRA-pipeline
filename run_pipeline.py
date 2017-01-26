@@ -78,7 +78,7 @@ def main():
 
 
 def run_pipeline(tag_to_val):
-    pipeline = p_47()
+    pipeline = p_48()
     sample_acc_to_matches = {}
     mapped_terms, real_props = pipeline.run(tag_to_val)
     mappings = {
@@ -86,7 +86,7 @@ def run_pipeline(tag_to_val):
         "real_value_properties": [x.to_dict() for x in real_props]}
     return mappings
     
-def p_47():
+def p_48():
     spec_lex = pc.SpecialistLexicon(config.specialist_lex_location())
     inflec_var = pc.SPECIALISTLexInflectionalVariants(spec_lex)
     spell_var = pc.SPECIALISTSpellingVariants(spec_lex)
@@ -115,6 +115,7 @@ def p_47():
     exact_match = pc.ExactStringMatching_Stage(["1", "2", "4", "5", "7", "8", "9"], query_len_thresh=3)
     fuzzy_match = pc.FuzzyStringMatching_Stage(0.1, query_len_thresh=3)
     two_char_match = pc.TwoCharMappings_Stage()
+    time_unit = pc.ParseTimeWithUnit_Stage()
 
     stages = [
         key_val_filt,
@@ -129,6 +130,7 @@ def p_47():
         spell_var,
         man_at_syn,
         acr_to_expan,
+        time_unit,
         exact_match,
         two_char_match,
         prop_spec_syn,

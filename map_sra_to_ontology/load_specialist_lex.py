@@ -26,7 +26,7 @@ class SpecialistLexicon:
         self.lexicon = load_lexicon(lex_loc)
         self.eui_array = []
 
-        print "building SPECIALIST Lexicon tre..."
+        print "building SPECIALIST Lexicon trie..."
         tups = []
         curr_i = 0
         for eui, lex_info in self.lexicon.iteritems():
