@@ -1,0 +1,215 @@
+.button {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    border: 2px solid #4CAF50; /* Green */
+    //padding: 15px 32px;
+    background-color: #4CAF50; /* Green */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    color:white;
+    font-size: 15px;
+    font-weight: bold;
+    font-family: Tahoma, sans-serif;
+    height:40px;
+}
+
+.button:hover {
+    background-color: purple; /* Green */
+    color: white;
+    cursor: pointer;
+}
+
+.form_label {
+    color: black;
+    font-size: 17px;
+    font-family: Tahoma, sans-serif;
+}
+
+.radio_label {
+    font-size: 16px;
+    font-family: Tahoma, sans-serif;
+}
+
+#form_container {
+    background-color: #eafcec;
+    padding-left:20px;
+    padding-right:20px;
+    padding-top:20px;
+    padding-bottom:20px;
+}
+
+.page_title {
+    color:#4CAF50;
+    text-align: left;
+    //font-family: Tahoma, sans-serif;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 40px;
+    margin-bottom: 0px;
+}
+
+.section_title {
+    //font-family: Tahoma, sans-serif;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+a {
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+p {
+    //font-family: Tahoma, sans-serif;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 18px;
+}
+
+.footer_images {
+    display: inline-block;
+    position: relative;
+    float: right;
+}
+
+.footer_logo {
+    margin-right: 20px;
+}
+
+.subsection_title {
+    color:#3f4040; /*dark gray*/
+    font-size: 15px
+    text-align: left;
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif;
+}
+
+.nav_bar{
+    width:1100px; /* The width is fixed by pixels */
+    height:30px; /* The height is fixed by pixels*/
+    background-color:gray;
+    color:white;
+}
+
+.nav_item{
+    position:relative;
+    display: inline-block;
+    font-size: 14px;
+    padding-left: 15px;
+    padding-right: 15px;
+    top:5px;
+    float:left;
+}
+
+.nav_item a {
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif;
+    color:white !important;
+    font-size: 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.nav_item a:hover {
+    color: purple !important;
+}
+
+.sample_accession_link {
+    font-family: Tahoma, sans-serif;
+}
+
+#container{
+    /*Styling for any element with the id="container" */
+    margin: auto;
+    width:1100px; /* The width is fixed by pixels */
+    height:800px; /* The height is fixed by pixels*/
+    background-color:white;
+    //background: url(congruent_pentagon.png);
+    margin: auto;
+}
+
+
+th {
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif !important;
+}
+
+#results_table a {
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif !important;
+    font-size: 15px;
+}
+
+
+.sample_attributes_table th{
+    background-color: #f0f5f5;
+    color:#3f4040; /*dark gray*/
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif !important;
+    font-size: 15px;
+}
+
+#download_results_btn {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    border: 2px solid #4CAF50; /* Green */
+    background-color: #4CAF50; /* Green */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    color:white;
+    font-family: Tahoma, sans-serif
+}
+
+#download_results_btn:hover {
+    background-color:purple;
+    cursor: pointer;
+}
+
+.show_attrs {
+
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    border: 2px solid #4CAF50; /* Green */
+    background-color: #4CAF50; /* Green */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    color:white;
+    font-family: Tahoma, sans-serif;
+}
+
+.show_attrs:hover {
+    background-color:purple;
+    cursor: pointer;
+}
+
+
+/* DataTables */
+#results_table_length label{
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif !important;
+    font-weight: bold !important;
+}
+
+#results_table_filter label{
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif !important;
+    font-weight: bold !important;
+}
+
+/* Classes in OLS suggestor */
+.tt-suggestion.tt-selectable {
+    width:550px !important;
+}
+
+/*.ontology-source {
+    float: right !important;
+    display: inline-block !important;
+}
+
+.term-source {
+    float: right !important;
+    display: inline-block !important;
+}*/
+
+
+
+

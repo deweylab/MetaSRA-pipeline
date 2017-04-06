@@ -115,5 +115,9 @@
     [
         "cell type",
         "CellType"
+    ],
+    [
+        "time point",
+        "timepoint"
     ]
 ]

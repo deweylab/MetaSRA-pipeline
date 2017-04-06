@@ -1,0 +1,203 @@
+$def with (form)
+<html>
+    <head>
+        <title>MetaSRA</title>\
+
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet"> 
+
+        <link rel="stylesheet" type="text/css" href="/static/style.css" />
+        <script type="text/javascript" src="/static/jquery-3.2.0.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="static/DataTables-1.10.13/media/css/jquery.dataTables.min.css"/> 
+        <script type="text/javascript" src="/static/DataTables-1.10.13/media/js/jquery.dataTables.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="/static/ols.css"/>
+        <link rel="stylesheet" type="text/css" href="/static/ols-colors.css"/>
+        <link rel="stylesheet" type="text/css" href="/static/typeaheadjs.css"/>
+
+        <!--<script type="text/javascript" src="/static/handlebars-v4.0.5.js"></script>
+        <script type="text/javascript" src="/static/typeahead.jquery.min.js"></script>
+        <script type="text/javascript" src="/static/typeahead.bundle.min.js"></script>
+        <script type="text/javascript" src="/static/bloodhound.min.js"></script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/0.11.1/typeahead.bundle.min.js"></script>
+        <script type="text/javascript" src="/static/ols-autocomplete.js"></script>    
+
+ 
+        <script type="text/javascript">
+            jQuery(document).ready(function() {
+                jQuery('#spinner').hide();
+
+                var app = require("ols-autocomplete");
+                var instance = new app();
+                instance.start();
+            
+                //jQuery(".tt-dataset-selection.h5").html("Jump to in Ontology Lookup Service")
+
+                $$(".tt-dataset.tt-dataset-selection").remove();
+                $$(".tt-menu.tt-open").css("width", "600px");
+
+                datatable = $$('#results_table').DataTable();
+
+                jQuery("#search_button").click(function() {
+                    $$('#search_result').hide();
+                    $$('#spinner').show();
+                    var input_string = $$("#term_id_field").val();
+                    var radio_val = $$("input:radio[name=sample_type]:checked").val();
+
+                    //Set the download form
+                    var download_form_query = $$("#download_results_form_text");
+                    var download_form_sample_type = $$("#download_results_form_sample_type");
+                    download_form_query.attr("value", input_str);
+                    download_form_sample_type.attr("value", radio_val);
+
+                    jQuery.ajax({
+                        type: "POST",
+                        data: {
+                            "term_id" : input_string,
+                            "sample_type" : radio_val
+                        },
+                        success: function(resp) {
+                            resp = JSON.parse(resp);
+                            $$('#spinner').hide();
+                            $$('#search_result').show();
+
+                            datatable.clear();
+                            datatable.rows.add(resp); // Add new data
+                            datatable.columns.adjust().draw();
+                            $$('#results_content').show();
+                        },
+                    });
+                    return false;
+                });
+
+                jQuery("#search_result").on(
+                    "click",
+                    ".show_attrs",
+                    function() {
+                        //jQuery(this).html("hide")
+                        var target_id = jQuery(this).attr("data-target");
+                        var attrs_elem = jQuery("#"+target_id);
+                        if (attrs_elem.is(':visible')) {
+                            jQuery(this).html("Show attributes");
+                            attrs_elem.hide()
+                        }
+                        else {
+                            jQuery(this).html("Hide");
+                            attrs_elem.show();
+                        }
+                        //window.alert(target_id);
+                        //jQuery("#"+target_id).show();
+                    }
+                );
+
+                jQuery("#download_results_btn").click(function() {
+                    /*var input_str = $$("#term_id_field").val();
+                    var radio_val = $$("input:radio[name=sample_type]:checked").val();
+
+                    var download_form = $$("#download_results_form");
+                    var download_form_query = $$("#download_results_form_text");
+                    var download_form_sample_type = $$("#download_results_form_sample_type");
+                    download_form_query.attr("value", input_str);
+                    download_form_sample_type.attr("value", radio_val);*/
+                    download_form.submit();
+
+                    /*var s = '<form action="/download_search_result" method="POST">';
+                    s += '<input style="display:none" type="text" name="term_id" value="'
+                        + input_str
+                        + '" />';
+                    s += '<input type="text" name="sample_type" value="'
+                        + radio_val
+                        + '" />';
+                    s += '</form>';
+                    // add the form to the document
+                    var tmp_form = $$(s).appendTo('body');
+                    // submit it
+                    tmp_form.submit();*/
+
+                });
+            });
+
+
+        </script>
+    </head>
+    
+    <body>
+        <div id=container>
+        <h1 class=page_title>MetaSRA</h1>
+        <div class=nav_bar>
+            <ul>
+                <li class=nav_item><a href="/">Home</a></li>
+                <li class=nav_item><a href="/download">Download</a></li>
+                <li class=nav_item><a href="/publication">Publication</a></li>
+                <li class=nav_item><a href="/links">Links</a></li>
+            </ul> 
+        </div>
+
+        <h3 class=section_title>Normalized metadata for the Sequence Read Archive</h3>
+        <p>MetaSRA is an annotation/re-coding of sample-specific metadata in the <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">Sequence Read Archive</a> using biomedical ontologies. Currently, MetaSRA maps biological samples to biologically relavent terms in the Disease Ontology, Experimental Factor Ontology, Cell Ontology, Uberon, and Cellosaurus.</p>
+        <br>
+
+        <h3 class=section_title>Search the MetaSRA</h3>
+
+        <p>
+        The 
+        <a href="http://www.ebi.ac.uk/ols/search?q=brain&submit1=1&ontology=efo&ontology=uberon&ontology=cl&ontology=doid" target="_blank">Ontology Lookup Service</a> 
+        and 
+        <a href="http://web.expasy.org/cellosaurus/" target="_blank">Cellosaurus</a> 
+        can be used to find a specific ontology term of interest within the ontologies. 
+        The MetaSRA can be queried for an ontology term using the form below:
+        </p>
+        <br><br>
+
+        <div id="form_container">
+            <form id="search_form" class="form" method="post" action="javascript:onSubmitClick()"> 
+                <div class="form_label"><b>Search:</b><br><br>(Enter the name or synonym of the ontology term of interest. You can also enter an ontology term ID.)</div>
+                <br>
+
+                <input id="term_id_field" style="font-weight: normal" size="35" type="text" name="q" data-olswidget="multisearch" data-olsontology="doid,uberon,cl,efo" data-selectpath="http://www.ebi.ac.uk/ols/" olstype="" id="local-searchbox" placeholder="Enter the term you are looking for" class="ac_input"></input>
+                <!-- <input type="text" id="term_id_field" class="textfield" name="term_id"> --> <br><br>
+            
+                <div class="form_label"><b>Filter by sample-type (select 'All' to avoid filtering):</div></b><br>
+                <input type="radio" name="sample_type" value="all" checked="checked"><span class="radio_label">All</span><br>
+                <input type="radio" name="sample_type" value="cell line"><span class="radio_label">Cell line</span><br>
+                <input type="radio" name="sample_type" value="tissue"><span class="radio_label">Tissue</span><br>
+                <input type="radio" name="sample_type" value="primary cells"><span class="radio_label">Primary cells</span><br>
+                <input type="radio" name="sample_type" value="in vitro differentiated cells"><span class="radio_label">In vitro differentiated cells</span><br>
+                <input type="radio" name="sample_type" value="stem cells"><span class="radio_label">Stem cells</span><br>
+                <input type="radio" name="sample_type" value="induced pluripotent stem cell line"><span class="radio_label">Induced pluripotent stem cells</span><br><br>
+                <input id="search_button" class="button" type="submit" value="Search MetaSRA"/>
+            </form>
+            <div id="spinner_div"><img src="/static/cube.svg" id="spinner" style="display:none"></div>
+                <div id="search_result" style="display:none">
+                    <div class="form_label"><b>Results:</b></div><br>
+                    <table id="results_table">
+                    <thead>
+                        <th>Sample accession</th>
+                        <th>Sample name</th>
+                        <th>Study</th>
+                        <th>Sample type (confidence)</th>
+                        <th>Sample attributes</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    </table>
+                    <div id="download_results_btn"><b>Download results</b></div><br>
+                    <form style="display:none" id="download_results_form" action="/download_search_result" method="POST">';
+                        <input id="download_results_form_text" type="text" name="term_id" value=""/>
+                        <input id="download_results_form_sample_type" type="text" name="sample_type" value=""/>;
+                    </form>
+                </div>  
+            </div>
+        <br>
+
+        <div class="footer_images">
+            <a href="http://www.cpcp.wisc.edu/" target="_blank"><img class="footer_logo" src="static/cpcp_logo.png" style="width:250px;"/></a>
+            <a href="http://www.wisc.edu/" target="_blank"><img class="footer_logo" src="static//uw_madison_logo.png" style="width:150px;"/></a>
+        </div>
+
+        </div>
+    </div>     
+    </body>
+    
+</html>

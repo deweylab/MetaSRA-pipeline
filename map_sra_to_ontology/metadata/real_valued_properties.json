@@ -7,6 +7,7 @@
             "EFO:0004340": "body mass index",
             "EFO:0005056": "age at death",
             "EFO:0000724": "timepoint",
+            "EFO:0000721": "time",
             "EFO:0000410": "disease staging"
     },
     "default_units": {

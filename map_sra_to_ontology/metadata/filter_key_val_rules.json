@@ -41,7 +41,11 @@
         "bc accession ids",
         "biospecimen repository",
         "biospecimen repository sample id",
-        "coriell cell line repository identifier"
+        "coriell cell line repository identifier",
+        "DISEASE_ONTOLOGY_URI",
+        "SAMPLE_ONTOLOGY_URI",
+        "cell ontology uri",
+        "disease ontology uri"
     ],
     "filter_values": [
         "-",
