@@ -1,6 +1,7 @@
 <html>
     <head>
-        <title>MetaSRA</title>
+        <title>MetaSRA</title>\
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet"> 
         <link rel="stylesheet" type="text/css" href="/static/style.css" />
     </head>
 
@@ -11,8 +12,11 @@
          <ul>
             <li class=nav_item><a href="/">Home</a></li>
             <li class=nav_item><a href="/download">Download</a></li>
+            <li class=nav_item><a href="/faq">FAQ</a></li>
+            <li class=nav_item><a href="/users">Mailing list</a></li>
             <li class=nav_item><a href="/publication">Publication</a></li>
             <li class=nav_item><a href="/links">Links</a></li>
+            <li class=nav_item><a href="/contact">Contact</a></li>
          </ul>
         </div>
 
@@ -35,20 +39,52 @@
         </p>
 
         <p>
-        XXXX samples were manually annotated with mapped
-        ontology terms, real-value properties, and sample-type. 
+        422 samples were manually annotated with mapped
+        ontology terms, real-value properties. 
         This dataset was used as a test set to evaluate the ontology mapping
-        pipeline and sample-type prediction algorithm:
+        pipeline. More specifically, this data 
+        was used as ground-truth for results shown in Figure 4.
         <ul>
-            <li><a href="/TODO">TODO</a></li>
+            <li><a href="/static/publication_datasets/test_set_ontology_mapping.json">test_set_ontology_mapping.json</a></li>
         </ul>
         </p>
         
         <p>
-        XXXX samples were labelled only with the sample-type. This dataset was used
-        to train the sample-type classifier:
+        701 samples were manually labelled with their sample-types by consulting their 
+        publications and other external descriptions of the experiments in which they were used. 
+        This dataset was used to train the sample-type classifier:
          <ul>
-            <li><a href="/TODO">TODO</a></li>
+            <li><a href="/static/publication_datasets/training_set_sample_type.json">training_set_sample_type.json</a></li>
+        </ul>
+        </p>
+
+        <p>
+        367 samples were used to evaluate the sample-type classifier's recall on each category and to
+        generate the row-normalized confusion matrix and reliability diagram in Figure 5.A and 5.B. 
+        These samples are a subset of the 422 samples used to evaluate the ontology term mapping 
+        pipeline.
+         <ul>
+            <li><a href="/static/publication_datasets/test_set_nonenriched_sample_type.json">test_set_nonenriched_sample_type.json</a></li>
+        </ul>
+        </p>
+
+        <p>
+        552 samples were used to evaluate the sample-type classifier's precision on each category and to
+        generate the transpose of the column-normalized confusion matrix in Figure 5.C.
+         <ul>
+            <li><a href="/static/publication_datasets/test_set_enriched_sample_type.json">test_set_enriched_sample_type.json</a></li>
+        </ul>
+        </p>
+
+
+        <h3 class=subsection_title>Cell line metadata</h3>
+
+        <p>
+        MetaSRA uses cell line information scraped from the <a href="https://www.atcc.org/">ATCC</a> website. 
+        We mapped cell lines found in the <a href="http://web.expasy.org/cellosaurus/">Cellosaurus</a> to ontology
+        terms:
+        <ul>
+            <li><a href="/static/publication_datasets/cvcl_mappings.json">cvcl_mappings.json</a></li>
         </ul>
         </p>
 
@@ -56,9 +92,8 @@
             <a href="http://www.cpcp.wisc.edu/" target="_blank"><img class="footer_logo" src="static/cpcp_logo.png" style="width:250px;"/></a>
             <a href="http://www.wisc.edu/"target="_blank"><img class="footer_logo" src="static//uw_madison_logo.png" style="width:150px;"/></a>
         </div>
-
-        </div>
-        
+        <div class="copyright"><p>&copy; 2017</p></div>
+    </div>
 
     </body>
 

@@ -15,7 +15,10 @@ urls = (
     '/download', 'download',
     '/publication', 'publication',
     '/links', 'links',
-    '/download_search_result', 'download_search_result'
+    '/faq', 'faq',
+    '/users', 'users',
+    '/download_search_result', 'download_search_result',
+    '/contact', 'contact'
 )
 
 search_form = form.Form(
@@ -40,12 +43,23 @@ class publication:
 
 class download:
     def GET(self):
-        versions = [] # TODO gather all versions of the MetaSRA
-        return render.download(versions)
+        return render.download()
 
 class links:
     def GET(self):
         return render.links()
+
+class faq:
+    def GET(self):
+        return render.faq()
+
+class users:
+    def GET(self):
+        return render.users()
+
+class contact:
+    def GET(self):
+        return render.contact()
 
 class download_search_result:
     def POST(self):
@@ -53,25 +67,29 @@ class download_search_result:
         form.validates()
 
         usr_in = form['term_id'].value
-        sample_type = form["sample_type"].value
+        in_sample_type = form["sample_type"].value
         term_ids = get_searched_term_ids(usr_in)
 
         metasra_db = web.database(dbn='sqlite', db='static/metasra.sqlite')
 
-        tsv_str = "sample_accession\tstudy_accession\tsample_type\n"
+        tsv_str = "sample_accession\tstudy_accession\tmapped_ontology_terms\tsample_type\tsample_type_confidence\n"
+        n_results = 0
         for term_id in term_ids:
-            if sample_type == "all":
+            if in_sample_type == "all":
                 results = query_metasra.query_metasra_for_term(metasra_db, term_id)
             else:
-                results = query_metasra.query_metasra_for_term(metasra_db, term_id, sample_type=sample_type)
+                results = query_metasra.query_metasra_for_term(metasra_db, term_id, sample_type=in_sample_type)
 
             for r in results:
+                n_results += 1
                 sample_acc = r["sample_accession"]
                 study_acc = r["study_accession"]
-                sample_type = r["sample_type"]
+                r_sample_type = r["sample_type"]
+                r_terms_csv = r["sample_terms_csv"]
                 confidence = r["confidence"]
-                tsv_str += "%s\t%s\t%s\t%0.3f\n" % (sample_acc, study_acc, sample_type, confidence)
+                tsv_str += "%s\t%s\t%s\t%s\t%0.3f\n" % (sample_acc, study_acc, r_terms_csv, r_sample_type, confidence)
         tsv_str = tsv_str[:-1] # remove trailing line-break
+        print "Returning %d results" % n_results
         return tsv_str 
         
 
@@ -88,7 +106,9 @@ class index:
 
         form = search_form()
         form.validates()
-        
+       
+        error_message = ""
+ 
         usr_in = form['term_id'].value
 
         metasra_db = web.database(dbn='sqlite', db='static/metasra.sqlite')
@@ -96,39 +116,46 @@ class index:
         #term_ancestors_db = web.database(dbn='sqlite', db='static/term_ancestors.sqlite')        
 
         term_ids = get_searched_term_ids(usr_in)
+        if len(term_ids) == 0:
+            error_message = "The query did not match the name nor synonym of any ontology terms. Please use the search-suggestion feature to guide your search."
+
 
         request_results = []
         for term_id in term_ids:    
-            sample_type = form["sample_type"].value
-            if sample_type == "all":
+            in_sample_type = form["sample_type"].value
+            if in_sample_type == "all":
                 results = query_metasra.query_metasra_for_term(metasra_db, term_id)
             else:
-                results = query_metasra.query_metasra_for_term(metasra_db, term_id, sample_type=sample_type)
+                results = query_metasra.query_metasra_for_term(metasra_db, term_id, sample_type=in_sample_type)
 
 
             print "Preparing results..."
             for r in results:
-                sample_acc = r["sample_accession"]
-                study_acc = r["study_accession"]
+                r_sample_acc = r["sample_accession"]
+                r_study_acc = r["study_accession"]
                 if r["study_title"]:
-                    study_title = r["study_title"]
+                    r_study_title = r["study_title"]
                 else:
-                    study_title = ""
-                attrs_elem = r["sample_attributes_html"]
-                sample_name = r["sample_name"]
-                sample_type = r["sample_type"]
-                confidence = r["confidence"]
+                    r_study_title = ""
+                r_attrs_elem = r["sample_attributes_html"]
+                r_terms_elem = r["sample_terms_html"]
+                r_sample_name = r["sample_name"]
+                r_sample_type = r["sample_type"]
+                r_confidence = r["confidence"]
                 
                 request_results.append([
-                    '<a class="sample_accession_link" target="_blank" href="https://www.ncbi.nlm.nih.gov/biosample/%s">%s</a>' % (sample_acc,sample_acc),
-                    '<a class="sample_accession_link" target="_blank" href="https://www.ncbi.nlm.nih.gov/biosample/%s">%s</a>' % (sample_acc,sample_name),
-                    '<a class="study_link" target="_blank" href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=%s">%s</a>' % (study_acc, study_title),
-                    "%s (%0.2f)" % (sample_type, confidence),
-                    attrs_elem
+                    '<a class="sample_accession_link" target="_blank" href="https://www.ncbi.nlm.nih.gov/biosample/%s">%s</a>' % (r_sample_acc,r_sample_acc),
+                    '<a class="sample_accession_link" target="_blank" href="https://www.ncbi.nlm.nih.gov/biosample/%s">%s</a>' % (r_sample_acc,r_sample_name),
+                    '<a class="study_link" target="_blank" href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=%s">%s</a>' % (r_study_acc, r_study_title),
+                    '<div class="sample_type_table_entry">%s (%0.2f)</div>' % (r_sample_type, r_confidence),
+                    r_terms_elem,
+                    r_attrs_elem
                 ])
             print "Finished preparing results."
 
-        return json.dumps(request_results)
+        print "Returning %d results" % len(request_results)
+
+        return json.dumps({"error_message":error_message, "search_results":request_results})
 
 def get_searched_term_ids(usr_in):
     term_names_db = web.database(dbn='sqlite', db='static/term_names.sqlite')

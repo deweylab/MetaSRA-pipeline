@@ -6,6 +6,8 @@ QUERY_METASRA_NO_SAMPLE_TYPE = """
     study_accession, 
     study_title, 
     sample_attributes_html, 
+    sample_terms_html,
+    sample_terms_csv,
     sample_type,
     confidence 
     FROM 
@@ -22,7 +24,9 @@ QUERY_METASRA_YES_SAMPLE_TYPE = """
     sample_name, 
     study_accession, 
     study_title, 
-    sample_attributes_html, 
+    sample_attributes_html,
+    sample_terms_html,
+    sample_terms_csv, 
     sample_type,
     confidence 
     FROM 

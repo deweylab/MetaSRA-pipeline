@@ -1,0 +1,3974 @@
+[
+    {
+        "attributes": {
+            "source_name": "vastus lateralis muscle_female",
+            "gender": "female",
+            "age": "48",
+            "bmi": "24",
+            "tissue": "vastus lateralis muscle",
+            "ID": "P352_141"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS779971"
+    },
+    {
+        "attributes": {
+            "gender": "female",
+            "age": "7 Year old",
+            "source_name": "Lymphoblastoid",
+            "batch": "1L",
+            "condition": "Disomic"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1371609"
+    },
+    {
+        "attributes": {
+            "source_name": "Day 3",
+            "cell type": "iPS derived endothelial cells from CD",
+            "condition": "3D culture of endothelial cells in 50% MMP degradable PEG-NB hydrogel, day3",
+            "passage": "3"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1325220"
+    },
+    {
+        "attributes": {
+            "age": "25",
+            "isolate": "Sertoli_cells_replicate_1",
+            "sex": "male",
+            "tissue": "testis",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Department of Urology, Ren Ji Hospital, School of Medicine, Shanghai Jiao Tong University, 1630 Dongfang Road,"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1443228"
+    },
+    {
+        "attributes": {
+            "cell-type": "Monocyte-derived dendritic cells",
+            "source_name": "Dendritic cells",
+            "condition": "Non-infected"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS798313"
+    },
+    {
+        "attributes": {
+            "stably transfected with": "miR-26a with specific sponge vector",
+            "cell line": "MDA-MB-231",
+            "source_name": "MDA-MB-231_sponge-miR-26a",
+            "cell type": "mesenchymal-like breast cancer cells",
+            "genotype/variation": "reduced miR-26a activity"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS387557"
+    },
+    {
+        "attributes": {
+            "tissue": "Human ovarian PDX tumor",
+            "source_name": "Treated Patient-Derived Xenograft (PDX)"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS639799"
+    },
+    {
+        "attributes": {
+            "rep": "1",
+            "cell line": "MDA-parental",
+            "source_name": "MDA-parental",
+            "overexpression": "control",
+            "fraction": "RPF"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1267343"
+    },
+    {
+        "attributes": {
+            "source_name": "Peripheral blood",
+            "bacterial community type": "Gardnerella dominant",
+            "cell type": "Antigen presenting cells",
+            "collection site and cell type": "PBMC APC"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS926489"
+    },
+    {
+        "attributes": {
+            "drug treatment": "vemurafenib_10 doses_75mg/kg",
+            "origin": "xenograft tumours",
+            "cell line": "A375R",
+            "source_name": "melanoma",
+            "cell type": "melanoma cell line"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS810673"
+    },
+    {
+        "attributes": {
+            "vec factor": "No",
+            "4oht factor": "No",
+            "source_name": "IMR90 cells",
+            "n11cd factor": "Yes",
+            "sample group": "N1ICD"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1045747"
+    },
+    {
+        "attributes": {
+            "source_name": "HUVEC",
+            "cell type": "HUVEC",
+            "treatment": "Angiopoietin2 in the presence of Angiopoietin2 Blocking Antibody",
+            "passage": "Passage 5"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1277865"
+    },
+    {
+        "attributes": {
+            "age": "derived from wild-type (WT) T47D cells",
+            "isolate": "T47D Clone biological replicate 1; derived from wild-type (WT) T47D cells",
+            "sex": "female",
+            "health_state": "breast cancer",
+            "tissue": "breast",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Dr. Gurmit Singh, McMaster University, 1280 Main Street West, Hamilton, ON L8S 4L8 Canada",
+            "cell_line": "T47D resistant to SH-4-54",
+            "treatment": "SH-4-54 STAT3/5 inhibitor"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1565312"
+    },
+    {
+        "attributes": {
+            "strain": "H9",
+            "passages": "40-50",
+            "source_name": "ESCs",
+            "cell type": "H9 ESC"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS750182"
+    },
+    {
+        "attributes": {
+            "cell line background": "MiaPaca2",
+            "source_name": "MiaPaca2",
+            "cell type": "original Pancreatic Ductal Adenocarcinoma (PDAC) cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS804970"
+    },
+    {
+        "attributes": {
+            "modulating agent": "SR1_500nM+BIO_1\u00c2\u00b5M",
+            "source_name": "AML patient sample",
+            "tissue": "peripheral blood",
+            "exposure time": "16h"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS467702"
+    },
+    {
+        "attributes": {
+            "cell line": "GM12878",
+            "source_name": "GM12878",
+            "treatment": "eluate (m6A positive) fraction of m6A-LAIC-seq"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS850826"
+    },
+    {
+        "attributes": {
+            "tissue": "Stomach",
+            "source_name": "Stomach"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1279097"
+    },
+    {
+        "attributes": {
+            "tissue": "adipose",
+            "source_name": "Adipose, acromegaly",
+            "phenotype": "acromegaly"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS613995"
+    },
+    {
+        "attributes": {
+            "exposed to": "static (control)",
+            "cell line": "TK6",
+            "source_name": "TK6_control",
+            "cell type": "human lymphoblastoid cells",
+            "genotype/variation": "heterozygous at the thymidine kinase (TK) locus"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS846547"
+    },
+    {
+        "attributes": {
+            "sample type": "Control embryo b",
+            "source_name": "Human preimplantation embryo",
+            "cell type": "Blastocyst single cell"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1239284"
+    },
+    {
+        "attributes": {
+            "substrate stiffness": "60kPa",
+            "differentiation state": "undifferentiated",
+            "source_name": "H9 human embryonic stem cells_undifferentiated_60kPa",
+            "cell line source": "H9 human embryonic stem cells",
+            "cell type": "human embryonic stem cells"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1519639"
+    },
+    {
+        "attributes": {
+            "cell line": "HeLa",
+            "source_name": "Human HeLa cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS995449"
+    },
+    {
+        "attributes": {
+            "gender": "female",
+            "source_name": "dentate granule cells",
+            "diagnosis": "mesial temporal lobe epilepsy"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS994867"
+    },
+    {
+        "attributes": {
+            "median tin score": "60.71188767",
+            "tissue": "Bone",
+            "rin score": "2.4",
+            "tumor stage": "metastatic castration resistant",
+            "source_name": "Prostate cancer (Bone metastasis)"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS972538"
+    },
+    {
+        "attributes": {
+            "source_name": "BA9 prefrontal cortex",
+            "gender": "male",
+            "proteomics study": "yes",
+            "tissue": "brain (BA9 prefrontal cortex)",
+            "microarray study": "P_27",
+            "proteomics sv1": "-0.1683601219",
+            "proteomics sv2": "-0.1233597",
+            "proteomics sv3": "-0.482172644",
+            "age at death": "75"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS932702"
+    },
+    {
+        "attributes": {
+            "patient": "P500",
+            "age": "28",
+            "Sex": "male",
+            "prognosis": "Pouchitis",
+            "tissue": "Ileal pouch",
+            "diagnosis": "Ulcerative colitis",
+            "biopsytime": "4mo",
+            "source_name": "P500.5",
+            "ethnicity": "Caucasian"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1430544"
+    },
+    {
+        "attributes": {
+            "organoid culture": "cerebral organoids",
+            "source_name": "C12, d26",
+            "time": "26 days from the beginning of organoid culture"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1383091"
+    },
+    {
+        "attributes": {
+            "cell line": "MR49F",
+            "source_name": "Prostate Cancer Cell Line",
+            "treatment": "Vehicle"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS961602"
+    },
+    {
+        "attributes": {
+            "subject status": "healthy control",
+            "tissue": "blood",
+            "source_name": "healthy_GPI-AP+ granulocyte",
+            "cell type": "GPI-AP+ granulocyte cell"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1382497"
+    },
+    {
+        "attributes": {
+            "cell line": "BT474",
+            "source_name": "breast cancer cell line",
+            "cell type": "breast cancer cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1094700"
+    },
+    {
+        "attributes": {
+            "source_name": "Human lung cancer cell lines NCI-H1975 and HCC827",
+            "mixture cell line hcc827": "25",
+            "cell line": "Human lung cancer cell lines NCI-H1975 and HCC827",
+            "strain": "R2D",
+            "replicate": "2",
+            "mixture cell line nci-h1975": "75"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS788354"
+    },
+    {
+        "attributes": {
+            "ArrayExpress-Species": "Homo Sapien",
+            "strain": "",
+            "sample_description": "",
+            "ArrayExpress-CellType": "BPH1"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "ERS874708"
+    },
+    {
+        "attributes": {
+            "source_name": "Monocytes",
+            "cell type": "Peripheral blood monocytes",
+            "disease": "Health control"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS702342"
+    },
+    {
+        "attributes": {
+            "age": "0d",
+            "isolate": "mini-kidney, day 0, pellet 5",
+            "sex": "not applicable",
+            "tissue": "mini-kidney generated from human pluripotent stem cells",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Melissa Little, Murdoch Childrens Research Institute, Royal Children's Hospital, Flemington Road, Parkville Victoria 3052 Australia",
+            "cell_line": "C32 iPSC (Briggs et al, 2013)"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS961687"
+    },
+    {
+        "attributes": {
+            "replicate": "biological replicate #1",
+            "protocol": "AdSlit2 48h",
+            "cell collection details": "Sample from 1 individual",
+            "source_name": "human umbilical vein endothelial cells",
+            "passage": "passage 5"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS744285"
+    },
+    {
+        "attributes": {
+            "status": "ex vivo; unstimulated",
+            "sorting phenotype": "TM(CD3+CD14/CD11c-CD8-CD56/CD20/TCRgammadelta-CD27+CD45RO+CCR7-)",
+            "source_name": "LIR_01",
+            "cell type": "PBMC_TM"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1510380"
+    },
+    {
+        "attributes": {
+            "age": "36",
+            "Sample_ID": "Sample_B20_1002",
+            "isolate": "MCF10neoT is a premalignant clonal breast cancer cell line derived from a xenograft originating from normal mammary epithelial MCF10A cells that were HRAS transformed and injected into severe combined immune-deficient mice",
+            "sex": "female",
+            "tissue": "mammary gland; breast",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "The Barbara Ann Kamanos Cancer Institute",
+            "cell_line": "MCF10neoT"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1239187"
+    },
+    {
+        "attributes": {
+            "age": "72",
+            "isolate": "XP373",
+            "sample_type": "Sample6_XP373",
+            "sex": "female",
+            "tissue": "tumor thrombus",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "James Brugarolas, 2201 Inwood Road Dallas, Texas 75390-9125"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1397056"
+    },
+    {
+        "attributes": {
+            "subject group": "received combined H1/H2-histamine receptor blockade prior to exercise",
+            "time point": "immediately after exercise",
+            "source_name": "Histamine blockade subject biopsy immediately after exercise",
+            "subject id": "subject 11",
+            "tissue": "vastus lateralis muscle"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1029007"
+    },
+    {
+        "attributes": {
+            "cell line": "K562",
+            "source_name": "K562 cells",
+            "passage": "3-5"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1196887"
+    },
+    {
+        "attributes": {
+            "disease group": "Allergic rhinitis",
+            "tissue": "blood",
+            "source_name": "Blood PBMCs",
+            "cell type": "CD3+CD4+CD45RA-CCR7+CD25-CCR4+ T cells"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1163676"
+    },
+    {
+        "attributes": {
+            "source_name": "U2OS cells",
+            "cell line": "U2OS",
+            "antibody": "non"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1268421"
+    },
+    {
+        "attributes": {
+            "knockdown": "igf2bp3",
+            "source_name": "PL45 cells",
+            "cell type": "Epithelial",
+            "disease": "Pancreatic ductal adenocarcinoma"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1337443"
+    },
+    {
+        "attributes": {
+            "cell line": "SH-SY5Y",
+            "source_name": "RNA from SH-SY5Y FUS KO cells. A4 clone.",
+            "cell type": "neuroblastoma cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1230776"
+    },
+    {
+        "attributes": {
+            "rna fraction": "nuclear RNA",
+            "cell line": "HEK293",
+            "source_name": "Human Embryonic Kidney_soluble_nuclear_extract (sne)"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS861671"
+    },
+    {
+        "attributes": {
+            "cell line": "vorinostat-resistant HCT116",
+            "source_name": "colorectal carcinoma cell line",
+            "treatment": "mock DMSO",
+            "timepoint": "4hr"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS616827"
+    },
+    {
+        "attributes": {
+            "age": "not applicable",
+            "isolate": "not applicable",
+            "sex": "not applicable",
+            "RNA_analyzed_in_RACE_seq": "vault",
+            "tissue": "Human Embryonic Kidney",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Laboratory of RNA Biology and Functional Genomics PAS, Warsaw, Pawinskiego 5A, 01-106 Poland",
+            "cell_line": "HEK293",
+            "DIS3L": "WT"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1352209"
+    },
+    {
+        "attributes": {
+            "source_name": "Haploid NCAM1+ pES10-NPCs in G1 (1c)",
+            "cell line": "h-pES10",
+            "passage": "21",
+            "differentiation status": "Differentiated",
+            "cell cycle phase": "G1 (1c)",
+            "cell type": "Haploid NCAM1+ pES10-NPCs"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1015063"
+    },
+    {
+        "attributes": {
+            "age": "49",
+            "bmi": "42.4",
+            "source_name": "Liver tissue of obese patient",
+            "tissue": "Liver"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1501718"
+    },
+    {
+        "attributes": {
+            "ectopic expression construct": "murine FLAG-Bmi1 overexpression",
+            "cell line": "HeLa F-17",
+            "source_name": "SCR knockdown",
+            "cell treatment": "siRNA knockdown by nucleofection + 48hours growth"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS705766"
+    },
+    {
+        "attributes": {
+            "knockdown": "wild type",
+            "differential stage": "day 10",
+            "source_name": "embryonic stem cells",
+            "strain": "H9"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS581510"
+    },
+    {
+        "attributes": {
+            "source_name": "RNAseq_IMR-32_nELAVL_noUV",
+            "cell line": "IMR-32",
+            "treated with": "nELAVL RNAi for 96hrs",
+            "RNAi": "nELAVL",
+            "cell type": "neuroblastoma cells",
+            "sample group": "non-stressed"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1071454"
+    },
+    {
+        "attributes": {
+            "cell line": "melanoma cell line A375P",
+            "source_name": "A375p cells",
+            "agent": "SCH772984"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS920925"
+    },
+    {
+        "attributes": {
+            "tissue": "placental villus parenchyma",
+            "source_name": "placenta"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS866550"
+    },
+    {
+        "attributes": {
+            "patient number": "HPCa177N",
+            "tissue": "Prostate",
+            "source_name": "Freshly purified human benign prostatic luminal cells",
+            "cell type": "luminal epithelial cells",
+            "patient age": "74"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS877019"
+    },
+    {
+        "attributes": {
+            "age": "not collected",
+            "isolate": "SH-SY5Y",
+            "label": "contorl_1",
+            "tissue": "not collected",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "not collected",
+            "cell_line": "SH-SY5Y",
+            "sex": "not collected"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1569960"
+    },
+    {
+        "attributes": {
+            "cell line": "CRL2097",
+            "source_name": "Primary foreskin fibroblast cells",
+            "cell type": "large live"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS850614"
+    },
+    {
+        "attributes": {
+            "source_name": "induced pluripotent stem cells",
+            "cell type": "induced pluripotent stem cells",
+            "genotype/variation": "PAPD5 KD"
+        },
+        "sample_type": "induced_pluripotent_stem_cells",
+        "sample_accession": "SRS1442202"
+    },
+    {
+        "attributes": {
+            "donor id": "LH068",
+            "source_name": "Donor LH068 TMNP cells",
+            "cell type": "TMNP"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1397966"
+    },
+    {
+        "attributes": {
+            "culture condition": "3 day in vitro culture for Th0, treatment (IL27)",
+            "source_name": "human primary CD4+ T cells",
+            "genotype": "STAT1 GOF patient 2",
+            "lab data id": "797"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS836477"
+    },
+    {
+        "attributes": {
+            "leukaemic stem cells": "positive",
+            "disease": "AML",
+            "AML status": "cd34n",
+            "individual": "#230",
+            "phenotype": "CD34-CD244+CD117+",
+            "organism": "Homo sapiens",
+            "cell type": "CD34-CD244+CD117+"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "ERS482489"
+    },
+    {
+        "attributes": {
+            "knockdown": "shBRG1",
+            "cell line": "Hermes 3A",
+            "source_name": "Hermes 3A",
+            "cell type": "melanocyte"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS714471"
+    },
+    {
+        "attributes": {
+            "clone": "Control Clone 4",
+            "cell line": "HCT116",
+            "source_name": "Human colorectal cancer cell-line HCT116",
+            "time point": "RNA extracted on day A"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1055916"
+    },
+    {
+        "attributes": {
+            "source_name": "Naive CD4 T-cells",
+            "activated": "FALSE",
+            "days after activation": "0",
+            "donor id": "4659",
+            "technical batch": "1",
+            "cell type": "Naive"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1074588"
+    },
+    {
+        "attributes": {
+            "passages": "32-34",
+            "cell line": "LNCaP",
+            "source_name": "LNCaP-SiControl",
+            "cell type": "prostate cancer cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS336308"
+    },
+    {
+        "attributes": {
+            "cell line": "H7 derived",
+            "source_name": "differentiated from H7 hESCs"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1235284"
+    },
+    {
+        "attributes": {
+            "source_name": "patient tumor sample",
+            "genotype": "histone H3.3 K36M mutant",
+            "tumor type": "chondroblastoma"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1198934"
+    },
+    {
+        "attributes": {
+            "disease state": "Lyme disease",
+            "individual": "patient 01-20",
+            "source_name": "PBMCs",
+            "cell type": "PBMC",
+            "time": "acute Lyme pre-treatment (V1)"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS738759"
+    },
+    {
+        "attributes": {
+            "source_name": "Primed SSEA4+ UCLA1 hESCs",
+            "passage number": "Passage 31",
+            "library type": "Ovation RNASeq System V2"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1251693"
+    },
+    {
+        "attributes": {
+            "tissue type": "Prostate",
+            "donor": "Human (donor A)",
+            "source_name": "Tissue"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1491601"
+    },
+    {
+        "attributes": {
+            "cell line": "HCT116",
+            "source_name": "HCT116 p21-/- cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1322489"
+    },
+    {
+        "attributes": {
+            "cell_type": "monocyte",
+            "age": "1",
+            "isolate": "monoisolate",
+            "disease": "acute monocytic leukemia",
+            "sample_type": "cell culture",
+            "sex": "male",
+            "tissue": "peripheral blood",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Karolinska Institutet",
+            "cell_line": "THP-1",
+            "time_h": "12",
+            "treatment": "Control"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS985929"
+    },
+    {
+        "attributes": {
+            "cell_type": "Sarcoma",
+            "Paired frozen tumor": "M980",
+            "age": "85",
+            "isolate": "Monoisolate",
+            "disease": "Undifferentiated pleomorphic sarcoma",
+            "sample_type": "FFPE block extraction",
+            "sex": "male",
+            "RNA_seq_ID": "S962",
+            "RNA quality group": "2",
+            "tissue": "Lower limb",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "French Sarcoma Group"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS962789"
+    },
+    {
+        "attributes": {
+            "organism part": "liver",
+            "age": "adult",
+            "cell line": "primary tissue",
+            "isolate": "not applicable",
+            "disease": "healthy",
+            "sex": "male",
+            "organism": "human",
+            "cell type": "80% hepatocyte"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "ERS976348"
+    },
+    {
+        "attributes": {
+            "tissue": "Heart",
+            "source_name": "Heart (Left Ventricle)"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS979151"
+    },
+    {
+        "attributes": {
+            "drug treatment": "JQ1",
+            "duration": "3h",
+            "cell line": "SUM159R",
+            "source_name": "SUM159R"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS751145"
+    },
+    {
+        "attributes": {
+            "tissue": "coronary artery",
+            "source_name": "coronary artery",
+            "disease": "treated Kawasaki Disease"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS803341"
+    },
+    {
+        "attributes": {
+            "source_name": "Lung adenocarcinoma cells",
+            "cell type": "A549 cells",
+            "treatment": "Transient overexpression (20 nM)"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1185560"
+    },
+    {
+        "attributes": {
+            "growth condition": "mitogen-rich media (MRM)",
+            "original cell line": "H2087",
+            "source_name": "H2087, parental, MRM, 48hr",
+            "cell type": "established lung cancer cell line",
+            "growth time": "48hr"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1065129"
+    },
+    {
+        "attributes": {
+            "source_name": "cell line",
+            "cell type": "HCC",
+            "rna source": "cell line"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1308061"
+    },
+    {
+        "attributes": {
+            "sorting": "Tra-160 negative",
+            "cell line": "BJ Fibroblasts",
+            "source_name": "BJ Fibroblasts",
+            "genotype": "WT",
+            "treatment": "BJ Fibroblasts 16 days post induced OSKM viral Expression and treated with non-targeting siRNA."
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS923929"
+    },
+    {
+        "attributes": {
+            "subtypes": "II",
+            "tissue": "Soft Tissue",
+            "source_name": "Leiomyosarcoma",
+            "tissue archive method": "FFPE"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS404091"
+    },
+    {
+        "attributes": {
+            "source_name": "Flp-In T-REx 293, Rbfox2 knockout cells (clone 7)",
+            "cell type": "Human embryonic kidney",
+            "expression of rbfox1 and hnrnp m": "do not express hnRNP M and Rbfox1"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1233058"
+    },
+    {
+        "attributes": {
+            "transfection": "empty vector control",
+            "cell line": "MIHA",
+            "source_name": "Liver"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1029851"
+    },
+    {
+        "attributes": {
+            "gap_subject_id": "1092234",
+            "gap_sample_id": "1425012",
+            "analyte type": "RNA",
+            "study design": "Tumor vs. Matched-Normal",
+            "sex": "male",
+            "submitter handle": "NCI_TARGET",
+            "gap_parent_phs": "phs000218",
+            "molecular data type": "Targeted Exome (NGS)",
+            "submitted sample id": "TARGET-52-PAVVIT-01A-01R",
+            "gap_accession": "phs000470",
+            "gap_consent_code": "1",
+            "study name": "TARGET",
+            "gap_consent_short_name": "PCR",
+            "histological type": "Kidney Tumors",
+            "submitted subject id": "TARGET-52-PAVVIT",
+            "is tumor": "Yes",
+            "body site": "Primary Solid Tumor",
+            "biospecimen repository": "NCI_TARGET",
+            "biospecimen repository sample id": "TARGET-52-PAVVIT-01A-01R"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS945051"
+    },
+    {
+        "attributes": {
+            "cell line": "TOV21G",
+            "source_name": "Human Ovarian Cancer Cell Line",
+            "treatment": "Control siRNA transfection for 48 h"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS901648"
+    },
+    {
+        "attributes": {
+            "gap_subject_id": "1393926",
+            "gap_sample_id": "1842837",
+            "analyte type": "RNA",
+            "study design": "Prospective Longitudinal Cohort",
+            "submitter handle": "NCI_AntisenseGeneExpression_Cancers",
+            "submitted sample id": "MCTP_SAMPLE_149",
+            "molecular data type": "RNA Seq (NGS)",
+            "gap_accession": "phs000937",
+            "biospecimen repository sample id": "MCTP_SAMPLE_149",
+            "study name": "The Landscape of Antisense Gene Expression in Human Cancers",
+            "histological type": "lung_carcinoma",
+            "submitted subject id": "149",
+            "body site": "lung",
+            "biospecimen repository": "NCI_AntisenseGeneExpression_Cancers",
+            "is tumor": "Yes"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1332542"
+    },
+    {
+        "attributes": {
+            "source_name": "SZ_hiPSC forebrain NPCs",
+            "transduced with": "RV-miR-9",
+            "gender": "female",
+            "diagnosis": "Schizophrenia (SZ)",
+            "biomaterial_provider": "https",
+            "patient id": "SZ3",
+            "repository source fibroblast id": "GM01835",
+            "cell type": "forebrain neural progenitor cells (NPCs)"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1386460"
+    },
+    {
+        "attributes": {
+            "harvest time": "80% confluence",
+            "source_name": "human keratinocyte from donor",
+            "lentiviral transgenes": "no",
+            "culture protocols": "Human keratinocyte was cultured with DermaLife K serum-free human keratinocyte medium (Lifeline Cell Technology, LL-0007) per manufacturer\u00c2\u00a1\u00c3\u2026\u00e2\u201e\u00a2s instruction.",
+            "passage number": "passage 4",
+            "cell type": "keratinocyte"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS872367"
+    },
+    {
+        "attributes": {
+            "source_name": "SKBR3"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1397663"
+    },
+    {
+        "attributes": {
+            "gap_subject_id": "791085",
+            "gap_sample_id": "1838859",
+            "analyte type": "RNA",
+            "study design": "Case Set",
+            "sex": "female",
+            "submitter handle": "OD_HeLaCells",
+            "gap_parent_phs": "phs000640",
+            "molecular data type": "RNA Seq (NGS)",
+            "submitted sample id": "SRS1046069",
+            "gap_accession": "phs001029",
+            "gap_consent_code": "1",
+            "study name": "Full-Length Single-Cell RNA-seq Applied to HeLa S3 Cells",
+            "gap_consent_short_name": "HMB",
+            "histological type": "Cervix_carcinoma",
+            "submitted subject id": "HeLa_1",
+            "is tumor": "Yes",
+            "body site": "cervix",
+            "biospecimen repository": "OD_HeLaCells",
+            "biospecimen repository sample id": "SRS1046069"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1258720"
+    },
+    {
+        "attributes": {
+            "source_name": "T47D breast cancer cells",
+            "cell type": "T47D",
+            "treatment": "AKT inhibitor MK2206"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1409189"
+    },
+    {
+        "attributes": {
+            "source_name": "HEK",
+            "cell type": "HEK Gibco"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1534499"
+    },
+    {
+        "attributes": {
+            "source_name": "TSC2-/- cells (number 20) treated with Rapamycin, total RNA",
+            "genotype/variation": "TSC2-/-",
+            "treatment": "Rapamycin",
+            "cell line id": "20",
+            "cell type": "Embryonic stem cell-derived neurons",
+            "assayed molecule": "mRNA"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1326951"
+    },
+    {
+        "attributes": {
+            "cell line": "foreskin HDF",
+            "source_name": "Foreskin-derived fibroblasts",
+            "passage": "p2"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1268854"
+    },
+    {
+        "attributes": {
+            "cell_type": "EPITHELIAL-LIKE",
+            "age": "53",
+            "isolate": "ATCC",
+            "disease": "NORMAL",
+            "sample_type": "cell culture",
+            "sex": "female",
+            "alias": "HTERT-HME1",
+            "tissue": "BREAST",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "ATCC",
+            "cell_line": "NCI-PBCF-CRL4010",
+            "karyotype": "This is a pseudo-diploid cell line of female origin with a modal chromosome count of 46 and a low-to-moderate rate of polyploidy. However, even though the line generally has 46 chromosomes per cell, several of those 46 were derivative or marker chromosomes. There were two copies of a karyotypically normal X-chromosome present in 50-60% of the cells. Other features included a normal variation in the heterochromatic region of chromosome 1 (1qh+), a consistent derivative-10 marker chromosome (present in most cells) and 2 other markers",
+            "culture_collection": "ATCC"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1547237"
+    },
+    {
+        "attributes": {
+            "source_name": "plasmacytoid dendritic cells",
+            "stimulus": "UT",
+            "gender": "female",
+            "tissue": "blood",
+            "donor": "1",
+            "cell type": "pDCs"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1341040"
+    },
+    {
+        "attributes": {
+            "cell line": "PrEC",
+            "source_name": "normal prostate epithelial cells PrEC",
+            "tissue": "prostate"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1102095"
+    },
+    {
+        "attributes": {
+            "source_name": "Colon",
+            "tissue": "Control right colon",
+            "patient cohort": "Control"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1252116"
+    },
+    {
+        "attributes": {
+            "age": "40 years",
+            "isolate": "Lot no.",
+            "sex": "female",
+            "tissue": "Lung",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Agilent Technologies"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS931031"
+    },
+    {
+        "attributes": {
+            "cell line": "HEK293T-Rex",
+            "source_name": "HEK293T-Rex DMSO (Vh)",
+            "treatment": "DMSO",
+            "tissue": "kidney"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1572441"
+    },
+    {
+        "attributes": {
+            "anti-pd-1 response": "Progressive Disease",
+            "source_name": "tumor biopsy_Progressive Disease",
+            "anatomical location": "R neck, SC",
+            "previous mapki": "N",
+            "biopsy time": "pre-treatment",
+            "study site": "UCLA",
+            "disease status": "M1c",
+            "tissue": "Melanoma biopsies",
+            "braf": "V600E",
+            "nf1": "R2349C",
+            "gender": "female",
+            "patient id": "Pt14",
+            "vital status": "Alive",
+            "treatment": "Pembrolizumab"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1307750"
+    },
+    {
+        "attributes": {
+            "cell state": "Proliferating",
+            "cell line": "Parkin-expressing MRC5 fibroblasts",
+            "source_name": "Prolif"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1212219"
+    },
+    {
+        "attributes": {
+            "subpopulation": "CD62L+CX3CR1+",
+            "source_name": "blood",
+            "cell type": "CD8+ T cells"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS742173"
+    },
+    {
+        "attributes": {
+            "degenerate linker": "25nt",
+            "cell line": "IMR-32",
+            "source_name": "HITS-CLIP_IMR-32_UV2",
+            "cell type": "neuroblastoma cells",
+            "treatment": "UV stressed"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS520237"
+    },
+    {
+        "attributes": {
+            "sample type": "Tumor sample",
+            "tissue": "thyroid",
+            "source_name": "Thyroid",
+            "diagnosis": "papillary thyroid carcinoma"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS816270"
+    },
+    {
+        "attributes": {
+            "source_name": "human embryonic stem cells (H1)",
+            "differentiation stage": "mesoderm committed cells",
+            "cell type": "H1",
+            "differentiation time": "2 days"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS557395"
+    },
+    {
+        "attributes": {
+            "infected with": "none (control) for 2h",
+            "source_name": "RNA from OECs controls for 2h",
+            "cell type": "Olfactory ensheathing cells (OECs)"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS947723"
+    },
+    {
+        "attributes": {
+            "cell line": "H9 human embryonic stem cells (hESCs) (Day 0)",
+            "source_name": "H9 nascent 4sU-labeled 60min ribo-RNA technical replicate 1",
+            "treatment": "3 h DRB 60 min 4sU-labeling",
+            "assayed molecule": "ribo-RNA"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1080094"
+    },
+    {
+        "attributes": {
+            "age": "not applicable",
+            "isolate": "SC_F09_G_C36",
+            "sample_type": "Single cell",
+            "sex": "not determined",
+            "tissue": "RPE",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Santiago Costantino",
+            "cell_line": "ARPE-19",
+            "treatment": "Non tagged"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1272572"
+    },
+    {
+        "attributes": {
+            "source_name": "Human Lumbar spinal cord motor neurons",
+            "cell type": "Laser Capture microdissected MNs from post-mortem spinal cord"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1217205"
+    },
+    {
+        "attributes": {
+            "infection_status": "late_infection",
+            "disease_duration_days": "30",
+            "disease_stage": "late",
+            "lesion_size_mm2": "252",
+            "age": "27",
+            "isolate": "not applicable",
+            "disease": "leishmaniasis",
+            "sample_type": "biopsy",
+            "library_prep_date": "5/4/2014",
+            "tissue": "skin",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "not applicable",
+            "health_state": "infected",
+            "hpgl_id": "L6",
+            "sex": "male",
+            "treatment": "infected with Leishmania braziliensis MHOMBR75M2904 (late infection)"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1284468"
+    },
+    {
+        "attributes": {
+            "age": "53",
+            "isolate": "K562",
+            "sex": "male",
+            "tissue": "leukemia",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Giuseppe Fiume"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1585039"
+    },
+    {
+        "attributes": {
+            "cell line": "MOLM-14",
+            "source_name": "MOLM-14 cells transduced with lentivirus encoding shRNAs targeting LacZ",
+            "shRNAi": "shControl"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1419887"
+    },
+    {
+        "attributes": {
+            "cell line": "A375",
+            "source_name": "A375 cells, 25 \u00ce\u00bcM A771726",
+            "cell type": "malignant melanoma",
+            "assayed molecule": "nascent RNA"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS604063"
+    },
+    {
+        "attributes": {
+            "donor": "1",
+            "tissue": "Pancreas",
+            "source_name": "Pancreas",
+            "cell type": "beta cell",
+            "subtype": "2"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1416748"
+    },
+    {
+        "attributes": {
+            "cell line": "MCF10A",
+            "source_name": "MCF10A Cell Line",
+            "cell type": "Non-tumorigenic immortalized breast epithelia line",
+            "treatment": "infection with adenovirus with MEK"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS666444"
+    },
+    {
+        "attributes": {
+            "source_name": "pancreatic adenocarcinoma cancer tissue",
+            "patient gender": "male",
+            "age": "51",
+            "diabetes status": "no",
+            "patient race": "white",
+            "patient survival status": "Dead"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1366088"
+    },
+    {
+        "attributes": {
+            "gender": "male",
+            "age": "66",
+            "tissue": "Tumor",
+            "source_name": "Nasopharyngeal",
+            "who class": "III"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS935399"
+    },
+    {
+        "attributes": {
+            "source_name": "Human aortic vascular smooth muscle cells",
+            "cell type": "aortic vascular smooth muscle cells",
+            "treatment": "Cytosolic Hsp60 normal and TNF-alpha positive"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS828620"
+    },
+    {
+        "attributes": {
+            "cell_type": "Human",
+            "age": "missing",
+            "biomaterial_provider": "ATCC",
+            "isolate": "Cell line",
+            "disease": "normal cell line",
+            "sample_type": "cell line",
+            "sex": "missing",
+            "tissue": "kidney",
+            "BioSampleModel": "Human",
+            "cell_subtype": "empty stable",
+            "cell_line": "HK2",
+            "treatment": "HK2 Stable empty vector (pcDNA3.1) experiment 1 run 2"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1255991"
+    },
+    {
+        "attributes": {
+            "gap_subject_id": "1329202",
+            "gap_sample_id": "1739138",
+            "analyte type": "DNA; RNA",
+            "study design": "Case Set",
+            "submitter handle": "NCI_ProstateCancer_MetastaticCastrationResistant",
+            "sex": "male",
+            "molecular data type": "Whole Exome (NGS)",
+            "submitted sample id": "01115244-TA4",
+            "gap_accession": "phs000915",
+            "gap_consent_code": "1",
+            "study name": "Integrative Clinical Sequencing Analysis of Metastatic Castration Resistant Prostate Cancer Reveals a High Frequency of Clinical Actionability",
+            "gap_consent_short_name": "DS-PC-MDS",
+            "submitted subject id": "01115244",
+            "is tumor": "Yes",
+            "biospecimen repository": "NCI_ProstateCancer_MetastaticCastrationResistant",
+            "biospecimen repository sample id": "01115244-TA4"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1068593"
+    },
+    {
+        "attributes": {
+            "age": "not determined",
+            "isolate": "human retinal microvascular endothelial cells",
+            "sex": "not determined",
+            "tissue": "retinal endothelial cell",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Cell Systems"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS835369"
+    },
+    {
+        "attributes": {
+            "age": "not applicable",
+            "isolate": "not applicable",
+            "sex": "not applicable",
+            "tissue": "lung 17",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "not applicable"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1467761"
+    },
+    {
+        "attributes": {
+            "infection status": "mock infected",
+            "source_name": "human Neural Progenitor cells",
+            "cell type": "Neural Progenitor cells"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1312740"
+    },
+    {
+        "attributes": {
+            "source_name": "IMR90 human fibrobasts",
+            "cell condition": "senescent",
+            "cell line": "IMR90",
+            "viral transduction": "cotransduced with pWZL HRASV12 and shRen",
+            "treatment": "100nM JQ1 48h",
+            "cell type": "fetal lung fibroblasts"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1130917"
+    },
+    {
+        "attributes": {
+            "source_name": "HPV+ RNA-Seq Control",
+            "hpv status": "HPV+",
+            "dek status": "Control",
+            "diagnosis": "Head and Neck Squamous Cell Carcinoma"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS977341"
+    },
+    {
+        "attributes": {
+            "perfusion group": "high",
+            "cancer type": "Non-small cell lung cancer (NSCLC)",
+            "source_name": "Lung tumor"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1140220"
+    },
+    {
+        "attributes": {
+            "cell_type": "epithelial",
+            "tissue": "cervix",
+            "age": "31",
+            "isolate": "shSmad3 replicate 2",
+            "disease": "adenocarcinoma",
+            "sample_type": "RNA",
+            "sex": "female",
+            "race": "African-American",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "n/a",
+            "cell_line": "Hela",
+            "ethnicity": "black",
+            "treatment": "untreated, replicate 2"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1013490"
+    },
+    {
+        "attributes": {
+            "gender": "male",
+            "cell line": "HepG2",
+            "source_name": "HepG2 cell line",
+            "tissue": "hepatocellular carcinoma"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1248922"
+    },
+    {
+        "attributes": {
+            "sample type": "primary human leukemia cell from cryopreserved sample",
+            "donorid": "SU654",
+            "cell type": "acute myeloid leukemia, pre-leukemic hematopoietic stem cell",
+            "source_name": "pHSC"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1126159"
+    },
+    {
+        "attributes": {
+            "age": "adult",
+            "isolate": "mixture",
+            "sex": "pooled male and female",
+            "tissue": "kidney",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Clontech"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS897369"
+    },
+    {
+        "attributes": {
+            "source_name": "IMR90 cells",
+            "sample group": "Control"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1045774"
+    },
+    {
+        "attributes": {
+            "source_name": "hES/hiPS-derived neuron",
+            "cell type": "hES/hiPS-derived neuron"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1274995"
+    },
+    {
+        "attributes": {
+            "individual": "patient 5 (low-grade glioma)",
+            "source_name": "patient 5 (low-grade glioma), RNA-Seq of brain tumor tissue",
+            "tissue": "brain"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1346308"
+    },
+    {
+        "attributes": {
+            "knockdown": "Arg",
+            "cell line": "1833",
+            "metastasis": "Bone metastasis",
+            "source_name": "breast cancer cells",
+            "subtype": "Triple negative"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS943500"
+    },
+    {
+        "attributes": {
+            "tissue type": "Amnion",
+            "clinical information": "Control",
+            "source_name": "Amnion",
+            "gender": "male"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1369016"
+    },
+    {
+        "attributes": {
+            "source_name": "Human Intestinal Epithelial Cells (HIECs)",
+            "time point": "72H",
+            "replicate": "1",
+            "treatment": "Mock"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1375926"
+    },
+    {
+        "attributes": {
+            "cell_type": "Burkitt's lymphoma",
+            "age": "not applicable",
+            "isolate": "not applicable",
+            "sex": "not applicable",
+            "virus": "Epstein-Barr virus, type 2",
+            "tissue": "cell line, derived from Burkitt's lymphoma",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "American Type Culture Collection",
+            "cell_line": "Jijoye"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1159187"
+    },
+    {
+        "attributes": {
+            "time point": "20 days",
+            "source_name": "H7",
+            "cell type": "H7 hESC cell line"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS735187"
+    },
+    {
+        "attributes": {
+            "transfection": "non-targeting (NT) siRNA",
+            "time point": "48 hours",
+            "source_name": "H9 ESC"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS951799"
+    },
+    {
+        "attributes": {
+            "age": "three monthes",
+            "isolate": "hela cells",
+            "sex": "not applicable",
+            "tissue": "Vagina",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "hust"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS961692"
+    },
+    {
+        "attributes": {
+            "cell line": "H1",
+            "source_name": "H1 human embryonic stem cells",
+            "treatment": "ETOH"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS862736"
+    },
+    {
+        "attributes": {
+            "disease status": "small cell lung cancer",
+            "source_name": "tumor"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS673336"
+    },
+    {
+        "attributes": {
+            "cell_type": "Myotubes Upon Induction of Differentiation",
+            "tissue": "Muscle tissue",
+            "age": "2",
+            "dev_stage": "infant",
+            "isolate": "Cytosolic_RNA",
+            "sex": "male",
+            "race": "Caucasian",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Telethon BioBank, C. Besta Institute, Milan, Italy",
+            "health_state": "Healthy",
+            "internal_sample_id": "16"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS847012"
+    },
+    {
+        "attributes": {
+            "source_name": "mixture of several clones",
+            "patient": "csc3",
+            "cell type": "mixture of several clones"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS418734"
+    },
+    {
+        "attributes": {
+            "gap_subject_id": "1362400",
+            "gap_sample_id": "1786720",
+            "analyte type": "DNA; RNA",
+            "study design": "Case Set",
+            "submitter handle": "NHGRI_Melanoma_Garraway",
+            "sex": "male",
+            "molecular data type": "Whole Exome (NGS)",
+            "submitted sample id": "IPI_punch_tumor_Pat38",
+            "gap_accession": "phs000452",
+            "gap_consent_code": "2",
+            "study name": "Melanoma Genome Sequencing Project",
+            "gap_consent_short_name": "DS-M",
+            "submitted subject id": "IPI_Pat38",
+            "is tumor": "Yes",
+            "biospecimen repository": "NHGRI_Melanoma_Garraway",
+            "biospecimen repository sample id": "IPI_punch_tumor_Pat38"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1116141"
+    },
+    {
+        "attributes": {
+            "cell_line": "A2780",
+            "organism": "Homo sapiens",
+            "cell_type": "ovarian cancer cell lines",
+            "isolate": "not applicable"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "ERS1157796"
+    },
+    {
+        "attributes": {
+            "source_name": "total RNA extracted from HFF cells",
+            "age category": "-",
+            "population doublings": "26",
+            "cell type": "HFF"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1125562"
+    },
+    {
+        "attributes": {
+            "sample treatment": "PUM2 plasmid",
+            "cell line": "U2OS",
+            "source_name": "U2OS cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1369319"
+    },
+    {
+        "attributes": {
+            "specimen_voucher": "Samsung Medical Center",
+            "sample_type": "tissue sample",
+            "disease": "gastrointestinal stromal tumor_2",
+            "geo_loc_name": "South Korea",
+            "body_site": "stomach_2"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS598566"
+    },
+    {
+        "attributes": {
+            "cell line": "Human osteosarcoma U2OS cells",
+            "source_name": "shCac_C, repl 2",
+            "treatment": "shRNA transfection",
+            "time": "48h"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1474683"
+    },
+    {
+        "attributes": {
+            "cell_line": "HeLa"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "ERS1072416"
+    },
+    {
+        "attributes": {
+            "treatment length": "6 hours",
+            "age": "62 years old",
+            "isolate": "pancreatic adenocarcinoma cells",
+            "disease": "pancreatic cancer",
+            "sample_type": "replicate 1",
+            "sex": "female",
+            "tissue": "pancreatic adenocarcinoma cells",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "ATCC",
+            "treatment": "DMSO"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS918158"
+    },
+    {
+        "attributes": {
+            "source_name": "Fuji Xenograft model",
+            "model": "Fuji Xenograft model",
+            "cell or tumor type": "synovial sarcoma",
+            "xenograft or pdx": "xenograft"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1510256"
+    },
+    {
+        "attributes": {
+            "source_name": "human embryonic stem cells",
+            "cell type": "cerebral organoid"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1123282"
+    },
+    {
+        "attributes": {
+            "passages": "14-17",
+            "source_name": "Breast cancer cells",
+            "cell line": "MCF7",
+            "treatment": "E2",
+            "time": "80 min",
+            "sample type": "Pleural effusion"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS732537"
+    },
+    {
+        "attributes": {
+            "cell line": "A1847",
+            "source_name": "Ovarian Cancer Cell Line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1489881"
+    },
+    {
+        "attributes": {
+            "gender": "female",
+            "cell line": "MCF-7",
+            "source_name": "RNA-seq in MCF7 cells with shRNA-mediated knockdown of Luciferase as a control",
+            "cell type": "human breast cancer cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1434789"
+    },
+    {
+        "attributes": {
+            "cell line": "HeLa",
+            "source_name": "HeLa S3",
+            "treatment": "MeOH"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1038533"
+    },
+    {
+        "attributes": {
+            "source_name": "Peripheral Blood",
+            "hiv status": "HIV+",
+            "individual": "0450-318",
+            "treatment": "Untreated",
+            "days post hiv-infection": "1",
+            "cell type": "Innate Lymphoid Cell 3"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1256328"
+    },
+    {
+        "attributes": {
+            "medication": "none",
+            "source_name": "colorectal biopsy, sigma",
+            "tissue": "benign"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS823569"
+    },
+    {
+        "attributes": {
+            "transduction": "Not transduced",
+            "cell line": "Kasumi-1",
+            "source_name": "leukemic cell line derived from peripheral blood (contains t(8;21) chromosome translocation)",
+            "tissue": "peripheral blood derived"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1433174"
+    },
+    {
+        "attributes": {
+            "gender": "female",
+            "source_name": "squamous cell carcinoma",
+            "tumor stage": "IVa",
+            "hpv-status": "Neg"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1159056"
+    },
+    {
+        "attributes": {
+            "cell line": "BT474",
+            "source_name": "BT474 cells",
+            "tissue of origin": "breast",
+            "number of cells": "2 million"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1587383"
+    },
+    {
+        "attributes": {
+            "patient": "Patient 10",
+            "diagnosis": "normal",
+            "tissue": "Colonic mucosa",
+            "source_name": "Colonic mucosa",
+            "sample type": "Whole tissue",
+            "patient treatment status": "Treatment-na\u00c3\u00afve"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1135800"
+    },
+    {
+        "attributes": {
+            "age": "not applicable",
+            "isolate": "not applicable",
+            "sex": "not applicable",
+            "tissue": "not applicable",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "not applicable",
+            "cell_line": "SMMC-7721-2"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1439282"
+    },
+    {
+        "attributes": {
+            "source_name": "HeLa cells",
+            "treatment": "Chemical treatment",
+            "compound": "5,6-Dichloro-1-\u00c3\u0178-D-ribofuranosylbenzimidazole"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS895512"
+    },
+    {
+        "attributes": {
+            "cell_type": "breast cancer",
+            "disease_stage": "metastatic",
+            "age": "68-year-old",
+            "biomaterial_provider": "Erik W Thompson, Institute of Health and Biomedical Innovation and School of Biomedical Sciences, Queensland University of Technology, 60 Musk Avenue, Kelvin Grove, QLD 4059, Australia",
+            "isolate": "not applicable",
+            "disease": "adenocarcinoma",
+            "sample_type": "cell culture",
+            "sex": "female",
+            "tissue": "mammary gland/breast cancer; derived from metastatic site",
+            "replicate": "biological replicate 3",
+            "BioSampleModel": "Human",
+            "cell_subtype": "parental",
+            "cell_line": "PMC42-ET",
+            "ethnicity": "Caucasian",
+            "treatment": "control"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1463660"
+    },
+    {
+        "attributes": {
+            "source_name": "brain",
+            "tumor type": "glioblastoma (Grade IV)"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1274004"
+    },
+    {
+        "attributes": {
+            "age": "20",
+            "isolate": "Term placenta",
+            "sex": "female",
+            "tissue": "Term placenta",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Carmen Marsit"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1256249"
+    },
+    {
+        "attributes": {
+            "knockdown": "TAF15",
+            "source_name": "TAF15 KD 1hr",
+            "cell type": "NPC",
+            "agent": "Actinomycin D",
+            "time": "1hr"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1280223"
+    },
+    {
+        "attributes": {
+            "age": "0",
+            "isolate": "ES04 embryonic stem cell-derived mesenchymal stem cells EXP2",
+            "sex": "male",
+            "tissue": "embryo",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "WiCell"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS868146"
+    },
+    {
+        "attributes": {
+            "tissue subtype": "dorsolateral prefrontal cortex",
+            "disease status": "control",
+            "tissue": "brain",
+            "source_name": "control_brain"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1071414"
+    },
+    {
+        "attributes": {
+            "differentiation day": "day 12",
+            "source_name": "embryonic stem cells"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS875468"
+    },
+    {
+        "attributes": {
+            "source_name": "Lymphoblastoids",
+            "cell type": "Lymphocytes",
+            "relationship": "Affected nephew",
+            "genotype": "L254F OGT"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1127316"
+    },
+    {
+        "attributes": {
+            "cell_type": "esophageal cancer",
+            "age": "not collected",
+            "isolate": "The transcriptomes were performed with PLCE1 inactivated human esophageal cancer cells by means of CRISPR/Cas11 technology",
+            "sex": "not collected",
+            "tissue": "cell line",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Xinxiang Medica University Lab, Laboratory of Molecular Oncology",
+            "cell_line": "EC9706"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1296106"
+    },
+    {
+        "attributes": {
+            "subject is affected": "Yes",
+            "gap_subject_id": "1314188",
+            "gap_sample_id": "1722805",
+            "analyte type": "RNA",
+            "study design": "Prospective Longitudinal Cohort",
+            "study disease": "Adenocarcinoma",
+            "submitter handle": "NHGRI_NeuroendocrineProstateCancer",
+            "sex": "male",
+            "molecular data type": "RNA Seq (NGS)",
+            "submitted sample id": "WCMC119_1_C_RNA_Tumor",
+            "gap_accession": "phs000909",
+            "gap_consent_code": "1",
+            "study name": "Neuroendocrine Prostate Cancer (Trento/Cornell/Broad 2015)",
+            "gap_consent_short_name": "GRU",
+            "histological type": "Tissue",
+            "submitted subject id": "WCMC119",
+            "is tumor": "Yes",
+            "body site": "Lymph node",
+            "biospecimen repository": "NHGRI_NeuroendocrineProstateCancer",
+            "biospecimen repository sample id": "WCMC119_1_C_RNA_Tumor"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1277080"
+    },
+    {
+        "attributes": {
+            "source_name": "Monocyte",
+            "batch": "B",
+            "condition": "Trisomic"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1569751"
+    },
+    {
+        "attributes": {
+            "rna fraction": "polyA+ RNA",
+            "polarizing conditions": "TH1",
+            "source_name": "PBMC",
+            "cell type": "peripheral blood mononuclear"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS856575"
+    },
+    {
+        "attributes": {
+            "knockdown": "siCTRL",
+            "source_name": "umbilical cord wharton's jelly",
+            "cell type": "Mesenchymal stem cells",
+            "agasga": "AGA"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1265005"
+    },
+    {
+        "attributes": {
+            "source_name": "Primary Patient Derived Tumor Model",
+            "treatment 2": "DMSO",
+            "treatment 1": "Nontargeting shRNA",
+            "tumor model": "4121"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1368089"
+    },
+    {
+        "attributes": {
+            "tissue subtype": "dorsolateral prefrontal cortex",
+            "disease status": "advanced Alzheimer's Disease",
+            "tissue": "brain",
+            "source_name": "advanced Alzheimer's Disease_brain"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1071437"
+    },
+    {
+        "attributes": {
+            "disease_stage": "IIIA",
+            "age": "75",
+            "isolate": "LCa8",
+            "disease": "large cell carcinoma",
+            "sample_type": "frozen",
+            "sex": "male",
+            "health_state": "Alive",
+            "tissue": "lung",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "CHU albert michallon, grenoble, France",
+            "cell_line": "no",
+            "treatment": "naive"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS950082"
+    },
+    {
+        "attributes": {
+            "source": "Stanford Surgical",
+            "tissue": "soft tissue sarcoma",
+            "source_name": "GIST WT",
+            "tissue subtype": "GIST WT",
+            "tissue archive method": "FFPE"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS553943"
+    },
+    {
+        "attributes": {
+            "cell line": "U1810",
+            "source_name": "U1810 NSCLC cell line",
+            "cell type": "NSCLC",
+            "treatment": "non-targeting control siRNA"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1436242"
+    },
+    {
+        "attributes": {
+            "source_name": "PBMC",
+            "cells cultured in vitro with": "IL12",
+            "cell type": "activated naive CD4 T cells"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1308864"
+    },
+    {
+        "attributes": {
+            "cell line": "MCF-7",
+            "organism": "Homo sapiens"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "ERS802779"
+    },
+    {
+        "attributes": {
+            "molecule subtype": "ribosomal RNA depleted whole cell RNA",
+            "source_name": "siScr",
+            "cell type": "HeLa-LTR-Luciferase cells",
+            "treated with": "si RNAs against control (scrambled)"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS687448"
+    },
+    {
+        "attributes": {
+            "sample type": "double thymidine block at 15h",
+            "cell line": "HeLa cells",
+            "cell cycle": "G1-S",
+            "source_name": "G1-S"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1442541"
+    },
+    {
+        "attributes": {
+            "tissue": "skin biopsies",
+            "passages": "passages 4-11",
+            "source_name": "fibroblast",
+            "genotype": "AGS",
+            "agent": "hydrogen peroxide (400 \u00c2\u00b5M)"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS655632"
+    },
+    {
+        "attributes": {
+            "sample type": "tumour (T-cell large granular lymphocytic leukemia)",
+            "source_name": "Peripheral blood mononuclear cells",
+            "cell type": "sorted CD8 pos CD57 pos T cells"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS957774"
+    },
+    {
+        "attributes": {
+            "source_name": "HEK 293 T-Rex_rna_DMSO",
+            "cell line": "HEK 293 T-REx cell",
+            "molecule": "total RNA",
+            "treatment": "DMSO"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS969984"
+    },
+    {
+        "attributes": {
+            "biomaterial provider": "Donor center, Roswell Park Cancer Institute",
+            "age": "unknown",
+            "isolate": "Unknown platelet donor",
+            "sex": "not determined",
+            "tissue": "Monocyte-enriched peripheral blood mononuclear cells isolated from peripheral blood in leukoreduction system chambers after thrombocytapheresis",
+            "BioSampleModel": "Human"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS586705"
+    },
+    {
+        "attributes": {
+            "source_name": "SCNT derived human ES cells",
+            "cell/tissue type": "SCNT assisted by KDM4A derived human ES cells"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1086589"
+    },
+    {
+        "attributes": {
+            "karyotype": "Parthenogenetic",
+            "source_name": "pES2 Human embryonic stem cells",
+            "differentiation status": "Undifferentiated"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1435299"
+    },
+    {
+        "attributes": {
+            "passages": "15-18 Passages",
+            "source_name": "HEK293T Cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1386202"
+    },
+    {
+        "attributes": {
+            "cell line": "acute myeloid leukemia cell line KG1",
+            "source_name": "KG1 cells",
+            "treatment": "DMSO (0.1%, 12hrs)"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1159020"
+    },
+    {
+        "attributes": {
+            "cell line": "MCF7",
+            "source_name": "mammary gland/breast"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS517322"
+    },
+    {
+        "attributes": {
+            "source_name": "human HEK293T cell",
+            "cell type": "human HEK293T cell",
+            "passage": "none"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS951235"
+    },
+    {
+        "attributes": {
+            "cell line": "MCF7",
+            "source_name": "breast tumor_MCF7_RA_4h",
+            "cell type": "epithelial",
+            "treatment": "retinoic acid 10-7M 4hours"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1465406"
+    },
+    {
+        "attributes": {
+            "cell line": "HEK293FT",
+            "source_name": "Wild Type, HEK293FT",
+            "genotype/variation": "Transfected with wild type FOXE3 expression vector"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1229020"
+    },
+    {
+        "attributes": {
+            "source_name": "HEK-293FT",
+            "cell line": "HEK-293FT",
+            "grna": "TOP1"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS872354"
+    },
+    {
+        "attributes": {
+            "lentiviral shrna": "scrambled control",
+            "cell line": "BPH-1",
+            "source_name": "prostate",
+            "cell type": "BPH patient derived prostate epithelial cell"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1418639"
+    },
+    {
+        "attributes": {
+            "rep": "2",
+            "cell line": "MDA-parental",
+            "source_name": "MDA-parental",
+            "fraction": "RPF"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1267363"
+    },
+    {
+        "attributes": {
+            "tissue": "FFPE",
+            "source_name": "Primary colorectal carcinoma"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1089306"
+    },
+    {
+        "attributes": {
+            "tissue": "Normal adjacent lung tissue",
+            "source_name": "Normal adjacent lung tissue_Epi",
+            "cell type": "epithelial cells (Epi)"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS935161"
+    },
+    {
+        "attributes": {
+            "source_name": "Human articular cartilage",
+            "treatment pressure": "yes",
+            "gender": "male",
+            "age": "16 years-old",
+            "treatment perfusion": "yes",
+            "cell type": "chondrocyte"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS945634"
+    },
+    {
+        "attributes": {
+            "cell line": "RMS13",
+            "source_name": "Rhabdomyosarcoma Cell Line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1405822"
+    },
+    {
+        "attributes": {
+            "passage": "P68",
+            "cell line": "H1",
+            "source_name": "human embryonic stem cells",
+            "cell type": "hESC cell line",
+            "genotype/variation": "none"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS875249"
+    },
+    {
+        "attributes": {
+            "human biological replicate": "1",
+            "source_name": "Cord blood CD4+ cells 0.5h after activation",
+            "cell type": "CD4+",
+            "source": "Cord blood"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS501339"
+    },
+    {
+        "attributes": {
+            "cell line": "A375",
+            "source_name": "A375 cell line",
+            "treatment": "Vemurafenib+JQ1"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1520059"
+    },
+    {
+        "attributes": {
+            "time": "18 h",
+            "source_name": "Gastric epithelial cells",
+            "cell type": "primary short-term culture",
+            "treatment": "H. pylori infection",
+            "passage": "4"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS737370"
+    },
+    {
+        "attributes": {
+            "tumor stage": "21 days old xenografts",
+            "xenografts host mice": "7-wks old male Balb/C nude mice",
+            "source_name": "V0 (control) - run2",
+            "cell type": "U87-MG glioblastoma human cells",
+            "transfected with": "empty vector (V0)"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS686731"
+    },
+    {
+        "attributes": {
+            "source_name": "MCF7",
+            "cell line": "MCF7",
+            "Sex": "female",
+            "treatment time": "4h",
+            "tissue": "Breast",
+            "treatment": "10 nM E2",
+            "biomaterial_provider": "ATCC",
+            "inhibitor": "1 uM AZD6422"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1096888"
+    },
+    {
+        "attributes": {
+            "gender": "male",
+            "repository source fibroblast id": "BJ",
+            "source_name": "hiPSC forebrain NPCs",
+            "diagnosis": "Control"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS775164"
+    },
+    {
+        "attributes": {
+            "source_name": "human myoblasts",
+            "cell line": "9208",
+            "Sex": "male",
+            "disease status": "WT",
+            "biomaterial_provider": "Telethon Biobank",
+            "cell type": "myoblast"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS975953"
+    },
+    {
+        "attributes": {
+            "transfection": "pcDNA3.1-ZEB1",
+            "cell line": "HCC827",
+            "source_name": "human lung adenocarcinoma cell",
+            "tissue": "in vitro cultured lung cancer cell line",
+            "passage": "29"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1423580"
+    },
+    {
+        "attributes": {
+            "cell line": "tracheal basal cells",
+            "source_name": "Lonza cells",
+            "infection": "uninfected without treatment"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS693310"
+    },
+    {
+        "attributes": {
+            "cell line": "Jurkat",
+            "source_name": "Jurkat cells expressing a Dox-inducible shRNA against UTX with Dox addition",
+            "treatment": "Dox-induced UTX-KD"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1044100"
+    },
+    {
+        "attributes": {
+            "tissue": "beta cells",
+            "source_name": "fetal beta cells",
+            "developmental stage": "fetal (12-18 gestational weeks)"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS892644"
+    },
+    {
+        "attributes": {
+            "stimulation": "media alone",
+            "stimulation length": "2 hours",
+            "source_name": "Donor 5, Media, 2hrs",
+            "cell type": "monocyte-dervied macrophages"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1482701"
+    },
+    {
+        "attributes": {
+            "disease/genotype": "wildtype",
+            "source cell type": "patient-derived iPSCs",
+            "source_name": "WT-derived osteoblast",
+            "cell subtype": "osteoblast",
+            "time point": "day 17 of osteoblast differentiation treatment"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS623399"
+    },
+    {
+        "attributes": {
+            "source_name": "HeLa cells",
+            "sirna transfection": "siAcinus (CUGCAGAGCAUGAAGUAAAUU)"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1438168"
+    },
+    {
+        "attributes": {
+            "cell line": "HeLa",
+            "source_name": "HeLa cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1180062"
+    },
+    {
+        "attributes": {
+            "shRNA": "FUS",
+            "source_name": "FUS Knockdown",
+            "cell type": "Motor Neuron",
+            "genotype/variation": "FUS Knockdown"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1280398"
+    },
+    {
+        "attributes": {
+            "cell line": "HEK293T",
+            "source_name": "cell_culture"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1458386"
+    },
+    {
+        "attributes": {
+            "source_name": "ZR-75-30 cell",
+            "cell line": "ZR-75-30",
+            "antibody": "none",
+            "genotype": "parental"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1239520"
+    },
+    {
+        "attributes": {
+            "culture conditions": "xenograft",
+            "cell line": "HT-29",
+            "source_name": "HT-29_xenograft",
+            "cell type": "colorectal cell line"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS620361"
+    },
+    {
+        "attributes": {
+            "source_name": "HUVEC",
+            "cell type": "Human Umbilical Vein Cell",
+            "cell subtype": "control HUVEC",
+            "passage": "p4-7"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS911495"
+    },
+    {
+        "attributes": {
+            "ssea4": "NA",
+            "tra160": "NA",
+            "gfp": "+",
+            "cell line": "Detroit 551",
+            "cd13": "+",
+            "source_name": "Detroit 551"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS911033"
+    },
+    {
+        "attributes": {
+            "cell line": "A549",
+            "source_name": "adenocarcinomic human alveolar basal epithelial cells",
+            "cell type": "adenocarcinomic human alveolar basal epithelial",
+            "time point": "36h"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS956644"
+    },
+    {
+        "attributes": {
+            "cell line": "LNT-229",
+            "source_name": "Glioblastoma cultured cells",
+            "treatment": "Not treated",
+            "tissue": "Brain tumor cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1384181"
+    },
+    {
+        "attributes": {
+            "tissue": "peripheral blood",
+            "source_name": "healthy adult",
+            "cell type": "Granulocytes",
+            "sorted by surface marker": "CD33+ within granulocyte gate"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS497486"
+    },
+    {
+        "attributes": {
+            "infection reagent": "Herpes simplex virus 1, strain 17",
+            "time post infection": "60 min 500\u00c2\u00b5M 4sU at 6-7 h p.i.",
+            "source_name": "4sU-RNA",
+            "cell type": "fibroblasts",
+            "tissue": "foreskin"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS665450"
+    },
+    {
+        "attributes": {
+            "cell line": "MCF7",
+            "source_name": "MCF7_E2+R5020_3hr",
+            "cell type": "ER+ breast cancer cell line",
+            "treated with": "E2+R5020_3hr"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS924602"
+    },
+    {
+        "attributes": {
+            "source_name": "Neural progenitor cells_ELAVL2",
+            "tissue source": "mid-gestation fetal brain",
+            "genotype/variation": "ELAVL2 knockdown",
+            "transfected with": "shRNA targeting ELAVL2",
+            "time point": "differentiated into neurons for 4 weeks and then harvested",
+            "cell type": "primary human neural progenitor cells"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS942052"
+    },
+    {
+        "attributes": {
+            "infected with": "non-silencing control vector",
+            "source_name": "MGH4 Glioma stem-like cells",
+            "cell line": "MGG4",
+            "genotype/variation": "control for MP2 knockdown",
+            "cell type": "Glioma cell line",
+            "cell subtype": "Cancer stem-like cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1108250"
+    },
+    {
+        "attributes": {
+            "source_name": "venous smooth muscle cells",
+            "cell type": "primary venous smooth muscle cells",
+            "treatment": "0.2% serum",
+            "passage": "p4-5"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS956188"
+    },
+    {
+        "attributes": {
+            "passages": "long term culture",
+            "cell line": "A375",
+            "source_name": "human melanoma cell line",
+            "cell type": "melanoma"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1179138"
+    },
+    {
+        "attributes": {
+            "source_name": "RWPE1, control vector",
+            "cell line": "RWPE1",
+            "expression": "Control vector"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1436876"
+    },
+    {
+        "attributes": {
+            "treatmemt": "untreated",
+            "source_name": "Akata_induced_rep2_noDNase",
+            "cell type": "Akata cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1346253"
+    },
+    {
+        "attributes": {
+            "treated with": "PTB shRNA",
+            "barcode": "ACCA",
+            "source_name": "RNA-seq HAF shPTB 6d",
+            "cell type": "human adult fibroblasts (HAFs)",
+            "time point": "6 days after switching to N3 media"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1273718"
+    },
+    {
+        "attributes": {
+            "source_name": "hepatic stellate cells (HSCs)",
+            "cell type": "adult HSCs differentiated into HSC myofibroblasts",
+            "passage": "passage 7-8"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1252089"
+    },
+    {
+        "attributes": {
+            "cell line": "CUTLL1",
+            "source_name": "CUTLL1 cell line_control",
+            "cell type": "leukemia"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS846963"
+    },
+    {
+        "attributes": {
+            "source_name": "Primary Monocytes(BC9)",
+            "cell type": "Primary Monocytes(BC9)"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS630234"
+    },
+    {
+        "attributes": {
+            "total brain volume": "1361",
+            "ados total score at biopsy": "16 (Fluent Speech - Child/Adolescent)",
+            "gender": "male",
+            "age at biopsy": "8",
+            "iPSc clone": "AVID_5_5",
+            "source_name": "iPSCs",
+            "patient id": "AVID",
+            "group": "ASD",
+            "cell type": "iPSCs"
+        },
+        "sample_type": "induced_pluripotent_stem_cells",
+        "sample_accession": "SRS892122"
+    },
+    {
+        "attributes": {
+            "tissue type": "breast adenocarcinoma",
+            "source_name": "human breast adenocarcinoma cell line",
+            "treatment": "Wip1i"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1414657"
+    },
+    {
+        "attributes": {
+            "cell line": "Kasumi-1",
+            "source_name": "SL58786",
+            "agent": "GSK690*_1uM",
+            "time point": "24h"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1023789"
+    },
+    {
+        "attributes": {
+            "cell line": "HEK293T",
+            "source_name": "human embryonic kidney cell line transformed with SV40 T antigen",
+            "lentivirus": "shMock"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS937040"
+    },
+    {
+        "attributes": {
+            "source_name": "hFOB 1.19 cells",
+            "cell type": "osteoblastic cell"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS568482"
+    },
+    {
+        "attributes": {
+            "cell line": "HCT 116",
+            "source_name": "HCT116_miR-155_RNA-seq",
+            "cell type": "Colorectal carcinoma cell line",
+            "transfected with": "miR-155 RNA"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS913965"
+    },
+    {
+        "attributes": {
+            "cell line": "HT-29",
+            "source_name": "HT-29",
+            "treatment": "JQ.1"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1079469"
+    },
+    {
+        "attributes": {
+            "disease state": "asthma",
+            "source_name": "Alveolar macrophages, pre-allergen challenge",
+            "cell type": "alveolar macrophages from BAL fluid",
+            "sampling time": "pre-allergen challenge"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS821060"
+    },
+    {
+        "attributes": {
+            "source_name": "Monocyte-derived dendritic cells",
+            "condition": "Non-infected"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS798307"
+    },
+    {
+        "attributes": {
+            "source_name": "HT29_RNAseq_24h_Rosiglitazone",
+            "cell line": "HT29",
+            "agent": "Rosiglitazone",
+            "chip antibody": "N/A",
+            "time": "24hr",
+            "cell type": "colorectal adenocarcinoma"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1255289"
+    },
+    {
+        "attributes": {
+            "cell line": "A375",
+            "source_name": "A375 Control cells, GFP overexpressing cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1027283"
+    },
+    {
+        "attributes": {
+            "melanoma mutation": "BRAFV600E",
+            "source_name": "metastasis of cutaneous melanoma",
+            "infected shrna": "shLuc",
+            "cell type": "patient derived xenograft cells",
+            "passage": "2"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1028326"
+    },
+    {
+        "attributes": {
+            "source_name": "human late blastoycst",
+            "cell type": "late blastocyst"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1013511"
+    },
+    {
+        "attributes": {
+            "age": "wpc13",
+            "source_name": "aRG"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS820209"
+    },
+    {
+        "attributes": {
+            "age": "NA",
+            "isolate": "monoisolate",
+            "sex": "not applicable",
+            "tissue": "cell line",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "NA",
+            "cell_line": "293T and Jurkat"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1409980"
+    },
+    {
+        "attributes": {
+            "source_name": "KP",
+            "cell  type": "Keratinocyte Progenitors"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1313464"
+    },
+    {
+        "attributes": {
+            "passages": "10",
+            "cell line": "ATCC CRL-2522",
+            "source_name": "fibroblast"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1421163"
+    },
+    {
+        "attributes": {
+            "tissue": "prostate",
+            "source_name": "Prostate cancer cell line LNCaP-abl_E2F1_si",
+            "cell type": "LNCaP-abl",
+            "passage": "53-60"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS583614"
+    },
+    {
+        "attributes": {
+            "source_name": "CCR6+, CD4+ T cells from HLA-DR4+ MS patient, myelin tetramer negative",
+            "diagnosis": "Multiple Sclerosis",
+            "cell population": "CCR6+, CD4+ T cells from HLA-DR4+ MS patient, myelin tetramer negative"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS870993"
+    },
+    {
+        "attributes": {
+            "cell line": "HCT116",
+            "source_name": "HCT116, 100\u00ce\u00bcM S2101"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS950651"
+    },
+    {
+        "attributes": {
+            "tissue": "HCT116 xenograft tumors",
+            "source_name": "HCT116 xenograft tumors_shLPA2",
+            "genotype/variation": "knockdown of LPA2"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS910707"
+    },
+    {
+        "attributes": {
+            "genotype": "vector control",
+            "cell line": "MCF-7",
+            "isolate": "not applicable",
+            "disease": "breast cancer",
+            "organism": "Homo sapiens",
+            "cell type": "epithelial cell"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "ERS804776"
+    },
+    {
+        "attributes": {
+            "stimulation": "TNFa, 6 hours",
+            "cell line": "BEAS-2B",
+            "source_name": "Transformed bronchial epithelial cells",
+            "treatment": "miR-26 mimic"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS988210"
+    },
+    {
+        "attributes": {
+            "cell line": "IMR90hTert",
+            "source_name": "immortalized fetal lung fibroblasts",
+            "experiment": "neusRNA_seq (NC, negative control)",
+            "treatment": "Cells grown in fetal bovine serum + DMSO for 5h",
+            "passage": "6-13"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1112069"
+    },
+    {
+        "attributes": {
+            "source_name": "Undifferentiated EpSC shDNMT3A",
+            "genotype/variation": "DNMT3A knock-down",
+            "passage": "3",
+            "cell": "Primary",
+            "tissue": "foreskin",
+            "cell type": "Epidermal Stem Cells (EpSC)"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS874649"
+    },
+    {
+        "attributes": {
+            "tissue": "skin",
+            "source_name": "resistant basal cell cancers",
+            "cell type": "basal cell carcinomas (BCCs)"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS633778"
+    },
+    {
+        "attributes": {
+            "cell modifications": "Contains SV40 T-antigen",
+            "cell line": "HEK293T",
+            "source_name": "HEK293T cells",
+            "cell type": "Epithelial fetal human kidney cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS937888"
+    },
+    {
+        "attributes": {
+            "cell line": "MIA PaCa-2",
+            "source_name": "pancreatic cancer cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1198644"
+    },
+    {
+        "attributes": {
+            "iPSc": "AH017-7",
+            "reprogramming vector": "Sendai virus (SeVdp(KOSM)302L)",
+            "source_name": "iPSC-derived cortical neuron",
+            "cell type": "iPSC-derived cortical neuron",
+            "time": "72 days of neuronal differentiation"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS959253"
+    },
+    {
+        "attributes": {
+            "source_name": "Colorectal cancer cells, hypoxia, 2hr",
+            "cell line": "HCT116",
+            "replicate": "2",
+            "treatment": "1% oxygen",
+            "time-point": "2hr",
+            "cell type": "colorectal cancer cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1442456"
+    },
+    {
+        "attributes": {
+            "gender": "female",
+            "source_name": "G0/G1 diploid ESCs from parthenogenetic blastocysts",
+            "cell type": "embryonic stem cells",
+            "passage": "p14"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1418657"
+    },
+    {
+        "attributes": {
+            "age": "Newborn",
+            "source_name": "CD4+ T cell",
+            "cell type": "CD4+ T cell"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS834069"
+    },
+    {
+        "attributes": {
+            "knockdown": "IMP1 knockdown",
+            "shRNA": "TRCN0000075149",
+            "source_name": "H9 embryonic stem cell line"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1310223"
+    },
+    {
+        "attributes": {
+            "tissue type": "peripheral blood",
+            "source_name": "peripheral blood",
+            "cell type": "CD19+ selected B cells",
+            "disease": "Mantle cell lymphoma"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS992738"
+    },
+    {
+        "attributes": {
+            "cell_type": "Immortal cell line of cervical cancer",
+            "description": "Total RNA sample of Empty in unstimulated HeLa [control for Regnase-1]",
+            "sample_name": "1_Empty Unstimulated Total",
+            "cell_line": "HeLa cells",
+            "sample_title": "1_Empty Unstimulated HeLa Total",
+            "bioproject_id": "PRJDB3776"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "DRS019758"
+    },
+    {
+        "attributes": {
+            "age": "42",
+            "tissue": "brain BA4",
+            "source_name": "BA4",
+            "diagnosis": "HD CTRL"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1365673"
+    },
+    {
+        "attributes": {
+            "source_name": "neurons",
+            "tissue": "motor neurons",
+            "cell number": "10"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1414914"
+    },
+    {
+        "attributes": {
+            "source_name": "Poly(A)-selected 30m",
+            "cell type": "Akata cells"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1346249"
+    },
+    {
+        "attributes": {
+            "cell line": "H9 hESCs expressing pJAZ NLS-GFP-OsJAZ33",
+            "source_name": "hESCs",
+            "cell type": "embryonic stem cells",
+            "agent": "coronatine"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "SRS1139490"
+    },
+    {
+        "attributes": {
+            "infected with": "lentiviral FUGW vector encoding HOXA7 protein (FUGW-GFP-HOXA7)",
+            "source_name": "EB CD34+CD38-CD90+CD45+",
+            "cell type": "EB CD34+CD38-CD90+CD45+"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1244245"
+    },
+    {
+        "attributes": {
+            "tissue": "Muscle biopsy 2hr after surgery and tourniquet",
+            "source_name": "2hr after surgery and tourniquet"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1180860"
+    },
+    {
+        "attributes": {
+            "cell_type": "T cell",
+            "age": "31",
+            "biomaterial_provider": "Lupus Subtypes Study, Bradley et al, George Tsokos Lab, Department of Rheumatology, Beth Israel Deaconess Medical Center, Harvard School of Medicine, Boston, Massachusetts",
+            "isolate": "N098",
+            "sex": "female",
+            "tissue": "Blood",
+            "BioSampleModel": "Human",
+            "cell_subtype": "peripheral",
+            "ethnicity": "white",
+            "phenotype": "Healthy"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1056309"
+    },
+    {
+        "attributes": {
+            "cell line": "LNCaP",
+            "source_name": "prostate cancer cells",
+            "treatment": "DHT 10nM",
+            "time": "24 h"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS968569"
+    },
+    {
+        "attributes": {
+            "gender": "male",
+            "individual": "patient1",
+            "source_name": "kidney",
+            "tissue": "matched normal"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS742714"
+    },
+    {
+        "attributes": {
+            "cell_type": "Lymphoblastoid cell line",
+            "tissue": "Blood",
+            "age": "unknown",
+            "isolate": "NA12892",
+            "sample_type": "cell culture",
+            "sex": "female",
+            "race": "Caucasian",
+            "replicate": "biological replicate 4",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Coriell Institute",
+            "cell_line": "GM12892",
+            "ethnicity": "UTAH/MORMON",
+            "treatment": "Total RNA"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1404501"
+    },
+    {
+        "attributes": {
+            "age": "18.76",
+            "isolate": "B1865",
+            "sex": "female",
+            "tissue": "DLPFC",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Lieber Institute for Brain Development"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1484100"
+    },
+    {
+        "attributes": {
+            "passages": "Low passages (6-10)",
+            "cell line": "HCT116",
+            "source_name": "HCT116",
+            "cell type": "Human colorectal tumor",
+            "chip antibody": "N/A"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1463503"
+    },
+    {
+        "attributes": {
+            "cell_line": "A549",
+            "organism": "Homo sapiens",
+            "isolate": "not applicable",
+            "disease": "non-small cell lung carcinoma"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "ERS1146906"
+    },
+    {
+        "attributes": {
+            "source_name": "Mesenchymal stem cell",
+            "cell type": "mesenchymal stem cells"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS785593"
+    },
+    {
+        "attributes": {
+            "cell line": "HT29",
+            "source_name": "HT29_ShFra1-1",
+            "cell type": "colorectal adenocarcinoma cell line",
+            "fra-1 status": "knock-down"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS950036"
+    },
+    {
+        "attributes": {
+            "source_name": "K562 PU.1 Overexpression RNA-seq",
+            "cell line": "K562",
+            "genotype/variation": "PU.1 overexpression",
+            "treated with": "none (untreated)",
+            "duration of treatment": "n/a",
+            "cell type": "myelogenous leukemia cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1162707"
+    },
+    {
+        "attributes": {
+            "race": "Caucasian",
+            "tissue": "pancreas/duct",
+            "age": "56",
+            "isolate": "56 year old Caucasian male with pancreatic epithelioid carcinoma",
+            "disease": "epithelioid carcinoma",
+            "sex": "male",
+            "Seq File name": "Asp1",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "ATCC",
+            "cell_line": "PANC-1",
+            "treatment": "PANC-1 cells treated by 2mM aspirin for 48h"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS873007"
+    },
+    {
+        "attributes": {
+            "cell line": "U2OS",
+            "source_name": "U2OS cells",
+            "transfected with": "pCDNA vector"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1017793"
+    },
+    {
+        "attributes": {
+            "cell_type": "fibroblast",
+            "Unique_identifier": "HPGL0112",
+            "age": "newborn",
+            "isolate": "not collected",
+            "treatment": "Infected with Trypanosoma cruzi (Y strain) 4 hpi",
+            "sex": "Male",
+            "tissue": "skin; foreskin",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "ATCC",
+            "culture_collection": "ATCC"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS628830"
+    },
+    {
+        "attributes": {
+            "disease state": "renal cell carcinoma",
+            "source_name": "Renal cell carcinoma",
+            "cell type": "Tumor",
+            "genotype": "Tumor"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1160007"
+    },
+    {
+        "attributes": {
+            "source_name": "HeLa",
+            "cell type": "human cervical cancer cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1365650"
+    },
+    {
+        "attributes": {
+            "cell line": "SHSY5Y",
+            "source_name": "SHSY5Y_mir-control",
+            "cell type": "neural progenitors/neuroblastoma"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1113249"
+    },
+    {
+        "attributes": {
+            "cell line": "Kasumi-1 cells",
+            "source_name": "t(8;21)-containing acute myeloid leukemia cell line",
+            "treatment": "125 nM MS417, 1 hr"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1523291"
+    },
+    {
+        "attributes": {
+            "cell line": "H157",
+            "source_name": "Lung carcinoma cells",
+            "cell type": "Lung carcinoma cells",
+            "genotype/variation": "expressing YAP-TEAD434"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1401138"
+    },
+    {
+        "attributes": {
+            "age group": "<35 y.o.",
+            "source_name": "cumulus oophorus cells_younger",
+            "cell type": "cumulus oophorus cells",
+            "donor patient status": "male factor infertility/oocyte donation and oocyte freezing couples only"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1443753"
+    },
+    {
+        "attributes": {
+            "cell line": "HMLER",
+            "source_name": "cell line",
+            "treatment": "5-aza-deoxycytidine"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS743462"
+    },
+    {
+        "attributes": {
+            "genotype/variation": "control",
+            "source_name": "control shRNA RNA-seq",
+            "cell type": "RS4;11 lymphoblast cells",
+            "disease": "acute lymphoblastic leukemia"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1249898"
+    },
+    {
+        "attributes": {
+            "cell line": "hek t293",
+            "Organism": "Homo sapiens"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "ERS739348"
+    },
+    {
+        "attributes": {
+            "cell line": "HeLa",
+            "source_name": "HeLa cell line",
+            "genotype": "Wild-type"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1337587"
+    },
+    {
+        "attributes": {
+            "tumorgenecity": "Tumor",
+            "cell line": "MCF7",
+            "source_name": "MCF7 Cell line",
+            "cell types": "Breast Cancer Cell line, ER(+)",
+            "treatment": "Isotype PBMC"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1094685"
+    },
+    {
+        "attributes": {
+            "cell line": "hCMEC/D3",
+            "source_name": "Blood Brain Barrier",
+            "cell type": "Blood Brain Barrier cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1235765"
+    },
+    {
+        "attributes": {
+            "disease stage": "JIA patient with clinical remission on medication",
+            "tissue": "blood",
+            "source_name": "CD4+ T cell",
+            "cell type": "CD4+ T cell"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1506983"
+    },
+    {
+        "attributes": {
+            "source_name": "HL60",
+            "cell type": "Acute myeloid leukemia",
+            "treatment": "DMSO",
+            "genotype": "Myc amplification"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1346617"
+    },
+    {
+        "attributes": {
+            "cell line": "HCT116",
+            "source_name": "HCT116 - colorectal carcinoma",
+            "agent": "100nM CA"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1310086"
+    },
+    {
+        "attributes": {
+            "source_name": "primary B cell",
+            "duration unit": "hours",
+            "activation method": "pokeweed mitogen",
+            "Sex": "female",
+            "replicate": "2",
+            "treatment": "DMSO Vehicle",
+            "duration": "4",
+            "concentration": "0.02",
+            "concentration unit": "%"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1417820"
+    },
+    {
+        "attributes": {
+            "source_name": "hESC-derived primitive gut tube",
+            "cell type": "hESC-derived primitive gut tube"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1250966"
+    },
+    {
+        "attributes": {
+            "RNA interference": "siRNA control",
+            "cell line": "HEK293",
+            "isolate": "not applicable",
+            "fraction": "nuclear RNA",
+            "time": "30",
+            "organism": "Homo sapiens"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "ERS947099"
+    },
+    {
+        "attributes": {
+            "cell line": "FLT3-ITD+ AML cell lines (MV4-11)",
+            "source_name": "MV4-11 cells",
+            "genotype": "miR-155-/-"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1017284"
+    },
+    {
+        "attributes": {
+            "source_name": "A549 cells",
+            "treated": "Not treated",
+            "cell line": "A549 cells",
+            "infected": "Not infected"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS931967"
+    },
+    {
+        "attributes": {
+            "source_name": "human monocytic cell line",
+            "cell type": "THP-1",
+            "treatment": "Campothecin"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1384128"
+    },
+    {
+        "attributes": {
+            "rep": "1",
+            "cell line": "MDA-LM2",
+            "source_name": "MDA-LM2",
+            "fraction": "TT"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1266865"
+    },
+    {
+        "attributes": {
+            "sequencing": "Single Lane",
+            "sample type": "Day 7 Reporter+ H441 Cells",
+            "source_name": "Cell Culture"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1282402"
+    },
+    {
+        "attributes": {
+            "stress": "heat shock",
+            "cell line": "HEK293 cells",
+            "source_name": "HeatShock"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1368915"
+    },
+    {
+        "attributes": {
+            "cell line": "Human Embryonic Kidney 293 cells",
+            "source_name": "HEK293T cell",
+            "sirna transfection": "siBrd4-1"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1369051"
+    },
+    {
+        "attributes": {
+            "cell line": "Caki2-empty vector",
+            "source_name": "Caki2 cell line, Vector Control",
+            "genotype/variation": "No PBRM1 expression",
+            "construct": "empty doxycycline-inducible lentiviral vector"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1214842"
+    },
+    {
+        "attributes": {
+            "cell line": "JEG3",
+            "source_name": "JEG3 cells",
+            "cell type": "choriocarcinoma (trophoblast)",
+            "transfected with": "Cas9 without guide RNA"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1368947"
+    },
+    {
+        "attributes": {
+            "source_name": "Day 20 differentiated cells",
+            "cell type": "Day 20 differentiated cells (NPCs)"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS925102"
+    },
+    {
+        "attributes": {
+            "tissue type": "benign",
+            "source_name": "prostate",
+            "patient": "BS2340",
+            "cell type": "luminal",
+            "cell population": "Trop2+ CD49f Lo"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1474657"
+    },
+    {
+        "attributes": {
+            "gemcitabine sensitivity": "Sensitive",
+            "cell line": "CFPAC-1",
+            "source_name": "Pancreatic cancer cell line"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1366120"
+    },
+    {
+        "attributes": {
+            "grade": "Rhabdoid",
+            "pretreatment": "Sutent",
+            "sample type": "R",
+            "source_name": "Renal Cell Carcinoma",
+            "Stage": "IV"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS653515"
+    },
+    {
+        "attributes": {
+            "age": "fetus",
+            "biomaterial_provider": "Alan Engelman 450 Brookline Ave, Boston, MA 02215",
+            "isolate": "not applicable",
+            "sample_type": "cell culture",
+            "sex": "female",
+            "tissue": "embryonic kidney",
+            "BioSampleModel": "Human",
+            "cell_subtype": "LEDGF KO",
+            "cell_line": "HEK293T"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1145136"
+    },
+    {
+        "attributes": {
+            "source_name": "HEK293",
+            "gender": "female",
+            "cell line": "HEK293-Flp-In-T-Rex",
+            "treatment": "sodium arsenite",
+            "cell type": "Embryonic kidney",
+            "expressed protein": "DDX3 R534H"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS987656"
+    },
+    {
+        "attributes": {
+            "cell_type": "Stem Cell",
+            "population": "US - Seld Identified",
+            "tissue": "Stem cell population",
+            "age": "1 Day",
+            "dev_stage": "Induced Pluripotent Stem Cell",
+            "isolate": "Human male, 1 day old",
+            "sample_type": "Primary Cell Culture",
+            "sex": "male",
+            "race": "Asian",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Dr. Janet Paluh - SUNY Polytechnic Institute",
+            "health_state": "Healthy",
+            "karyotype": "Normal",
+            "ethnicity": "Asian",
+            "phenotype": "Normal"
+        },
+        "sample_type": "induced_pluripotent_stem_cells",
+        "sample_accession": "SRS1306707"
+    },
+    {
+        "attributes": {
+            "source_name": "HCC10 Recurrent Tumor",
+            "primary tumor and nat rna": "Yes",
+            "alb": "40.2",
+            "tb": "29.6",
+            "individual": "HCC10",
+            "alt": "71",
+            "primary tumor cirrhosis": "Yes",
+            "pt": "12.7",
+            "recurrent tumor grade": "NA",
+            "primary tumor biopsy method": "OLT",
+            "hbvdna": "<500",
+            "ca199": "70.8",
+            "hgb": "136",
+            "ggt": "79.5",
+            "cea": "3.97",
+            "ast": "96",
+            "db": "10.7",
+            "bclc stage pre-ltx": "A3",
+            "afp": "1888.2",
+            "hbsag": ">250\u00ef\u00bc\u02c6+\u00ef\u00bc\u2030",
+            "gender": "male",
+            "age": "59",
+            "recurrent tumor organ": "liver",
+            "tissue": "HCC Recurrent Tumor",
+            "recurrent tumor method": "RFA",
+            "primary tumor grade": "III",
+            "recurrent tumor cirrhosis": "No",
+            "definitions": "RFA=Radiofrequency ablation; VATS=Video-assisted thorascopic surgery; OLT=Orthotopic liver transplantation; AFP=Alpha-fetoprotein",
+            "glu": "5.03"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS589586"
+    },
+    {
+        "attributes": {
+            "age": "not applicable",
+            "isolate": "not applicable",
+            "sex": "not applicable",
+            "tissue": "not applicable",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Life Technologies (Flp-In-293)",
+            "cell_line": "HEK293",
+            "treatment": "control siRNA"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1167094"
+    },
+    {
+        "attributes": {
+            "ar expression status": "Transduction with lentiviral particles for expression of the AR-V7",
+            "cell line": "LNCaP",
+            "source_name": "LNCaP cell line",
+            "cell type": "Prostate cancer cell line",
+            "fluorescence": "EGFP"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1010966"
+    },
+    {
+        "attributes": {
+            "cell_line": "KMM-1",
+            "sample_title": "small cellular RNA",
+            "bioproject_id": "PRJDB3120",
+            "description": "human cell line KMM-1",
+            "sample_name": "KMM-1"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "DRS019464"
+    },
+    {
+        "attributes": {
+            "cell line": "MDA-MB231",
+            "source_name": "MDA-MB231",
+            "cell type": "Triple Negative"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1108905"
+    },
+    {
+        "attributes": {
+            "cell line": "SLKK cells",
+            "source_name": "SLKK cells",
+            "infection status": "Chronically KSHV-infected"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS733646"
+    },
+    {
+        "attributes": {
+            "source_name": "mantle cell lymphoma cell line",
+            "cell type": "Mino stable cell transfected with small hairpin targeting BTK, and induced with Doxycyclin for 48H"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1407617"
+    },
+    {
+        "attributes": {
+            "gap_subject_id": "1116691",
+            "gap_sample_id": "1448223",
+            "analyte type": "RNA",
+            "study design": "Case-Control",
+            "sex": "male",
+            "submitter handle": "NIMH Postmortem Autism Brain Transcriptomes",
+            "gap_parent_phs": "phs001022",
+            "molecular data type": "RNA Seq (NGS)",
+            "submitted sample id": "S23",
+            "gap_accession": "phs000872",
+            "gap_consent_code": "1",
+            "study name": "PsychENCODE Consortium",
+            "gap_consent_short_name": "GRU",
+            "histological type": "Temporal Cortex",
+            "submitted subject id": "23",
+            "is tumor": "No",
+            "body site": "Brain",
+            "biospecimen repository": "NIMH Postmortem Autism Brain Transcriptomes",
+            "biospecimen repository sample id": "S23"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS875066"
+    },
+    {
+        "attributes": {
+            "source_name": "Immortalized human mammary epithelial cells",
+            "cell type": "HMLE"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1158455"
+    },
+    {
+        "attributes": {
+            "age": "na",
+            "isolate": "HER2-positive breast cancer cell line",
+            "sex": "not applicable",
+            "tissue": "Breast cancer",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "Gary L. Johnson lab, UNC",
+            "cell_line": "BT474",
+            "treatment": "48h 300nM lapatinib"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS880750"
+    },
+    {
+        "attributes": {
+            "patient number": "4",
+            "modified mankin score": "5",
+            "organism part": "cartilage",
+            "age": "70",
+            "isolate": "not applicable",
+            "disease": "osteoarthritis of the knee",
+            "sequencing date": "15/07/2014",
+            "phenotype": "Intact",
+            "sex": "female",
+            "organism": "Homo sapiens"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "ERS1034561"
+    },
+    {
+        "attributes": {
+            "cell line": "HEK-293",
+            "source_name": "293 Tet-off",
+            "treatment": "siPTBP1/siUPF1"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS670097"
+    },
+    {
+        "attributes": {
+            "subject is affected": "Yes",
+            "gap_subject_id": "1607101",
+            "gap_sample_id": "1970180",
+            "analyte type": "RNA",
+            "study design": "Case Set",
+            "study disease": "Melanoma, Cutaneous Malignant",
+            "submitter handle": "NCI_MelanomaGeneticAnalysis",
+            "sex": "male",
+            "molecular data type": "RNA Seq (NGS)",
+            "submitted sample id": "CY10-CAF",
+            "gap_accession": "phs001115",
+            "gap_consent_code": "1",
+            "study name": "Tissue Specimens from Patients with Melanoma for Genetic Analysis",
+            "gap_consent_short_name": "GRU",
+            "histological type": "Fibroblast",
+            "submitted subject id": "CY10",
+            "is tumor": "No",
+            "body site": "Axillary lymph node",
+            "biospecimen repository": "NCI_MelanomaGeneticAnalysis",
+            "biospecimen repository sample id": "CY10-CAF"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1515985"
+    },
+    {
+        "attributes": {
+            "disease state": "acute lymphoblastic leukemia",
+            "source_name": "pre-B leukemic cell line",
+            "cell line": "REH",
+            "etv6 status": "Wild type (ETV6 -/-)"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1347274"
+    },
+    {
+        "attributes": {
+            "culture": "with differentiated (O) stromal cells",
+            "cell line": "ALL leukemia cell line REH",
+            "replicate": "1",
+            "source_name": "REH cell line co-cultured with differentiated (O) stromal cells",
+            "time": "24 h"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS892576"
+    },
+    {
+        "attributes": {
+            "cell line": "HCC4006",
+            "source_name": "NSCLC cell lines",
+            "cell type": "NSCLC",
+            "treatment": "DMSO"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1366416"
+    },
+    {
+        "attributes": {
+            "age": "not applicable",
+            "isolate": "not applicable",
+            "sex": "not applicable",
+            "tissue": "carcinoma",
+            "BioSampleModel": "Human",
+            "biomaterial_provider": "not applicable",
+            "cell_line": "NCCIT",
+            "treatment": "gsk"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS693009"
+    },
+    {
+        "attributes": {
+            "tissue": "omental",
+            "source_name": "OMENTAL TISSUE",
+            "treatment": "POST-NACT"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1011032"
+    },
+    {
+        "attributes": {
+            "cell line": "SW480",
+            "source_name": "epithelial colon cancer cell lines"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1221688"
+    },
+    {
+        "attributes": {
+            "organism": "Homo sapiens",
+            "individual": "Poly(A)+ RNA 2 -  0 min",
+            "cell line": "HUVEC cell line",
+            "ENA-CHECKLIST": "ERC000011"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "ERS568763"
+    },
+    {
+        "attributes": {
+            "cell line": "HCT116",
+            "source_name": "colorectal carcinoma cell line",
+            "genotype": "wild type"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS988201"
+    },
+    {
+        "attributes": {
+            "days post-lif": "N/A",
+            "cell line": "K562",
+            "source_name": "human lymphoblastoma culture ATCC\u00c2\u00ae CCL-243",
+            "cell type": "lymphoblastoma",
+            "number cells in sample": "239"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS834193"
+    },
+    {
+        "attributes": {
+            "transfected with": "empty control vector",
+            "source_name": "HDF-a_Control",
+            "cell type": "Human Adult Dermal Fibroblasts (HDF-a)",
+            "biomaterial_provider": "sciencell (#2320)"
+        },
+        "sample_type": "primary_cells",
+        "sample_accession": "SRS1400005"
+    },
+    {
+        "attributes": {
+            "transfection": "Con-siRNA",
+            "passages": "4-10",
+            "source_name": "endothelial cell (EC)",
+            "cell type": "pulmonary microvascular EC"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS736869"
+    },
+    {
+        "attributes": {
+            "clone": "A375 resistant clone 4",
+            "cell line": "A375",
+            "source_name": "SL44077",
+            "treatment": "CPI203"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS949241"
+    },
+    {
+        "attributes": {
+            "culture condition": "SFEM doxycycline+ (Day0)",
+            "mouse strain": "NA",
+            "differentiation stage": "Early basophilic erythroblasts",
+            "source_name": "WT HUDEP-2"
+        },
+        "sample_type": "in_vitro_differentiated_cells",
+        "sample_accession": "SRS1161502"
+    },
+    {
+        "attributes": {
+            "cell line": "HCT116",
+            "source_name": "HCT116",
+            "treatment": "shRNA BRD4 (8)"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1079414"
+    },
+    {
+        "attributes": {
+            "cell line": "HEK293T",
+            "source_name": "HEK293T"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1410443"
+    },
+    {
+        "attributes": {
+            "treated with": "none (control)",
+            "cell line": "N/TERT-2G",
+            "source_name": "N/TERT-2G_skin keratinocyte_control",
+            "cell type": "keratinocyte",
+            "genotype/variation": "Tet-inducible AREG shRNA"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS970819"
+    },
+    {
+        "attributes": {
+            "cell line": "HeLa",
+            "source_name": "HeLa",
+            "treatment": "TCAB1 siRNA"
+        },
+        "sample_type": "cell_line",
+        "sample_accession": "SRS1302329"
+    },
+    {
+        "attributes": {
+            "drug treatment": "10nM Estradiol + 10 nM R5020",
+            "er/pr status": "ER+/PR+",
+            "hormone exposure time": "24 Hours",
+            "source_name": "Breast cancer cells",
+            "tissue type": "ER+/PR+ Human tumor explants"
+        },
+        "sample_type": "tissue",
+        "sample_accession": "SRS1383428"
+    },
+    {
+        "attributes": {
+            "cell_type": "embryonic stem cell",
+            "organism part": "embryo",
+            "isolate": "not applicable",
+            "developmental stage": "embryo stage",
+            "sex": "male",
+            "cell_line": "HNES1",
+            "organism": "Homo sapiens"
+        },
+        "sample_type": "stem_cells",
+        "sample_accession": "ERS1059993"
+    }
+]

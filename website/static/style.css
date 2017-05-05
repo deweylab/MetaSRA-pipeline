@@ -10,7 +10,8 @@
     color:white;
     font-size: 15px;
     font-weight: bold;
-    font-family: Tahoma, sans-serif;
+    //font-family: Tahoma, sans-serif;
+    font-family: 'Roboto Condensed', sans-serif;
     height:40px;
 }
 
@@ -23,12 +24,14 @@
 .form_label {
     color: black;
     font-size: 17px;
-    font-family: Tahoma, sans-serif;
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif;
 }
 
 .radio_label {
     font-size: 16px;
-    font-family: Tahoma, sans-serif;
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif;
 }
 
 #form_container {
@@ -50,6 +53,7 @@
 
 .section_title {
     //font-family: Tahoma, sans-serif;
+    font-size: 22px;
     font-family: 'Roboto Condensed', sans-serif;
 }
 
@@ -63,6 +67,12 @@ p {
     font-size: 18px;
 }
 
+li {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 18px;
+}
+
+
 .footer_images {
     display: inline-block;
     position: relative;
@@ -75,7 +85,7 @@ p {
 
 .subsection_title {
     color:#3f4040; /*dark gray*/
-    font-size: 15px
+    font-size: 18px;
     text-align: left;
     font-family: 'Roboto Condensed', sans-serif;
     //font-family: Tahoma, sans-serif;
@@ -102,7 +112,7 @@ p {
     font-family: 'Roboto Condensed', sans-serif;
     //font-family: Tahoma, sans-serif;
     color:white !important;
-    font-size: 15px;
+    font-size: 16px;
     text-decoration: none;
     font-weight: bold;
 }
@@ -163,6 +173,24 @@ th {
     cursor: pointer;
 }
 
+.show_terms {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    border: 2px solid #4CAF50; /* Green */
+    background-color: #4CAF50; /* Green */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    color:white;
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif;
+}
+
+.show_terms:hover {
+    background-color:purple;
+    cursor: pointer;
+}
+
 .show_attrs {
 
     -webkit-transition-duration: 0.4s; /* Safari */
@@ -173,7 +201,8 @@ th {
     text-decoration: none;
     display: inline-block;
     color:white;
-    font-family: Tahoma, sans-serif;
+    font-family: 'Roboto Condensed', sans-serif;
+    //font-family: Tahoma, sans-serif;
 }
 
 .show_attrs:hover {
@@ -181,6 +210,9 @@ th {
     cursor: pointer;
 }
 
+.sample_type_table_entry {
+    font-family: 'Roboto Condensed', sans-serif;
+}
 
 /* DataTables */
 #results_table_length label{
@@ -193,6 +225,14 @@ th {
     font-family: 'Roboto Condensed', sans-serif;
     //font-family: Tahoma, sans-serif !important;
     font-weight: bold !important;
+}
+
+#results_table_info {
+    font-family: 'Roboto Condensed', sans-serif !important;
+}
+
+#error_message {
+    font-family: 'Roboto Condensed', sans-serif;
 }
 
 /* Classes in OLS suggestor */
