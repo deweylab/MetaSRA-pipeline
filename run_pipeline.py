@@ -34,17 +34,37 @@ def main():
      
     # Map key-value pairs to ontologies
     with open(input_f, "r") as f:
-        tag_to_val = json.load(f)
-    mapping_data = run_pipeline(tag_to_val)
-    
-    # Filter for biologically significant terms
+        tag_to_vals = json.load(f)
+
+    # Load ontologies
     ont_name_to_ont_id = {
-        "UBERON":"12", 
-        "CL":"1", 
-        "DOID":"2", 
-        "EFO":"16", 
+        "UBERON":"12",
+        "CL":"1",
+        "DOID":"2",
+        "EFO":"16",
         "CVCL":"4"}
     ont_id_to_og = {x:load_ontology.load(x)[0] for x in ont_name_to_ont_id.values()}
+    pipeline = p_48()
+
+    all_mappings = []
+    for tag_to_val in tag_to_vals:
+        sample_acc_to_matches = {}
+        mapped_terms, real_props = pipeline.run(tag_to_val)
+        mappings = {
+            "mapped_terms":[x.to_dict() for x in mapped_terms],
+            "real_value_properties": [x.to_dict() for x in real_props]
+        }
+        all_mappings.append(mappings)
+
+    outputs = []
+    for tag_to_val, mappings in zip(tag_to_vals, all_mappings):
+        outputs.append(
+            run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings)
+        )
+    print json.dumps(outputs, indent=4, separators=(',', ': '))
+
+def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data): 
+    
     mapped_terms = []
     real_val_props = []
     for mapped_term_data in mapping_data["mapped_terms"]:
@@ -57,7 +77,8 @@ def main():
         real_val_prop = {
             "unit_id":real_val_data["unit_id"], 
             "value":real_val_data["value"], 
-            "property_id":real_val_data["property_id"]}
+            "property_id":real_val_data["property_id"]
+        }
         real_val_props.append(real_val_prop)
 
     # Add super-terms of mapped terms to the list of ontology term features   
@@ -67,24 +88,31 @@ def main():
             sup_terms.update(og.recursive_relationship(term_id, ['is_a', 'part_of']))
     mapped_terms = list(sup_terms)
 
-    predicted, confidence = run_sample_type_predictor.run_sample_type_prediction(tag_to_val, mapped_terms, real_val_props)
+    predicted, confidence = run_sample_type_predictor.run_sample_type_prediction(
+        tag_to_val, 
+        mapped_terms, 
+        real_val_props
+    )
 
     mapping_data = {
         "mapped ontology terms": mapped_terms, 
         "real-value properties": real_val_props, 
         "sample type": predicted, 
         "sample-type confidence": confidence}
-    print json.dumps(mapping_data, indent=4, separators=(',', ': '))
+
+    return mapping_data
+    #print json.dumps(mapping_data, indent=4, separators=(',', ': '))
 
 
-def run_pipeline(tag_to_val):
-    pipeline = p_48()
-    sample_acc_to_matches = {}
-    mapped_terms, real_props = pipeline.run(tag_to_val)
-    mappings = {
-        "mapped_terms":[x.to_dict() for x in mapped_terms], 
-        "real_value_properties": [x.to_dict() for x in real_props]}
-    return mappings
+#def run_pipeline(tag_to_val, pipeline):
+#    pipeline = p_48()
+#    sample_acc_to_matches = {}
+#    mapped_terms, real_props = pipeline.run(tag_to_val)
+#    mappings = {
+#        "mapped_terms":[x.to_dict() for x in mapped_terms], 
+#        "real_value_properties": [x.to_dict() for x in real_props]
+#    }
+#    return mappings
     
 def p_48():
     spec_lex = pc.SpecialistLexicon(config.specialist_lex_location())
