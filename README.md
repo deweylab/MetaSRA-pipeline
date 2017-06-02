@@ -32,14 +32,24 @@ using the run_pipeline.py script. This script is used as follows:
 
     python run_pipeline.py <input key-value pairs JSON file>
 
-The script accepts as input a JSON file storing the key value pairs.
+The script accepts as input a JSON file storing a list of sets of key-value pairs.
 For example, the pipeline will accept a file with the following content:
 
-    {   
+    [
+      {   
         "ID": "P352_141",
         "age": "48",
         "bmi": "24",
         "gender": "female",
         "source_name": "vastus lateralis muscle_female",
         "tissue": "vastus lateralis muscle"
-    }
+      },
+      {   
+        "ID": "P352_141",
+        "age": "29",
+        "bmi": "30",
+        "gender": "male",
+        "source_name": "vastus lateralis muscle_female",
+        "tissue": "vastus lateralis muscle"
+      }
+     ]
