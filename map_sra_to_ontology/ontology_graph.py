@@ -114,7 +114,10 @@ class OntologyGraph:
         print str(g)
      
     def direct_subterms(self, id):
-        return Set([self.id_to_term[x] for x in self.id_to_term[id].relationships["inv_is_a"]])
+        return Set([
+            self.id_to_term[x] 
+            for x in self.id_to_term[id].relationships["inv_is_a"]
+        ])
 
     def recursive_subterms(self, id):
         return self.recursive_relationship(id, ["inv_is_a"]) 
@@ -122,14 +125,14 @@ class OntologyGraph:
     def recursive_superterms(self, id):
         return self.recursive_relationship(id, ["is_a"])
 
-    def recursive_relationship(self, id, recurs_relationships):
+    def recursive_relationship(self, t_id, recurs_relationships):
         """
         To be used with caution? 
         """
-        if id not in self.id_to_term:
+        if t_id not in self.id_to_term:
             return Set()
         gathered_ids = Set()
-        curr_id = id
+        curr_id = t_id
         q = Queue()
         q.put(curr_id)
         visited_ids = Set()
@@ -168,7 +171,10 @@ class MappableOntologyGraph(OntologyGraph):
         return self.mappable_term_ids
 
     def get_mappable_terms(self):
-        return [y for x,y in self.id_to_term.iteritems() if x not in self.nonmappable_terms]
+        return [y
+            for x,y in self.id_to_term.iteritems() 
+            if x not in self.nonmappable_terms
+        ]
  
 
 def build_ontology(ont_to_loc, restrict_to_idspaces=None, 
@@ -180,7 +186,10 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
         include_obsolete=include_obsolete)
 
     # Add enriched synonyms
-    cvcl_syns_f = pr.resource_filename(resource_package, join("metadata", "term_to_extra_synonyms.json"))
+    cvcl_syns_f = pr.resource_filename(
+        resource_package, 
+        join("metadata", "term_to_extra_synonyms.json")
+    )
     term_to_syns = None
     with open(cvcl_syns_f, "r") as f:
         term_to_syns = json.load(f)
@@ -190,7 +199,10 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
                 term.synonyms.add(Synonym(syn, "ENRICHED"))
 
     # Remove specified synonyms
-    term_to_remove_syns_f = pr.resource_filename(resource_package, join("metadata", "term_to_remove_synonyms.json"))
+    term_to_remove_syns_f = pr.resource_filename(
+        resource_package, 
+        join("metadata", "term_to_remove_synonyms.json")
+    )
     term_remove_syns = None
     with open(term_to_remove_syns_f, "r") as f:
         term_remove_syns = json.load(f)
@@ -198,7 +210,11 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
         if t_id in og.id_to_term:
             exclude_syns = Set(rem_syn_data["exclude_synonyms"])
             term = og.id_to_term[t_id]
-            term.synonyms = [x for x in term.synonyms if x.syn_str not in exclude_syns]
+            term.synonyms = [
+                x 
+                for x in term.synonyms 
+                if x.syn_str not in exclude_syns
+            ]
 
     if restrict_to_roots:
         keep_ids = Set() # The IDs that we will keep  
@@ -215,7 +231,11 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
 
             # Update the relationships between terms to remove dangling edges
             for rel, rel_ids in og.id_to_term[t_id].relationships.iteritems():
-                og.id_to_term[t_id].relationships[rel] = [x for x in rel_ids if x in keep_ids]
+                og.id_to_term[t_id].relationships[rel] = [
+                    x 
+                    for x in rel_ids 
+                    if x in keep_ids
+                ]
 
         #return OntologyGraph(id_to_term) 
         return MappableOntologyGraph(id_to_term, exclude_terms)   
@@ -266,6 +286,26 @@ def most_specific_terms(term_ids, og, sup_relations=["is_a"]):
 
 
 def parse_obos(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False):
+
+    def add_inverse_relationship_to_parents(term, relation, inverse_relation):
+        for sup_term_id in [x for x in term.get_related_terms(relation)]:
+            if sup_term_id in id_to_term:
+                sup_term = id_to_term[sup_term_id]
+                if inverse_relation not in sup_term.relationships:
+                    sup_term.relationships[inverse_relation] = []
+                sup_term.relationships[inverse_relation].append(term.id)
+            else:
+                if VERBOSE:
+                    print "Warning! Attempted to create inverse edge in term %s. \
+                        Not found in not in the ontology" % sup_term_id
+                # Remove superterm from term's relationship list because it 
+                # is not in the current ontology
+                while sup_term_id in term.relationships[relation]:
+                    term.relationships[relation].remove(sup_term_id)
+                if not term.relationships[relation]:
+                    del term.relationships[relation]
+
+
     id_to_term = {}
     name_to_ids = {}    
 
@@ -280,6 +320,11 @@ def parse_obos(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False):
                 name_to_ids[name] = ids
             else:
                 name_to_ids[name].update(ids)
+
+    for term in id_to_term.values():
+        add_inverse_relationship_to_parents(term, "is_a", "inv_is_a")
+        add_inverse_relationship_to_parents(term, "part_of", "inv_part_of")
+
     #return OntologyGraph(id_to_term, name_to_ids)
     return OntologyGraph(id_to_term)
 
@@ -354,9 +399,9 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
                 name_to_ids, id_to_term)
         
         # Create inverse "is_a" and "part_of" edges between terms
-        for term in id_to_term.values():
-            add_inverse_relationship_to_parents(term, "is_a", "inv_is_a")
-            add_inverse_relationship_to_parents(term, "part_of", "inv_part_of")
+        #for term in id_to_term.values():
+        #    add_inverse_relationship_to_parents(term, "is_a", "inv_is_a")
+        #    add_inverse_relationship_to_parents(term, "part_of", "inv_part_of")
 
     return id_to_term, name_to_ids    
 

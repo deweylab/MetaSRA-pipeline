@@ -1,14 +1,14 @@
 {
     "0": {
         "included_ontology_projects": [
+            "DOID",
             "CL", 
-            "DOID", 
             "UBERON"
         ],
         "restrict_to_specific_subgraph": false,
         "id_spaces": [
-            "CL", 
-            "DOID", 
+            "DOID",
+            "CL",
             "UBERON"
         ],
         "exclude_terms": [],
@@ -324,12 +324,32 @@
             "EFO:0003143": "CLIP-seq",
             "EFO:0003477": "median fin fold",
             "EFO:0000808": "animal body part",
-            "EFO:0000688": "sampling site"
+            "EFO:0000688": "sampling site",
+            "EFO:0004041": "NPC",
+            "EFO:0000993": "leaf",
+            "EFO:0001040": "stem"
         },
         "description": "A slice of the EFO ontology attempting to capture all 'biologically significant' terms and uses only 'EFO' prefix"
+    },
+    "17": {
+        "included_ontology_projects": [
+            "EFO",
+            "DOID",
+            "CL",
+            "UBERON",
+            "CVCL"
+        ],
+        "restrict_to_specific_subgraph": false,
+        "id_spaces": [
+            "CVCL",
+            "EFO",
+            "DOID",
+            "CL",
+            "UBERON"
+        ],
+        "exclude_terms": [],
+        "description": "Consists of all CL, DOID, UBERON, EFO, and CVCL terms."
     }
-
-
 }
     
 

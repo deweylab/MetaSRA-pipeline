@@ -5,7 +5,6 @@
 
 from optparse import OptionParser
 from sets import Set
-import math
 from collections import defaultdict, deque
 
 try:
@@ -70,7 +69,7 @@ class FuzzyStringMatch(EEdge):
         return hash(("FUZZY_STRING_MATCH", (self.query_str, self.matched_str,  self.match_target))) 
 
     def __str__(self):
-        return "FuzzyStringMatch(weight=%f, query_str='%s', matched_str='%s', match_target='%s')" % (self.weight, self.query_str, self.matched_str, self.match_target)
+        return "FuzzyStringMatch(weight=%f, query_str='%s', matched_str='%s', match_target='%s')" % (self.weight, self.query_str.decode('utf-8', 'replace'), self.matched_str, self.match_target)
 
     def __repr__(self):
         return self.__str__()

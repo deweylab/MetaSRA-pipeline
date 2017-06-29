@@ -1,21 +1,19 @@
 from optparse import OptionParser
 from sets import Set
-from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import mutual_info_score
-from sklearn.feature_selection import SelectFromModel
-from sklearn.pipeline import Pipeline
-from sklearn.feature_selection import RFE
-from sklearn.cross_validation import StratifiedKFold
-from sklearn.feature_selection import RFECV
 import numpy as np
 from scipy import sparse
 
-###import map_sra_to_ontology
-###from map_sra_to_ontology import load_ontology
-#import ..load_ontology
-
 def mutual_info_rank_features(feature_vecs, binary_labels):
+    """
+    Given a set of feature vectors and binary labels, return
+    the list of indices of the features ranked by mutual information
+    with the binary labels.
+    Args:
+        feature_vecs: list of feature vectors
+        binary_labels: list of binary labels
+    """
 
     # Convert Features to Boolean values
     bin_feature_vecs = []
@@ -27,26 +25,33 @@ def mutual_info_rank_features(feature_vecs, binary_labels):
                 nfv.append(1)
             else:
                 nfv.append(0)
-        #feature_v = [1 for x in np.asarray(feature_v) if x > 0]
         bin_feature_vecs.append(nfv)
 
     mutual_infos = []
-    for i in range(len(bin_feature_vecs[0])):
+    num_features = len(bin_feature_vecs[0])
+    for i in range(num_features):
         row_i = [x[i] for x in bin_feature_vecs]
         mi = mutual_info_score(row_i, binary_labels)
         mutual_infos.append(mi)
 
-    ranked_indices = [index for (mi,index) in sorted(zip(mutual_infos,[x for x in range(len(bin_feature_vecs[0]))]))]
+    ranked_indices = [index for (mi,index) in sorted(zip(mutual_infos,[x for x in range(num_features)]))]
     return ranked_indices
 
 
-                   
  
 
 
 class OneVsRestClassifier:
 
-    def __init__(self, classif_type, ngram_vec_scaffold, term_vec_scaffold, cvcl_og, num_features_per_class=50, use_predicted_term_rules=False):
+    def __init__(
+        self, 
+        classif_type, 
+        ngram_vec_scaffold, 
+        term_vec_scaffold, 
+        cvcl_og, 
+        num_features_per_class=50, 
+        use_predicted_term_rules=True):
+
         self.classif_type = classif_type
         self.ngram_vec_scaffold = ngram_vec_scaffold
         self.term_vec_scaffold = term_vec_scaffold
@@ -86,14 +91,12 @@ class OneVsRestClassifier:
             self.filt_features.update(mutual_info_rank_features(feature_vecs, train_labels)[self.feature_cutoff:])
         self.filt_features = list(self.filt_features)
 
-
+        # Train logistic regression classifiers
+        selected_feature_vecs = []
+        for feature_v in feature_vecs:
+            selected_feature_vecs.append(self._features(feature_v))
         for clss in classes:
             train_labels = [self._one_v_rest_class(clss, label) for label in labels]
-
-            selected_feature_vecs = []
-            for feature_v in feature_vecs:
-                selected_feature_vecs.append(self._features(feature_v))
-
             classif = self._learn_classifier(selected_feature_vecs, train_labels)
             self.class_to_classifier[clss] = classif
 
@@ -124,6 +127,7 @@ class OneVsRestClassifier:
 
 
         if self.use_predicted_term_rules:
+            print "Using predicted term rules"
 
             is_xenograft = False
             for pred_term in predicted_terms:
@@ -160,12 +164,14 @@ class OneVsRestClassifier:
             # If the cell-line type is not found, then rule out possible categories based on mapped ontology terms
             if not found_cell_line_type and not is_xenograft:
                 # If stem cell is mapped, then it can't be an immortalized cell line, tissue, or primary cell sample
-                if "CL:0000034" in predicted_terms: 
+                if "CL:0000034" in predicted_terms:
+                    print "Sample mapped to stem cell term CL:0000034" 
                     class_to_confidence["cell_line"] = 0.0
                     class_to_confidence["tissue"] = 0.0
                     class_to_confidence["primary_cells"] = 0.0
                 # If a specific cell-type is mapped, then it likely is not a tissue sample
                 elif "CL:0002371" in predicted_terms:
+                    print "Sample mapped to a specific cell-type as indicated by mapped term CL:0002371"
                     class_to_confidence["tissue"] = 0.0            
             
         sum_conf = sum(class_to_confidence.values())

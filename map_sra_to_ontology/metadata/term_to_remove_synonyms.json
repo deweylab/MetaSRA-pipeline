@@ -760,5 +760,92 @@
         "exclude_synonyms": [
             "nasopharyngeal carcinoma"
         ]
+    },
+    "EFO:0000326": {
+        "name": "central nervous system cancer",
+        "exclude_synonyms": [
+            "Glioma",
+            "Glial Cell Tumor"
+        ]
+    },
+    "UBERON:0035971": {
+        "name": "postsubiculum",
+        "exclude_synonyms": [
+            "POST"
+        ]
+    },
+    "UBERON:0001093": {
+        "name": "vertebral bone 2",
+        "exclude_synonyms": [
+            "axis"
+        ]
+    },
+    "UBERON:0001782": {
+        "name": "pigmented layer of retina",
+        "exclude_synonyms": [
+            "PRE"
+        ]
+    },
+    "UBERON:2000098": {
+        "name": "proliferative region",
+        "exclude_synonyms": [
+            "cell cycle",
+            "cell division",
+            "proliferation"
+        ]
+    },
+    "UBERON:0002416": {
+        "name": "integumental system",
+        "exclude_synonyms": [
+            "surface"
+        ]
+    },
+    "UBERON:0002922": {
+        "name": "olfactory trigone",
+        "exclude_synonyms": [
+            "OLT"
+        ]
+    },
+    "UBERON:0034754": {
+        "name": "occipitofrontal fasciculus",
+        "exclude_synonyms": [
+            "off"
+        ]
+    },
+    "UBERON:0005777": {
+        "name": "glomerular basement membrane",
+        "exclude_synonyms": [
+            "GBM"
+        ]
+    },
+    "UBERON:0002120": {
+        "name": "pronephros",
+        "exclude_synonyms": [
+            "embryonic kidney"
+        ]
+    },
+    "EFO_CL:0000817": {
+        "name": "precursor B cell",
+        "exclude_synonyms": [
+            "pre-BI cell"
+        ]
+    },
+    "CL:0000096": {
+        "name": "mature neutrophil",
+        "exclude_synonyms": [
+            "poly"
+        ]
+    },
+    "CL:0000775": {
+        "name": "neutrophil",
+        "exclude_synonyms": [
+            "poly"
+        ]
+    },
+    "EFO_CL:0000775": {
+        "name": "neutrophil",
+        "exclude_synonyms": [
+            "poly"
+        ]
     }
 }

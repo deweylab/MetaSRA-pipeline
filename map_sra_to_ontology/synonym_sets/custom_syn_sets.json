@@ -25,6 +25,10 @@
         "late embryo"
     ],
     [
+        "glioblastoma multiforme",
+        "glioblastoma"
+    ],
+    [
         "neural progenitor cell",
         "neural stem cell",
         "neuronal progenitor cell"
@@ -41,11 +45,16 @@
         "induced pluripotent stem cell"
     ],
     [
+        "ES cell",
         "ESCs",
         "ESC",
         "hESC",
         "hESCs",
         "embryonic stem cell"
+    ],
+    [
+        "stem cell",
+        "stem-like cell"
     ],
     [
         "newborn",

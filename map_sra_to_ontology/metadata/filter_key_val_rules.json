@@ -89,6 +89,14 @@
         "not applicable",
         "not available",
         "No",
-        "no"
+        "no",
+        "Not reported",
+        "not reported",
+        "No Diagnosis on Axis 1;Deferred;Other (Specify);",
+        "no pathologic disease",
+        "Not treated",
+        "not treated",
+        "no treatment",
+        "uninfected without treatment"
     ] 
 }

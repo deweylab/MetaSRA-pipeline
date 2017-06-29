@@ -370,7 +370,8 @@ class PropertySpecificSynonym_Stage:
 class BlockCellLineNonCellLineKey_Stage:
     def __init__(self):
         self.cell_line_keys = Set(["EFO:0000322", "EFO:0000324"])
-        self.cell_line_phrases = Set(["source_name"])
+        #self.cell_line_phrases = Set(["source_name"])
+        self.cell_line_phrases = Set()
 
         cvcl_og, x,y = load_ontology.load("4") 
 
@@ -1001,15 +1002,44 @@ class ParseTimeWithUnit_Stage:
         self.unit_to_expansion = {
             "hr": "hour",
             "h": "hour",
+            "hrs": "hour",
             "mo": "month",
             "d": "day",
             "min": "minute"
         }
+        self.time_nodes = Set(["EFO:0000721", "EFO:0000724"])
 
     def run(self, text_mining_graph):
+
+        kv_nodes_time_val = Set()
+        for kv_node in text_mining_graph.key_val_nodes:
+            # Find children of the key that indicate they encode a time-related real-value
+            key_time_nodes = Set()
+            for edge in text_mining_graph.forward_edges[kv_node]:
+                if isinstance(edge, DerivesInto) and edge.derivation_type == "key":
+                    for t_node in text_mining_graph.forward_edges[kv_node][edge]:
+                        key_time_nodes.update(text_mining_graph.downstream_nodes(t_node))
+            key_time_nodes = [x for x in key_time_nodes if isinstance(x, OntologyTermNode) and x.term_id in self.time_nodes]
+            if len(key_time_nodes) > 0:
+                kv_nodes_time_val.add(kv_node)
+
+
+        parseable_token_nodes = Set()
+        for kv_node in text_mining_graph.key_val_nodes:
+            if kv_node not in kv_nodes_time_val:
+                continue
+
+            # Gather all nodes that are children of the key-nodes that do not contain a cell-line value
+            # Remove them if they represent a cell line
+            for edge in text_mining_graph.forward_edges[kv_node]:
+                if isinstance(edge, DerivesInto) and edge.derivation_type == "val":
+                    for t_node in text_mining_graph.forward_edges[kv_node][edge]:
+                        parseable_token_nodes.update([x for x in text_mining_graph.downstream_nodes(t_node) if isinstance(x, TokenNode)])
+
+
         tnode_to_edges = defaultdict(lambda: [])
         unit_t_nodes = Set()
-        for t_node in text_mining_graph.token_nodes:
+        for t_node in parseable_token_nodes:
             m = re.search(self.regex, t_node.token_str)
             try:
                 value = m.group(1)
@@ -1234,23 +1264,19 @@ def nltk_n_grams(in_str, n):
 def main():
 
     tag_to_val = {
-        "timepoint": "48hr"
+        "what time is it?": "48hr"
     }
 
 
     key_val_filt = KeyValueFilter_Stage()
     init_tokens_stage = InitKeyValueTokens_Stage()
-    hier_ngram = HierarchicalNGram_Stage()
     ngram = NGram_Stage()
     lower_stage = Lowercase_Stage()
-    destem = RemoveStem_Stage()
     cvcl_syn = CellosaurusSynonyms_Stage()
     man_at_syn = ManuallyAnnotatedSynonyms_Stage()
     infer_cell_line = InferCellLineTerms_Stage()
     #exact_match = ExactStringMatching_Stage(["13"], query_len_thresh=3)
     prop_spec_syn = PropertySpecificSynonym_Stage()
-    downstream = RemoveDownstreamEdgesOfMappedTokenNodes_Stage()
-    subphrase = RemoveSubIntervalOfMatched_Stage()   
     filt_match_priority = FilterOntologyMatchesByPriority_Stage()
     match_cust_targs = ExactMatchCustomTargets_Stage()
     cellline_to_implied_disease = CellLineToImpliedDisease_Stage() 
@@ -1272,8 +1298,8 @@ def main():
     #fuzzy_match_CVCL = FuzzyStringMatching_Stage(cvcl_og, 0.1, query_len_thresh=3)
     
 
-    #exact_match = ExactStringMatching_Stage(["1", "2", "4", "5", "7", "8", "9"], query_len_thresh=3)
-    fuzzy_match = FuzzyStringMatching_Stage(0.1, query_len_thresh=3)
+    exact_match = ExactStringMatching_Stage(["1", "2", "4", "5", "7", "8", "9"], query_len_thresh=3)
+    #fuzzy_match = FuzzyStringMatching_Stage(0.1, query_len_thresh=3)
     real_val = ExtractRealValue_Stage()
 
 
@@ -1282,7 +1308,7 @@ def main():
     #stages = [init_tokens_stage, hier_ngram, exact_match, cellline_to_implied_disease]   
     #stages = [init_tokens_stage, acr_to_expan]
     
-    stages = [init_tokens_stage, time_unit, fuzzy_match, real_val]
+    stages = [init_tokens_stage, ngram, exact_match, time_unit, exact_match, real_val]
 
     p = Pipeline(stages, defaultdict(lambda: 1.0))
     
