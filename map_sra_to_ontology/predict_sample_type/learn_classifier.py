@@ -62,7 +62,11 @@ def main():
             val_data = json.load(f)
             for v in val_data["annotated_samples"]:
                 if v["sample_type"] != "TODO":
-                    data_set.append((v["attributes"], v["sample_type"], v["sample_accession"]))
+                    data_set.append((
+                        v["attributes"], 
+                        v["sample_type"], 
+                        v["sample_accession"]
+                    ))
         return data_set
 
     parser = OptionParser()
@@ -75,12 +79,17 @@ def main():
     print "Test samples are: %s" % train_samples
 
     # Build train dataset
-    train_dataset = get_dataset("/ua/mnbernstein/projects/tbcp/metadata/ontology/validation_sets/validation_set.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.json")
+    train_dataset = get_dataset(
+        "/ua/mnbernstein/projects/tbcp/metadata/ontology/validation_sets/validation_set.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.json"
+    )
     print "Initially %d samples in training set" % len(train_dataset)
     train_dataset = [x for x in train_dataset if x[2] in train_samples and x[1] != "other"]
 
     # Build sample to predicted terms and real-value properties
-    sample_to_predicted_terms_train, sample_to_real_val_props_train = get_samples_to_mappings("matches.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.pip41.json", OGS)
+    sample_to_predicted_terms_train, sample_to_real_val_props_train = get_samples_to_mappings(
+        "matches.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.pip41.json", 
+        OGS
+    )
 
     # Build sample to n-grams
     sample_to_ngrams = get_samples_to_ngram(train_dataset)
@@ -93,7 +102,8 @@ def main():
         num_features_per_class=num_features_per_class,
         doc_freq_thresh=doc_freq_thresh,
         balance_classes=balance_classes,
-        cvcl_og=OGS[4])
+        cvcl_og=OGS[4]
+    )
 
     print "Writing trained model to dilled files..."
     with open("sample_type_vectorizorHAHAHAHA.dill", "w") as f:
@@ -213,9 +223,6 @@ def get_samples_to_ngram(dataset):
         sample_to_ngrams[d[2]] = get_ngrams_from_tag_to_val(d[0])
     return sample_to_ngrams
 
-
-
-
 def ngram_features(
     sample_attributes, 
     sample_accs, 
@@ -288,6 +295,8 @@ def ont_term_features(
     print "The ontology term features are: %s" % term_vec_scaffold
     return term_vec_scaffold
 
+
+
 def get_ngrams(text, n):
 
     delimiters = ["_", "/", "-"]
@@ -295,6 +304,16 @@ def get_ngrams(text, n):
         text = text.replace(delim, " ")
 
     words = nltk.word_tokenize(text)
+
+    # The issue we're trying to solve here
+    # is that nltk converts quotes '"' to 
+    # double ticks (either "``" or "''" for
+    # before or after the quote. We'd like to 
+    # convert them back...however, this runs into
+    # issues when "''" appears in the raw text.
+    # Fixing this issue will likely require writing
+    # my own tokenizer...although that will 
+    # potentially be a lot of work.    
     new_words = []
     for word in words:
         if word == "``":
@@ -314,9 +333,11 @@ def get_ngrams(text, n):
     word_i = 0
     word_char_i = 0
 
-    word_to_indices = defaultdict(lambda: [])
-    for text_i in range(len(text)):
+    # Maps a word index to the character locations in the text
+    # in which this word was derived
+    word_to_text_indices = defaultdict(lambda: [])
 
+    for text_i in range(len(text)):
         if word_char_i == len(words[word_i]):
             word_i += 1
             word_char_i = 0
@@ -324,16 +345,15 @@ def get_ngrams(text, n):
             break
 
         if text[text_i] ==  words[word_i][word_char_i]:
-            word_to_indices[word_i].append(text_i)
-            word_char_i += 1
-        text_i += 1
+            word_to_text_indices[word_i].append(text_i)
+            word_char_i += 1 
 
     n_grams = []
     intervals = []
     for i in range(0, len(words)-n+1):
         grams = words[i:i+n]
-        text_char_begin = word_to_indices[i][0]
-        text_char_end = word_to_indices[i+n-1][-1]
+        text_char_begin = word_to_text_indices[i][0]
+        text_char_end = word_to_text_indices[i+n-1][-1]
         n_gram = text[text_char_begin: text_char_end+1]
         n_grams.append(n_gram)
         intervals.append((text_char_begin, text_char_end+1))

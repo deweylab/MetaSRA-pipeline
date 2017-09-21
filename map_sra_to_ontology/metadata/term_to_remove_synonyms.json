@@ -847,5 +847,24 @@
         "exclude_synonyms": [
             "poly"
         ]
+    },
+    "EFO_CL:0000451": {
+        "name": "dendritic cell",
+        "exclude_synonyms": [
+            "reticular cell",
+            "reticulum cell"
+        ]
+    },
+    "CL:0000560": {
+        "name": "band form neutrophil",
+        "exclude_synonyms": [
+            "band"
+        ]
+    },
+    "UBERON:0010166": {
+        "name": "coat of hair",
+        "exclude_synonyms": [
+            "coat"
+        ]
     }
 }

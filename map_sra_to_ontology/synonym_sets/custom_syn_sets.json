@@ -132,5 +132,13 @@
     [
         "HIV",
         "HIV infection"
+    ],
+    [
+        "PBMCs",
+        "PBMC"
+    ],
+    [
+        "CD14-positive monocyte",
+        "CD14+ monocyte"
     ]
 ]

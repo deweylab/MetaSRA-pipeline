@@ -1,3 +1,4 @@
+from optparse import OptionParser
 import json
 import sys
 import os
@@ -19,12 +20,13 @@ OGS = [load_ontology.load(ont_id)[0] for ont_id in ONT_IDS]
 
 def get_all_samples_to_mappings(matches_file_dir):
     print "loading sample to predicted ontology term mappings..."
-    sample_to_predicted_terms = defaultdict(lambda: Set())
+    sample_to_predicted_terms = {}
     sample_to_real_val_props = {}
     for fname in os.listdir(matches_file_dir):
         with open(join(matches_file_dir, fname), "r") as f:
             j = json.load(f)
             for sample_acc, map_data in j.iteritems():
+                sample_to_predicted_terms[sample_acc] = Set()
                 mapped_term_ids = [x["term_id"] for x in map_data["mapped_terms"]]
                 term_in_onts = False
                 for term in mapped_term_ids:
@@ -54,70 +56,58 @@ def get_dataset(val_set_file):
     return data_set
 
 def main():
-    num_features_per_class = 75
-    doc_freq_thresh = 2
-    algorithm = "one_vs_rest"
-    balance_classes = False
-  
-    # Determine which samples should be in the training set
-    with open("study_to_sample.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.json", "r") as f:
-        study_to_samples = json.load(f)
-    train_samples = Set([sorted(v)[0] for v in study_to_samples.values()])
-    print "Test samples are: %s" % train_samples
-
-    # Build train dataset
-    train_dataset = get_dataset("/ua/mnbernstein/projects/tbcp/metadata/ontology/validation_sets/validation_set.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.json")
-    print "Initially %d samples in training set" % len(train_dataset)
-    train_dataset = [x for x in train_dataset if x[2] in train_samples and x[1] != "other"]
-
-    # Build sample to predicted terms and real-value properties
-    sample_to_predicted_terms_train, sample_to_real_val_props_train = lc.get_samples_to_mappings("matches.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.pip41.json", OGS)
-    sample_to_predicted_terms_all, sample_to_real_val_props_all = get_all_samples_to_mappings("/tier2/deweylab/mnbernstein/standardized_sra_metadata/11-16-16_pip41")
-
-    # Build sample to n-grams
-    sample_to_ngrams = lc.get_samples_to_ngram(train_dataset)
-
-    vectorizer, model = lc.learn_model(
-        algorithm,
-        train_dataset,
-        sample_to_ngrams,
-        sample_to_predicted_terms_train,
-        num_features_per_class=num_features_per_class,
-        doc_freq_thresh=doc_freq_thresh,
-        balance_classes=balance_classes,
-        cvcl_og=OGS[4])
-
-    print "Writing trained model to dilled files..."
-    with open("sample_type_vectorizor.dill", "w") as f:
-        dill.dump(vectorizer, f)
-    with open("sample_type_classifier.dill", "w") as f:
-        dill.dump(model, f)
-    print "Fininshed writing trained model to dilled files."
+    parser = OptionParser()
+    parser.add_option("-m", "--mapping_output_dir", help="Location of mappings file output by pipeline")
+    (options, args) = parser.parse_args()
     
+    # Build sample to predicted terms and real-value properties
+    sample_to_predicted_terms_all, sample_to_real_val_props_all = get_all_samples_to_mappings(options.mapping_output_dir)
+
+    vectorizer_f = pr.resource_filename(__name__, "sample_type_vectorizor.dill")
+    classifier_f = pr.resource_filename(__name__, "sample_type_classifier.dill") 
+    with open(vectorizer_f, "rb") as f:
+        vectorizer = dill.load(f)
+    with open(classifier_f, "rb") as f:
+        model = dill.load(f)
+
     # Build sample to tag to values
     with open("/ua/mnbernstein/projects/tbcp/metadata/ontology/src/map_sra_to_ontology/metadata/sample_to_tag_to_values.json", "r") as f:
         sample_to_tag_to_values = json.load(f) 
 
     # Make predictions
     sample_to_prediction = {}
-    for sample_acc, tag_to_values in sample_to_tag_to_values.iteritems():
+    for sample_acc, tag_to_values in sample_to_tag_to_values.iteritems(): 
         if sample_acc not in sample_to_predicted_terms_all:
             # The mapping process may have failed for this sample
             continue
 
         print "\nPredicting %s" % sample_acc
+        try:
+            n_grams = lc.get_ngrams_from_tag_to_val(
+                sample_to_tag_to_values[sample_acc]
+            )
+        except:
+            print "Error retrieving n-grams!"
+            n_grams = []
         feat_v = vectorizer.convert_to_features(
-            lc.get_ngrams_from_tag_to_val(sample_to_tag_to_values[sample_acc]), 
-            sample_to_predicted_terms_all[sample_acc])
+            n_grams, 
+            sample_to_predicted_terms_all[sample_acc]
+        )
         predicted, confidence = model.predict(
             feat_v, 
             sample_to_predicted_terms_all[sample_acc], 
-            sample_to_real_val_props_all[sample_acc])
+            sample_to_real_val_props_all[sample_acc]
+        )
         sample_to_prediction[sample_acc] = (predicted, confidence)
 
     print sample_to_prediction
     with open("sample_to_predicted_sample_type.json", "w") as f:
-        f.write(json.dumps(sample_to_prediction, indent=4, sort_keys=True, separators=(',', ': ')))
+        f.write(json.dumps(
+            sample_to_prediction, 
+            indent=4, 
+            sort_keys=True, 
+            separators=(',', ': ')
+        ))
 
 
 if __name__ == "__main__":
