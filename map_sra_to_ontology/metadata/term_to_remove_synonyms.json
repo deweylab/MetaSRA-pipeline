@@ -866,5 +866,53 @@
         "exclude_synonyms": [
             "coat"
         ]
+    },
+    "UBERON:2005088": {
+        "name": "posterior mesenteric artery",
+        "exclude_synonyms": [
+            "PMA"
+        ]
+    },
+    "UBERON:0001183": {
+        "name": "inferior mesenteric artery",
+        "exclude_synonyms": [
+            "IMA"
+        ]
+    },
+    "UBERON:6004475": {
+        "name": "sclerite",
+        "exclude_synonyms": [
+            "plate"   
+        ]
+    },
+    "UBERON:0007358": {
+        "name": "abomasum",
+        "exclude_synonyms": [
+            "read"
+        ]
+    },
+    "UBERON:0001681": {
+        "name": "nasal bone",
+        "exclude_synonyms": [
+            "nasals"
+        ]
+    },
+    "EFO:0006510": {
+        "name": "Herpes Zoster",
+        "exclude_synonyms": [
+            "singles"
+        ]
+    },
+    "UBERON:4300020": {
+        "name": "anal fin basal cartilage",
+        "exclude_synonyms": [
+            "basal plate"
+        ]
+    },
+    "UBERON:4300019": {
+        "name": "dorsal fin basal cartilage (elasmobranchs)",
+        "exclude_synonyms": [
+            "basal plate"
+        ]
     }
 }

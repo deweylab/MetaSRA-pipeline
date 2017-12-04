@@ -5,6 +5,7 @@ from sklearn.metrics import mutual_info_score
 import numpy as np
 from scipy import sparse
 
+
 def mutual_info_rank_features(feature_vecs, binary_labels):
     """
     Given a set of feature vectors and binary labels, return
@@ -36,9 +37,6 @@ def mutual_info_rank_features(feature_vecs, binary_labels):
 
     ranked_indices = [index for (mi,index) in sorted(zip(mutual_infos,[x for x in range(num_features)]))]
     return ranked_indices
-
-
- 
 
 
 class OneVsRestClassifier:

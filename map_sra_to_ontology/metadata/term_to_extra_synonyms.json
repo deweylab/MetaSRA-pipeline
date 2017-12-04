@@ -17929,5 +17929,21 @@
         "muscle organ",
         "muscle, anterior tibial",
         "muscles, voluntary"
-    ]
+    ],
+    "CL:0000813": [
+        "memory t cell"
+    ],
+    "CL:0000787": [
+        "memory b cell"
+    ],
+    "UBERON:0013541": [
+        "Brodmann's area 10",
+        "brodmann's area 10",
+        "Brodmann's Area 10"
+    ],
+    "UBERON:0002436": [
+        "Brodmann's Area 17",
+        "brodmann's area 17",
+        "brodmann area 17"
+    ] 
 }

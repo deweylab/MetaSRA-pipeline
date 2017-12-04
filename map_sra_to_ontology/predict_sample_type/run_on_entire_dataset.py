@@ -17,6 +17,7 @@ import load_ontology
 ONT_IDS = ["12", "1", "2", "16", "4"]
 OGS = [load_ontology.load(ont_id)[0] for ont_id in ONT_IDS]
 
+SAMPLE_TO_TAG_TO_VALUES_F = "/ua/mnbernstein/projects/tbcp/metadata/ontology/src/map_sra_to_ontology/metadata/sample_to_tag_to_values.json"
 
 def get_all_samples_to_mappings(matches_file_dir):
     print "loading sample to predicted ontology term mappings..."
@@ -27,14 +28,24 @@ def get_all_samples_to_mappings(matches_file_dir):
             j = json.load(f)
             for sample_acc, map_data in j.iteritems():
                 sample_to_predicted_terms[sample_acc] = Set()
-                mapped_term_ids = [x["term_id"] for x in map_data["mapped_terms"]]
+                mapped_term_ids = [
+                    x["term_id"] 
+                    for x in map_data["mapped_terms"]
+                ]
                 term_in_onts = False
                 for term in mapped_term_ids:
                     for og in OGS:
                         if term in og.mappable_term_ids:
                             sample_to_predicted_terms[sample_acc].add(term)
                             break
-                real_val_props = [{"property_id":x["property_id"], "unit_id":x["unit_id"], "value":x["value"]} for x in map_data["real_value_properties"]]
+                real_val_props = [
+                    {
+                        "property_id": x["property_id"], 
+                        "unit_id": x["unit_id"], 
+                        "value": x["value"]
+                    } 
+                    for x in map_data["real_value_properties"]
+                ]
                 sample_to_real_val_props[sample_acc] = real_val_props
 
         for sample_acc, predicted_terms in sample_to_predicted_terms.iteritems():
@@ -52,12 +63,19 @@ def get_dataset(val_set_file):
         val_data = json.load(f)
         for v in val_data["annotated_samples"]:
             if v["sample_type"] != "TODO":
-                data_set.append((v["attributes"], v["sample_type"], v["sample_accession"]))
+                data_set.append((
+                    v["attributes"], 
+                    v["sample_type"], 
+                    v["sample_accession"]))
     return data_set
 
 def main():
     parser = OptionParser()
-    parser.add_option("-m", "--mapping_output_dir", help="Location of mappings file output by pipeline")
+    parser.add_option(
+        "-m", 
+        "--mapping_output_dir", 
+        help="Location of mappings file output by pipeline"
+    )
     (options, args) = parser.parse_args()
     
     # Build sample to predicted terms and real-value properties
@@ -65,13 +83,13 @@ def main():
 
     vectorizer_f = pr.resource_filename(__name__, "sample_type_vectorizor.dill")
     classifier_f = pr.resource_filename(__name__, "sample_type_classifier.dill") 
-    with open(vectorizer_f, "rb") as f:
+    with open(vectorizer_f, 'rb') as f:
         vectorizer = dill.load(f)
-    with open(classifier_f, "rb") as f:
+    with open(classifier_f, 'rb') as f:
         model = dill.load(f)
 
     # Build sample to tag to values
-    with open("/ua/mnbernstein/projects/tbcp/metadata/ontology/src/map_sra_to_ontology/metadata/sample_to_tag_to_values.json", "r") as f:
+    with open(SAMPLE_TO_TAG_TO_VALUES_F, 'r') as f:
         sample_to_tag_to_values = json.load(f) 
 
     # Make predictions

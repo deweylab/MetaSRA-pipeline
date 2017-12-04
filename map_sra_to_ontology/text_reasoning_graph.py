@@ -41,18 +41,25 @@ class Inference(EEdge):
         return self.__str__()
 
 class FuzzyStringMatch(EEdge):
-    def __init__(self, query_str, matched_str, match_target):
+    def __init__(
+        self, 
+        query_str, 
+        matched_str, 
+        match_target, 
+        edit_dist
+    ):
         """
         Args:
-            edit_dist: edit distance from query to matched string
             match_target: describes the aspect/field of the target
                 that was matched to
+            edit_dist: edit distance from query to matched string
         """
         # TODO allows transformation of edit distance to edge-weight
         super(FuzzyStringMatch, self).__init__(1.0)
         self.match_target = match_target
         self.query_str = query_str
         self.matched_str = matched_str
+        self.edit_dist = edit_dist
 
     def __eq__(self, other):
         if isinstance(other, FuzzyStringMatch):
@@ -66,10 +73,24 @@ class FuzzyStringMatch(EEdge):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(("FUZZY_STRING_MATCH", (self.query_str, self.matched_str,  self.match_target))) 
+        return hash((
+            "FUZZY_STRING_MATCH", 
+            (
+                self.query_str, 
+                self.matched_str,  
+                self.match_target, 
+                self.edit_dist
+            )
+        )) 
 
     def __str__(self):
-        return "FuzzyStringMatch(weight=%f, query_str='%s', matched_str='%s', match_target='%s')" % (self.weight, self.query_str.decode('utf-8', 'replace'), self.matched_str, self.match_target)
+        return "FuzzyStringMatch(weight=%f, query_str='%s', matched_str='%s', match_target='%s', edit_dist=%d)" % (
+            self.weight, 
+            self.query_str.decode('utf-8', 'replace'), 
+            self.matched_str, 
+            self.match_target, 
+            self.edit_dist
+        )
 
     def __repr__(self):
         return self.__str__()
@@ -135,7 +156,9 @@ class TokenNode(ENode):
 
     def __eq__(self, other):
         if isinstance(other, TokenNode):
-            if self.token_str == other.token_str and self.origin_gram_start == other.origin_gram_start and self.origin_gram_end == other.origin_gram_end:
+            if self.token_str == other.token_str \
+                and self.origin_gram_start == other.origin_gram_start \
+                and self.origin_gram_end == other.origin_gram_end:
                 return True
         return False
 
@@ -143,10 +166,21 @@ class TokenNode(ENode):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash(("TOKEN_NODE", (self.token_str, self.origin_gram_start, self.origin_gram_end)))
+        return hash((
+            "TOKEN_NODE", 
+            (
+                self.token_str, 
+                self.origin_gram_start, 
+                self.origin_gram_end
+            )
+        ))
 
     def __str__(self):
-        return "TokenNode(token_str='%s', origin_gram_start=%d, origin_gram_end=%d)" % (self.token_str, self.origin_gram_start, self.origin_gram_end)
+        return "TokenNode(token_str='%s', origin_gram_start=%d, origin_gram_end=%d)" % (
+            self.token_str, 
+            self.origin_gram_start, 
+            self.origin_gram_end
+        )
 
     def __repr__(self):
         return self.__str__()
@@ -247,7 +281,11 @@ class RealValuePropertyNode(ENode):
         return hash(("RealValuePropertyNode", (self.property_term_id, self.value, self.unit_term_id)))
 
     def __str__(self):
-        return "RealValuePropertyNode(property_term_id='%s', value=%f, unit_term_id='%s')" % (self.property_term_id, self.value, self.unit_term_id)
+        return "RealValuePropertyNode(property_term_id='%s', value=%f, unit_term_id='%s')" % (
+            self.property_term_id, 
+            self.value, 
+            self.unit_term_id
+        )
 
     def __repr__(self):
         return self.__str__()
@@ -359,7 +397,13 @@ class TextReasoningGraph:
 
 
     def delete_edge(self, node_a, node_b, edge):
-
+        """
+        Delete an edge from one node to another.
+        Args:
+            node_a: the source node
+            node_b: the target node
+            edge: the edge type between node_a and node_b to be removed
+        """
         if node_a in self.forward_edges and edge in self.forward_edges[node_a] and node_b in self.forward_edges[node_a][edge]:
             self.forward_edges[node_a][edge].remove(node_b)
             if len(self.forward_edges[node_a][edge]) == 0:
@@ -372,11 +416,11 @@ class TextReasoningGraph:
                 del self.reverse_edges[node_b][edge]
             if len(self.reverse_edges[node_b]) == 0:
                 del self.reverse_edges[node_b]
-        else:
-            print "Warning! Could not delete edge %s -- %s --> %s" % (node_a, edge, node_b)
-            print node_a in self.forward_edges
-            print edge in self.forward_edges[node_a]
-            print node_b in self.forward_edges[node_a][edge]
+#        else:
+#            print "Warning! Could not delete edge %s -- %s --> %s" % (node_a, edge, node_b)
+#            print "node_a=%s in self.forward_edges=? %s" % (node_a, (node_a in self.forward_edges))
+#            print "%s in self.forward_edges[node_a]? %s" % (edge, (edge in self.forward_edges[node_a]))
+#            print "node_b=%s in self.forward_edges[node_a][edge]? %s" % (node_b, (node_b in self.forward_edges[node_a][edge]))
         
     def add_edge(self, node_a, node_b, edge):
         if self.prohibit_cycles:

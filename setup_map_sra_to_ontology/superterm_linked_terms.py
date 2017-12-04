@@ -29,6 +29,11 @@ def main():
     #term_to_linkedsup_terms.update(term_to_linked_superterms(efo_disease_og))
     #term_to_linkedsup_terms.update(term_to_linked_superterms(efo_anatomy_og))
 
+    # Remove known incorrect mappings
+    if "CVCL:1240" in term_to_linkedsup_terms["EFO:0003045"]:
+        term_to_linkedsup_terms["EFO:0003045"].remove("CVCL:1240")
+        
+
     with open("term_to_superterm_linked_terms.json", "w") as f:
         f.write(json.dumps(term_to_linkedsup_terms, indent=4, sort_keys=True, separators=(',', ': ')))
 

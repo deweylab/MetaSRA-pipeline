@@ -97,6 +97,8 @@
         "Not treated",
         "not treated",
         "no treatment",
-        "uninfected without treatment"
+        "uninfected without treatment",
+        "No COPD",
+        "No history of smoking"
     ] 
 }
