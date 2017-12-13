@@ -1,6 +1,6 @@
 # MetaSRA: normalized human sample-specific metadata for the Sequence Read Archive
 
-This repository contains the code implementing the pipeline used to construct the MetaSRA database described in our publication: https://academic.oup.com/bioinformatics/article/3848915/MetaSRA-normalized-human-sample-specific-metadata.
+This repository contains the code implementing the pipeline used to construct the MetaSRA database described in our publication: https://doi.org/10.1093/bioinformatics/btx334.
 
 This pipeline re-annotates key-value descriptions of biological samples using biomedical ontologies.
 
