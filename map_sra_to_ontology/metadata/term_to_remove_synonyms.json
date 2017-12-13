@@ -914,5 +914,11 @@
         "exclude_synonyms": [
             "basal plate"
         ]
+    },
+    "UBERON:0000125": {
+        "name": "neural nucleus",
+        "exclude_synonyms": [
+            "nucleus"
+        ]
     }
 }
