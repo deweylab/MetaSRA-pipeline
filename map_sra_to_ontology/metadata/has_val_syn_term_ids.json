@@ -40,5 +40,11 @@
             "d",
             "day"
         ]
+    ],
+    "EFO:0000322": [
+        [
+            "HUVEC",
+            "HUVEC cell line"
+        ]
     ]
 }
