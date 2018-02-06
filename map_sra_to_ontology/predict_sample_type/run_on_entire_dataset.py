@@ -8,6 +8,7 @@ import dill
 from sets import Set
 from collections import Counter, defaultdict
 
+import numpy as np
 import pkg_resources as pr
 resource_package = __name__
 sys.path.append(pr.resource_filename(resource_package, ".."))
@@ -52,7 +53,12 @@ def get_all_samples_to_mappings(matches_file_dir):
             sup_terms = Set()
             for og in OGS:
                 for term in predicted_terms:
-                    sup_terms.update(og.recursive_relationship(term, ['is_a', 'part_of']))
+                    sup_terms.update(
+                        og.recursive_relationship(
+                            term, 
+                            ['is_a', 'part_of']
+                        )
+                    )
             sample_to_predicted_terms[sample_acc].update(sup_terms)
     return sample_to_predicted_terms, sample_to_real_val_props
 
@@ -79,10 +85,18 @@ def main():
     (options, args) = parser.parse_args()
     
     # Build sample to predicted terms and real-value properties
-    sample_to_predicted_terms_all, sample_to_real_val_props_all = get_all_samples_to_mappings(options.mapping_output_dir)
+    sample_to_predicted_terms_all, sample_to_real_val_props_all = get_all_samples_to_mappings(
+        options.mapping_output_dir
+    )
 
-    vectorizer_f = pr.resource_filename(__name__, "sample_type_vectorizor.dill")
-    classifier_f = pr.resource_filename(__name__, "sample_type_classifier.dill") 
+    vectorizer_f = pr.resource_filename(
+        __name__, 
+        "sample_type_vectorizor.dill"
+    )
+    classifier_f = pr.resource_filename(
+        __name__, 
+        "sample_type_classifier.dill"
+    ) 
     with open(vectorizer_f, 'rb') as f:
         vectorizer = dill.load(f)
     with open(classifier_f, 'rb') as f:

@@ -136,7 +136,7 @@ def main():
         dill.dump(vectorizer, f)
     with open("sample_type_classifier.dill", "w") as f:
         dill.dump(model, f)
-    print "Fininshed writing trained model to dilled files."
+    print "Finished writing trained model to dilled files."
 
 
 
@@ -161,13 +161,14 @@ class FeatureConverter:
 
 
 def learn_model(
-    training_set, 
-    sample_to_ngrams, 
-    sample_to_predicted_terms, 
-    num_features_per_class, 
-    doc_freq_thresh, 
-    balance_classes, 
-    cvcl_og):
+        training_set, 
+        sample_to_ngrams, 
+        sample_to_predicted_terms, 
+        num_features_per_class, 
+        doc_freq_thresh, 
+        balance_classes, 
+        cvcl_og
+    ):
     """
     Args:
         training_set: list of tuples where first element of tuple is a dictionary of
