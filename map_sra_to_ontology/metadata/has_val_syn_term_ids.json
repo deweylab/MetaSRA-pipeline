@@ -46,5 +46,13 @@
             "HUVEC",
             "HUVEC cell line"
         ]
+    ],
+    "EFO:0000324": [
+        "th1",
+        "T-helper 1 cell"
+    ],
+    "EFO:0000324": [
+        "th17,
+        "T-helper 17cell"
     ]
 }
