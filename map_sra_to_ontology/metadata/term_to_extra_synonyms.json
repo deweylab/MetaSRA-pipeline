@@ -17945,5 +17945,8 @@
         "Brodmann's Area 17",
         "brodmann's area 17",
         "brodmann area 17"
+    ],
+    "CL:0000815": [
+        "Treg"
     ] 
 }

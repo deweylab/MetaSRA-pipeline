@@ -920,5 +920,11 @@
         "exclude_synonyms": [
             "nucleus"
         ]
+    },
+    "CL:0000792": {
+        "name": "CD4-positive, CD25-positive, alpha-beta regulatory T cell",
+        "exclude_synonyms": [
+            "Treg"
+        ]
     }
 }
