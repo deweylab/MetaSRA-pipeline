@@ -17954,5 +17954,8 @@
     "CL:0000817": [
         "Pre-B-Precursor",
         "pre-b-precursor"
+    ],
+    "CL:0000049": [
+        "myeloid precursor"
     ]
 }
