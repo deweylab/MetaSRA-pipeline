@@ -17931,7 +17931,9 @@
         "muscles, voluntary"
     ],
     "CL:0000813": [
-        "memory t cell"
+        "memory t cell",
+        "Memory CD4 T-cells",
+        "memory cd4 t cells"
     ],
     "CL:0000787": [
         "memory b cell"
@@ -17948,5 +17950,5 @@
     ],
     "CL:0000815": [
         "Treg"
-    ] 
+    ]
 }
