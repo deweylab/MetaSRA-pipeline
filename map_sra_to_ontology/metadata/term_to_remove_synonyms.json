@@ -926,5 +926,17 @@
         "exclude_synonyms": [
             "Treg"
         ]
+    },
+    "CL:0000838": {
+        "name": "lymphoid lineage restricted progenitor cell",
+        "exclude_synonyms": [
+            "lymphoid progenitor cell"
+        ]
+    },
+    "CL:0000839": {
+        "name": "myeloid lineage restricted progenitor cell",
+        "exclude_synonyms": [
+            "myeloid progenitor cell"
+        ]
     }
 }
