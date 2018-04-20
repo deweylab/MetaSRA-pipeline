@@ -17957,5 +17957,9 @@
     ],
     "CL:0000049": [
         "myeloid precursor"
+    ],
+    "CL:0000711": [
+        "cumulus oophorus cell",
+        "cumulus oophorus cells"
     ]
 }
