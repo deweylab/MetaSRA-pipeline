@@ -72,7 +72,9 @@
         "id_spaces": [
             "CVCL"
         ],
-        "exclude_terms": {},
+        "exclude_terms": {
+            "CVCL:Z433": "AGE"
+        },
         "description": "All CVCL terms in the Cellosaurus"
     },
     "5": {
