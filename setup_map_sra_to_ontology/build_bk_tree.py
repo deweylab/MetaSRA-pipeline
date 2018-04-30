@@ -9,7 +9,14 @@ from collections import defaultdict
 
 def main():
     
-    og_ids = ["1", "2", "4", "5", "7", "9"]
+    og_ids = [
+        "1", 
+        "2", 
+        "18", # Cellosaurus with relavent terms for human biology 
+        "5", 
+        "7", 
+        "9"
+    ]
     ogs = [load_ontology.load(x)[0] for x in og_ids]
     str_to_terms = defaultdict(lambda: [])
 

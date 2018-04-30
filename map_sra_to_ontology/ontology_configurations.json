@@ -72,9 +72,7 @@
         "id_spaces": [
             "CVCL"
         ],
-        "exclude_terms": {
-            "CVCL:Z433": "AGE"
-        },
+        "exclude_terms": {},
         "description": "All CVCL terms in the Cellosaurus"
     },
     "5": {
@@ -357,7 +355,21 @@
         ],
         "exclude_terms": [],
         "description": "Consists of all CL, DOID, UBERON, EFO, and CVCL terms."
-    }
+    },
+    "18": {
+        "included_ontology_projects": [
+            "CVCL"
+        ],
+        "restrict_to_specific_subgraph": false,
+        "id_spaces": [
+            "CVCL"
+        ],
+        "exclude_terms": {
+            "CVCL:Z433": "AGE"
+        },
+        "description": "All CVCL terms in the Cellosaurus relavent for human data"
+    },
+
 }
     
 
