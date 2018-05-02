@@ -17931,9 +17931,15 @@
         "muscles, voluntary"
     ],
     "CL:0000813": [
-        "memory t cell",
+        "memory t cell"
+    ],
+    "CL:0000897": [
         "Memory CD4 T-cells",
-        "memory cd4 t cells"
+        "memory cd4 t cells",
+        "Memory CD4+ T-cells",
+        "memory cd4+ t cells",
+        "CD4+ memory T cells",
+        "CD4+ memory t cells"
     ],
     "CL:0000787": [
         "memory b cell"
@@ -17961,5 +17967,20 @@
     "CL:0000711": [
         "cumulus oophorus cell",
         "cumulus oophorus cells"
+    ],
+    "CL:0000624": [
+        "CD4+ T cells",
+        "CD4+ T-cells",
+        "CD4+ t cells",
+        "CD4+ t cell",
+        "CD4+ T-cell"
+    ],
+    "CL:0000625": [
+        "CD8+ T cells",
+        "CD8+ T-cells",
+        "CD8+ t cells",
+        "CD8+ t cell",
+        "CD8+ T-cell"
     ]
+    
 }
