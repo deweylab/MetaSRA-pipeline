@@ -40,6 +40,7 @@ REAL_VALUE_PROPERTIES = pr.resource_filename(resource_package, join("metadata", 
 CUST_TERM_TO_CONSEQ_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "custom_term_to_consequent_terms.json"))
 CELL_LINE_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "cvcl_mappings.json"))
 TWO_CHAR_MAPPINGS_JSON = pr.resource_filename(resource_package, join("metadata", "two_char_mappings.json"))
+TERM_ARTIFACT_COMBOS_JSON = pr.resource_filename(resource_package, join("metadata", "term_artifact_combo.json"))
 
 TOKEN_SCORING_STRATEGY = defaultdict(lambda: 1) # TODO We want an explicit score dictionary
 
@@ -411,7 +412,7 @@ class Lowercase_Stage:
 
 class PropertySpecificSynonym_Stage:
     def __init__(self):
-        with open(PROPERTY_SPECIFIC_SYNONYMS_JSON, "r") as f:
+        with open(PROPERTY_SPECIFIC_SYNONYMS_JSON, 'r') as f:
             self.property_id_to_syn_sets = json.load(f)
 
     def run(self, text_mining_graph):
@@ -446,9 +447,12 @@ class PropertySpecificSynonym_Stage:
                             for down_node in text_mining_graph.downstream_nodes(t_node):
                                 if isinstance(down_node, TokenNode):
                                     for syn_set in self.property_id_to_syn_sets[key_term_node.term_id]:
-                                        if down_node.token_str in syn_set:
+                                        #print "Is the issue with %s" % down_node.token_str
+                                        #print down_node.token_str
+                                        down_node_str = down_node.token_str.decode('utf-8')
+                                        if down_node_str in syn_set:
                                             for syn in syn_set:
-                                                if syn != down_node.token_str:
+                                                if syn != down_node_str:
                                                     new_node = TokenNode(syn, down_node.origin_gram_start, down_node.origin_gram_end)
                                                     text_mining_graph.add_edge(down_node, new_node, edge)
 
@@ -466,10 +470,10 @@ class BlockCellLineNonCellLineKey_Stage:
 
         cvcl_og, x,y = load_ontology.load("4") 
 
-        # Cell line terms are all CVCL terms and those terms in the EFO they link 
-        # to
+        # Cell line terms are all CVCL terms and those terms in the EFO 
+        # they link to
         self.cell_line_terms = set(cvcl_og.id_to_term.keys())
-        with open(TERM_TO_LINKED_ANCESTOR_JSON, "r") as f:
+        with open(TERM_TO_LINKED_ANCESTOR_JSON, 'r') as f:
             term_to_suplinked = json.load(f)
             for t_id in cvcl_og.id_to_term:
                 if t_id in term_to_suplinked:
@@ -625,6 +629,7 @@ class SPECIALISTLexInflectionalVariants:
             for target_node in target_nodes:
                 text_mining_graph.add_edge(source_node, target_node, edge)
         return text_mining_graph
+
  
 class SPECIALISTSpellingVariants:
     def __init__(self, specialist_lex):
@@ -684,7 +689,13 @@ class Delimit_Stage:
 
 
 class FilterOntologyMatchesByPriority_Stage:
-    
+    """
+    If an artifact has an exact string match with multiple ontology
+    terms, prioritize the ontology terms for which that matched 
+    string is closer semantically to the ontology term's concept.
+    For example, prioritize a match to a term name over an inexact
+    synonym.
+    """    
     def run(self, text_mining_graph):
         def is_edge_direct_match(edge):
             return edge.match_target == "TERM_NAME" \
@@ -736,8 +747,6 @@ class FilterOntologyMatchesByPriority_Stage:
                     #    text_mining_graph.delete_node(n)
 
         return text_mining_graph
-
-
 
 
 class ExactStringMatching_Stage:
@@ -836,8 +845,6 @@ class ExactStringMatching_Stage:
                             )
 
         return text_mining_graph
-
-
 
 
 class FuzzyStringMatching_Stage:
@@ -944,9 +951,66 @@ class FuzzyStringMatching_Stage:
 
         return text_mining_graph
 
-    
 
+class TermArtifactCombinations_Stage:
+    """
+    Given a certain ontology term is found in combination with a set 
+    of artifact strings, then map to a specific ontology term. For
+    example, if a sample maps to the term 'T cell' and we find the
+    artifact 'CD4+', then we should map the term 
+    'CD4-positive alpha-beta T cell'.  That is, the information for
+    a specific ontology term may be distributed over the key value 
+    pairs. 
+    """   
+    def __init__(self):
+        with open(TERM_ARTIFACT_COMBOS_JSON, 'r') as f:
+            self.term_artifact_combos = json.load(f)
+ 
+    def run(self, text_mining_graph):
+        all_artifacts = set([
+            a_node.token_str
+            for a_node in text_mining_graph.token_nodes
+        ])
+        all_term_ids = set([
+            ont_node.term_id 
+            for ont_node in text_mining_graph.ontology_term_nodes
+        ])
+        edge = Inference("Found co-occuring artifacts")
+        add_edges = []
+        for combo in self.term_artifact_combos:
+            # Check whether the sample mapped to all required 
+            # ontology terms
+            required_terms = set(combo['required_terms'].keys())
+            num_required_terms = len(required_terms)
+            if not required_terms <= all_term_ids:            
+                continue
 
+            # Check whether we have derived all required artifacts
+            num_required_artifacts = len(combo['required_artifacts'])
+            num_found_artifacts = 0
+            for artifact_set in combo['required_artifacts']:
+                if len(set(artifact_set) & all_artifacts) > 0:
+                     num_found_artifacts += 1
+            if num_found_artifacts < num_required_artifacts:
+                continue
+       
+            # If we've reached this point, then all requirements
+            # have been met for mapping to the consequent term 
+            conseq_term_id = combo['consequent_term']
+            required_ont_nodes = [
+                ont_node
+                for ont_node in text_mining_graph.ontology_term_nodes
+                if ont_node.term_id in required_terms
+            ]
+            for ont_node in required_ont_nodes:
+                add_edges.append((
+                    ont_node,
+                    OntologyTermNode(conseq_term_id),
+                    edge
+                ))
+        for e in add_edges:
+            text_mining_graph.add_edge(e[0], e[1], e[2])
+        return text_mining_graph            
 
 
 class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
@@ -1499,7 +1563,7 @@ def get_ngrams(text, n):
         else:
             new_words.append(word)
     words = new_words
-        
+    text = " ".join(words)
 
     if not words:
         return [], []
@@ -1516,7 +1580,6 @@ def get_ngrams(text, n):
             word_char_i = 0
         if word_i == len(words):
             break
-        
         if text[text_i] ==  words[word_i][word_char_i]:
             word_to_indices[word_i].append(text_i)
             word_char_i += 1
@@ -1555,32 +1618,21 @@ def nltk_n_grams(in_str, n):
  
 def main():
 
-    """
     tag_to_val = {
-        "what time is it?": "48hr"
+        "cell type": "T cell",
+        "marker": "CD4+"
     }
-    """
 
-    """
-    tag_to_val = {
-        "cell type": "memory B cells"
-    }
-    """
-
-    """
-    tag_to_val = {
-        "source_name":  "Human Memory B cells, Tonsil, FACS",
-        "gender":   "female",
-        "age 5":  "years",
-        "source tissue":   "tonsil",
-        "isolation":   "fluorescence activated cell sorting",
-        "cell type":   "memory B cell"
-    }
-    """
-    
-    tag_to_val = {
-        "body site": "Left Brodmann's Area 10 (Prefrontal Cortex)"
-    }
+    #tag_to_val = {
+    #    "BioSampleModel": "Human",
+    #    "age": "freshly isolated umbilical vein endothelial cells",
+    #    "biomaterial_provider": "Lonza",
+    #    "cell_line": "HUVEC",
+    #    "isolate": "freshly isolated umbilical vein endothelial cells",
+    #    "sex": "female",
+    #    "tissue": "umbilical vein"
+    #}
+   
 
     spec_lex = SpecialistLexicon("LEX")
     key_val_filt = KeyValueFilter_Stage()
@@ -1609,6 +1661,7 @@ def main():
     inflec_var = SPECIALISTLexInflectionalVariants(spec_lex)
     spell_var = SPECIALISTSpellingVariants(spec_lex)
     prioritize_exact = PrioritizeExactMatchOverFuzzyMatch()
+    art_term_combos = TermArtifactCombinations_Stage()
 
     #efo_og, x, y = load_ontology.load("13") 
     #fuzzy_match_EFO = FuzzyStringMatching_Stage(efo_og, 0.1, query_len_thresh=3)
@@ -1627,7 +1680,7 @@ def main():
     #stages = [init_tokens_stage, acr_to_expan]
     #stages = [init_tokens_stage, ngram, exact_match, time_unit, exact_match, real_val]
 
-    stages = [init_tokens_stage, ngram, lower_stage, inflec_var, spell_var, fuzzy_match, prioritize_exact]
+    stages = [init_tokens_stage, ngram, lower_stage, inflec_var, spell_var, fuzzy_match, prioritize_exact, art_term_combos]
 
     p = Pipeline(stages, defaultdict(lambda: 1.0))
     
