@@ -54,11 +54,21 @@ RAW_MAPPINGS_FILENAME = 'metasra_raw_mappings.{}.json'.format(TODAY_DATE)
 # The name of the file storing the predicted sample types
 SAMPLE_TYPE_PREDICTIONS_FILENAME = 'sample_type_predictions.{}.json'.format(TODAY_DATE)
 
+
+
+##################################################################################
+# This rule will build the MetaSRA in one fell swoop; however, usually there
+# are some hiccups in getting all of the Condor jobs to run successfully.
+##################################################################################
 rule all:
     input:
-        '{condor_root}/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
+        '{output_loc}/metasra.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        '{output_loc}/metasra.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
         )
 
 
@@ -250,7 +260,7 @@ rule gather_condor_outputs:
     run:
         commands=[
             'mkdir -p {}'.format(OUTPUT_LOC),
-            'python2.7 {src}/gather_matches.py {condor_root} {job_out_f} {{output.result}} {{output.log}}'.format(
+            'python2.7 {src}/gather_mappings.py {condor_root} {job_out_f} {{output.result}} {{output.log}}'.format(
                 src=CREATE_METASRA_SRC,
                 condor_root=CONDOR_ROOT_LOC,
                 job_out_f=PER_JOB_OUTPUT_FILENAME
