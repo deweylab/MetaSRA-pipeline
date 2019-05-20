@@ -5,8 +5,8 @@
 
 ####### Pipeline parameters. Set these variables appropriately.
 
-# This variable is used as the ID of the pipeline run. I usually use the data, but it
-# can be any string.
+# This variable is used as the ID of the pipeline run. I usually use the current date, 
+# but it can be any string.
 TODAY_DATE = '19-05-08'
 
 # Location to place the SRA metadata files 
