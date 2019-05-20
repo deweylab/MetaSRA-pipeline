@@ -20,34 +20,34 @@ OGS = [load_ontology.load(ont_id)[0] for ont_id in ONT_IDS]
 
 SAMPLE_TO_TAG_TO_VALUES_F = "/ua/mnbernstein/projects/tbcp/metadata/ontology/src/map_sra_to_ontology/metadata/sample_to_tag_to_values.json"
 
-def get_all_samples_to_mappings(matches_file_dir):
+def get_all_samples_to_mappings(mappings_f):
     print "loading sample to predicted ontology term mappings..."
     sample_to_predicted_terms = {}
     sample_to_real_val_props = {}
-    for fname in os.listdir(matches_file_dir):
-        with open(join(matches_file_dir, fname), "r") as f:
-            j = json.load(f)
-            for sample_acc, map_data in j.iteritems():
-                sample_to_predicted_terms[sample_acc] = Set()
-                mapped_term_ids = [
-                    x["term_id"] 
-                    for x in map_data["mapped_terms"]
-                ]
-                term_in_onts = False
-                for term in mapped_term_ids:
-                    for og in OGS:
-                        if term in og.mappable_term_ids:
-                            sample_to_predicted_terms[sample_acc].add(term)
-                            break
-                real_val_props = [
-                    {
-                        "property_id": x["property_id"], 
-                        "unit_id": x["unit_id"], 
-                        "value": x["value"]
-                    } 
-                    for x in map_data["real_value_properties"]
-                ]
-                sample_to_real_val_props[sample_acc] = real_val_props
+    #for fname in os.listdir(matches_file_dir):
+    with open(mappings_f, 'r') as f:
+        j = json.load(f)
+        for sample_acc, map_data in j.iteritems():
+            sample_to_predicted_terms[sample_acc] = Set()
+            mapped_term_ids = [
+                x["term_id"] 
+                for x in map_data["mapped_terms"]
+            ]
+            term_in_onts = False
+            for term in mapped_term_ids:
+                for og in OGS:
+                    if term in og.mappable_term_ids:
+                        sample_to_predicted_terms[sample_acc].add(term)
+                        break
+            real_val_props = [
+                {
+                    "property_id": x["property_id"], 
+                    "unit_id": x["unit_id"], 
+                    "value": x["value"]
+                } 
+                for x in map_data["real_value_properties"]
+            ]
+            sample_to_real_val_props[sample_acc] = real_val_props
 
         for sample_acc, predicted_terms in sample_to_predicted_terms.iteritems():
             sup_terms = Set()
@@ -83,10 +83,15 @@ def main():
         help="Location of mappings file output by pipeline"
     )
     (options, args) = parser.parse_args()
-    
+   
+    sample_to_metadata_f = args[0]
+    mapping_f = args[1]
+    out_f = args[2]
+    log_f = args[3]
+ 
     # Build sample to predicted terms and real-value properties
     sample_to_predicted_terms_all, sample_to_real_val_props_all = get_all_samples_to_mappings(
-        options.mapping_output_dir
+        mapping_f
     )
 
     vectorizer_f = pr.resource_filename(
@@ -103,17 +108,20 @@ def main():
         model = dill.load(f)
 
     # Build sample to tag to values
-    with open(SAMPLE_TO_TAG_TO_VALUES_F, 'r') as f:
+    with open(sample_to_metadata_f, 'r') as f:
         sample_to_tag_to_values = json.load(f) 
 
     # Make predictions
     sample_to_prediction = {}
+    not_found = 0
+    pred_none = 0
     for sample_acc, tag_to_values in sample_to_tag_to_values.iteritems(): 
         if sample_acc not in sample_to_predicted_terms_all:
             # The mapping process may have failed for this sample
+            not_found += 1
             continue
 
-        print "\nPredicting %s" % sample_acc
+        #print "\nPredicting %s" % sample_acc
         try:
             n_grams = lc.get_ngrams_from_tag_to_val(
                 sample_to_tag_to_values[sample_acc]
@@ -130,16 +138,35 @@ def main():
             sample_to_predicted_terms_all[sample_acc], 
             sample_to_real_val_props_all[sample_acc]
         )
+        if predicted == None or confidence == None:
+            #print "HUH? Sample %s was predicted as None..." % sample_acc
+            pred_none += 1
         sample_to_prediction[sample_acc] = (predicted, confidence)
 
-    print sample_to_prediction
-    with open("sample_to_predicted_sample_type.json", "w") as f:
-        f.write(json.dumps(
-            sample_to_prediction, 
-            indent=4, 
-            sort_keys=True, 
-            separators=(',', ': ')
-        ))
+    print "%d samples were not found in mappings file" % not_found
+    print "%d samples were predicted as none" % pred_none
+    log_data = {
+        'Number samples in metadata, but not mapping file': not_found,
+        'Number of samples with prediction errors': pred_none 
+    }
+
+    #print sample_to_prediction
+    with open(out_f, 'w') as f:
+        json.dump(
+            sample_to_prediction,
+            f, 
+            indent=True, 
+            sort_keys=True 
+        )
+
+    with open(log_f, 'w') as f:
+        json.dump(
+            log_data,
+            f,
+            indent=True
+        )
+
+        
 
 
 if __name__ == "__main__":

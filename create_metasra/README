@@ -1,0 +1,3 @@
+This code builds the MetaSRA. It uses Condor to parallelize mapping samples
+to ontology terms. The pipeline can be run using Snakemake. Each step of the
+pipeline is documented in the Snakefile.

@@ -1,0 +1,324 @@
+#######################################################################################
+#   Complete pipeline for creating the MetaSRA database from the latest version of 
+#   the SRAdb. Uses Condor to distribute the work across machines.
+#######################################################################################
+
+####### Pipeline parameters. Set these variables appropriately.
+
+# This variable is used as the ID of the pipeline run. I usually use the data, but it
+# can be any string.
+TODAY_DATE = '19-05-08'
+
+# Location to place the SRA metadata files 
+SRA_DB_DESTINATION = '' # TODO
+
+# Location to place the input files for Condor that are shared across jobs
+CONDOR_INPUT_LOC = '' # TODO
+
+# Location of the script to create the raw metadata JSON file that is fed to each Condor job
+EXTRACT_METADATA_JSON_LOCATION = '' # TODO
+
+# Location of map_sra_to_ontology
+PIPELINE_SRC_LOC = '' # TODO
+
+# Location of pipeline_v53.py
+BUILD_PIPELINE_LOC = '' # TODO
+
+# Location of all the scripts for running the MetaSRA pipeline (not the MetaSRA code itself)
+CREATE_METASRA_SRC = '' # TODO
+
+# Location of the Condor root directory
+CONDOR_ROOT_LOC = '' # TODO
+
+# Location of the output files
+OUTPUT_LOC = '' # TODO
+
+
+####### These variables can be left alone.
+
+# Location of SRAdb
+SRA_DB_LOCATION = 'https://s3.amazonaws.com/starbuck1/sradb/SRAmetadb.sqlite.gz'
+
+# Name of the file output by each Condor job
+PER_JOB_OUTPUT_FILENAME = 'metasra_mappings.json'
+
+# Name of the Condor submit file
+SUBMIT_FILENAME = 'create_metasra.submit'
+
+# Name of the file that Condor has terminated
+FINISH_FILENAME = 'finished.txt'
+
+# The name of the file storing the raw output from all Condor jobs
+RAW_MAPPINGS_FILENAME = 'metasra_raw_mappings.{}.json'.format(TODAY_DATE)
+
+# The name of the file storing the predicted sample types
+SAMPLE_TYPE_PREDICTIONS_FILENAME = 'sample_type_predictions.{}.json'.format(TODAY_DATE)
+
+rule all:
+    input:
+        '{condor_root}/{finished_f}'.format(
+            condor_root=CONDOR_ROOT_LOC,
+            finished_f=FINISH_FILENAME
+        )
+
+
+##################################################################################
+# Download the SRAdb. This is the database storing the raw
+# metadata for the entire SRA. See the following:
+# https://bioconductor.org/packages/release/bioc/html/SRAdb.html
+##################################################################################
+rule download_SRAdb:
+    output:
+        '{sra_db_dest}/SRAmetadb.{date}.sqlite'.format(
+            sra_db_dest=SRA_DB_DESTINATION,
+            date=TODAY_DATE
+        )
+    run:
+        commands=[
+            "curl {sra_db_loc} > {{output}}.gz".format(
+                sra_db_loc=SRA_DB_LOCATION
+            ),
+            "gunzip -f {output}.gz"
+        ]
+        for c in commands:
+            shell(c)
+
+##################################################################################
+# We only want a subset of the metadata, so I create a new SQLite
+# file storing only the data we want to standardize. Furthermore, 
+# this parses the key-value pairs in the SRAdb and stores them into
+# their own table in this 'subset' database.
+##################################################################################
+rule build_custom_SRAdb:
+    input:
+        '{sra_db_dest}/SRAmetadb.{date}.sqlite'.format(
+            sra_db_dest=SRA_DB_DESTINATION,
+            date=TODAY_DATE
+        )
+    output:
+        '{sra_db_dest}/SRAmetadb.subdb.{date}.sqlite'.format(
+            sra_db_dest=SRA_DB_DESTINATION,
+            date=TODAY_DATE
+        )
+    run:
+        commands=[
+            'python2.7 {}/build_subdb.py -t {{input}} -s {{output}}'.format(
+                EXTRACT_METADATA_JSON_LOCATION
+            )
+        ]
+        for c in commands:
+            shell(c)   
+
+##################################################################################
+# We extract the key-value pairs in the 'subset' database into a
+# JSON file, which is provided as input to all of the downstream
+# Condor jobs. 
+##################################################################################
+rule extract_json_from_sqlite:
+    input:
+        '{sra_db_dest}/SRAmetadb.subdb.{date}.sqlite'.format(
+            sra_db_dest=SRA_DB_DESTINATION,
+            date=TODAY_DATE
+        )
+    output:
+        '{}/sample_to_raw_metadata.json'.format(
+            CONDOR_INPUT_LOC
+        )
+    run:
+        commands=[
+            'mkdir -p {}'.format(CONDOR_INPUT_LOC),
+            'python2.7 {}/extract_raw_metadata_json.py {{input}} {{output}}'.format(
+                EXTRACT_METADATA_JSON_LOCATION
+            )
+        ]
+        for c in commands:
+            shell(c)
+
+##################################################################################
+# Creates a giant tarball with all of the code needed to run the pipeline
+# for each Condor job.
+##################################################################################
+rule bundle_condor_input:
+    input:
+        '{}/sample_to_raw_metadata.json'.format(
+            CONDOR_INPUT_LOC
+        )
+    output:
+        '{}/create_metasra_condor_bundle.tar.gz'.format(
+            CONDOR_INPUT_LOC
+         )
+    run:
+        commands=[
+            'mkdir -p {}/create_metasra_condor_bundle'.format(
+                CONDOR_INPUT_LOC
+            ),
+            'cp -r {pipeline_src}/map_sra_to_ontology {condor_input}/create_metasra_condor_bundle'.format(
+                pipeline_src=PIPELINE_SRC_LOC,
+                condor_input=CONDOR_INPUT_LOC
+            ),
+            'cp {pipeline_src}/pipeline_v53.py {condor_input}/create_metasra_condor_bundle/pipeline.py'.format(
+                pipeline_src=BUILD_PIPELINE_LOC,
+                condor_input=CONDOR_INPUT_LOC
+            ),
+            'cp {pipeline_src}/condor_run_pipeline.py {condor_input}/create_metasra_condor_bundle'.format(
+                pipeline_src=CREATE_METASRA_SRC,
+                condor_input=CONDOR_INPUT_LOC
+            ),
+            'cp {{input}} {}/create_metasra_condor_bundle'.format(
+                CONDOR_INPUT_LOC
+            ),          
+            'tar -C {input} -zcf {{output}} create_metasra_condor_bundle'.format(
+                input=CONDOR_INPUT_LOC
+            )
+        ]
+        for c in commands:
+            shell(c) 
+
+##################################################################################
+# Construct the Condor root directory. This directory contains subdirectories
+# for each job as well as the Condor submit file.
+##################################################################################
+rule prepare_condor_root:
+    input:
+        bundle='{}/create_metasra_condor_bundle.tar.gz'.format(
+            CONDOR_INPUT_LOC
+        ),
+        metadata='{}/sample_to_raw_metadata.json'.format(
+            CONDOR_INPUT_LOC
+        )
+    output:
+        '{}/create_metasra.submit'.format(CONDOR_ROOT_LOC)
+    run:
+        commands=[
+            'mkdir -p {}'.format(CONDOR_ROOT_LOC),
+            'python2.7 {src}/create_condorized_pipeline.py {condor_root} {submit_f} {{input.bundle}} {src}/condor_pipeline_executable.bash {job_out_f} {{input.metadata}}'.format(
+                condor_root=CONDOR_ROOT_LOC,
+                submit_f=SUBMIT_FILENAME,
+                src=CREATE_METASRA_SRC,
+                job_out_f=PER_JOB_OUTPUT_FILENAME
+            )
+        ]
+        for c in commands:
+            shell(c)
+
+##################################################################################
+# Run the Condor jobs. Note that all of the jobs may not succeed, in which case,
+# the failed jobs need to be re-run. When all jobs are finished, the file
+# <FINISH_FILENAME> is created to signal to Snakemake that the pipeline may 
+# proceed. Note that when jobs are re-run, this file will need to be created 
+# manually.
+##################################################################################
+rule run_condor:
+    input:
+        '{}/create_metasra.submit'.format(CONDOR_ROOT_LOC)
+    output:
+        '{condor_root}/{finished_f}'.format(
+            condor_root=CONDOR_ROOT_LOC,
+            finished_f=FINISH_FILENAME
+        )
+    run:
+        commands=[
+            'python2.7 {src}/run_condor_jobs.py {condor_root} {{input}} {{output}}'.format(
+                src=CREATE_METASRA_SRC,
+                condor_root=CONDOR_ROOT_LOC
+            )
+        ]
+        for c in commands:
+            shell(c) 
+
+##################################################################################
+# Gather all of the outputs from the Condor jobs. If we can't decode a job's
+# resultant JSON, then that job is simply skipped. Thus, it is important to make
+# sure that all jobs that ran in the previous step (rule 'run_condor') succeeded.
+# The file <OUTPUT_LOC>/gather_condor_outputs.log stores information about how many
+# jobs were skipped.
+##################################################################################
+rule gather_condor_outputs:
+    input:
+        '{condor_root}/{finished_f}'.format(
+            condor_root=CONDOR_ROOT_LOC,
+            finished_f=FINISH_FILENAME
+        )
+    output:
+       result='{condor_output}/{raw_mappings_f}'.format(
+            condor_output=OUTPUT_LOC,
+            raw_mappings_f=RAW_MAPPINGS_FILENAME
+        ),
+        log='{}/gather_condor_outputs.log'.format(
+            OUTPUT_LOC
+        )
+    run:
+        commands=[
+            'mkdir -p {}'.format(OUTPUT_LOC),
+            'python2.7 {src}/gather_matches.py {condor_root} {job_out_f} {{output.result}} {{output.log}}'.format(
+                src=CREATE_METASRA_SRC,
+                condor_root=CONDOR_ROOT_LOC,
+                job_out_f=PER_JOB_OUTPUT_FILENAME
+            )
+        ]
+        for c in commands:
+            shell(c)
+
+##################################################################################
+# Predict the sample-type for all samples. The file 
+# <OUTPUT_LOC>/predict_sample_type.log stores information about this step.
+##################################################################################
+rule predict_sample_type:
+    input:
+        metadata='{}/sample_to_raw_metadata.json'.format(
+            CONDOR_INPUT_LOC
+        ),
+        mappings='{condor_output}/{raw_mappings_f}'.format(
+            condor_output=OUTPUT_LOC,
+            raw_mappings_f=RAW_MAPPINGS_FILENAME
+        )
+    output:
+        result='{condor_output}/{predictions_f}'.format(
+            condor_output=OUTPUT_LOC,
+            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
+        ),
+        log='{}/predict_sample_type.log'.format(
+            OUTPUT_LOC
+        )
+    run:
+        commands=[
+            'python2.7 {src}/map_sra_to_ontology/predict_sample_type/run_on_entire_dataset.py {{input.metadata}} {{input.mappings}} {{output.result}} {{output.log}}'.format(
+                src=PIPELINE_SRC_LOC
+            )
+        ]
+        for c in commands:
+            shell(c)
+
+##################################################################################
+# Build the final database files.
+##################################################################################
+rule build_database_files:
+    input:
+        mappings='{condor_output}/{raw_mappings_f}'.format(
+            condor_output=OUTPUT_LOC,
+            raw_mappings_f=RAW_MAPPINGS_FILENAME
+        ),
+        predictions='{condor_output}/{predictions_f}'.format(
+            condor_output=OUTPUT_LOC,
+            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
+        )
+    output:
+        json_f='{output_loc}/metasra.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        sql_f='{output_loc}/metasra.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        )
+    run:
+        commands=[
+            'python2.7 {src}/build_metasra_database_files.py {{input.mappings}} {{input.predictions}} {{output.json_f}} {{output.sql_f}}'.format(
+                src=CREATE_METASRA_SRC
+            )
+        ]
+        for c in commands:
+            shell(c)
+
+
+
