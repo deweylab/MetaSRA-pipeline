@@ -6,16 +6,12 @@ import subprocess
 import json
 import math
 
-def script_path():
-    return os.path.dirname(realpath(sys.argv[0]))
-sys.path.append("/ua/mnbernstein/projects/condor_tools")
-
-ALL_PIPELINES_FILE_LOC = "/ua/mnbernstein/projects/tbcp/metadata/ontology/src/all_pipelines/pipelines.py"
-PATH_TO_THIS = "/ua/mnbernstein/projects/tbcp/metadata/ontology/src/run_all_samples/condorized_pipeline"
-CREATE_METASRA_CONFIG = "/ua/mnbernstein/projects/tbcp/metadata/ontology/src/run_all_samples/create_metasra_config.json" 
-BLACKLIST = "/ua/mnbernstein/projects/tbcp/metadata/ontology/src/run_all_samples/condorized_pipeline/blacklist.json" 
-
 import condor_submit_tools
+
+BLACKLIST = [
+    # TODO add machines you want to blacklist here
+    # TODO this should eventually be placed in a config file
+]
 
 def main():
     parser = OptionParser()
@@ -54,9 +50,6 @@ def condorize_pipeline(
     ):
     # Create directory in which all job directories are located
     subprocess.call("mkdir %s" % pipeline_root, shell=True, env=None)
-
-    with open(CREATE_METASRA_CONFIG, 'r') as f:
-        config = json.load(f)
 
     with open(BLACKLIST, 'r') as f:
         blacklist = json.load(f)
