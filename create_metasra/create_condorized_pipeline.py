@@ -51,15 +51,12 @@ def condorize_pipeline(
     # Create directory in which all job directories are located
     subprocess.call("mkdir %s" % pipeline_root, shell=True, env=None)
 
-    with open(BLACKLIST, 'r') as f:
-        blacklist = json.load(f)
-
     submit_builder = condor_submit_tools.SubmitFileBuilder(
         condor_exec_f, 
         15000, 
         500, 
         op_sys_version="7",
-        blacklist=blacklist
+        blacklist=BLACKLIST
     )
 
     # Create symlink to Condor executable
