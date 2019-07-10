@@ -11,7 +11,6 @@ from os.path import join, realpath
 import map_sra_to_ontology
 from map_sra_to_ontology import config
 from map_sra_to_ontology import ontology_graph
-from map_sra_to_ontology import query_metadata
 from map_sra_to_ontology import load_ontology as lo
 from map_sra_to_ontology.pipeline_components import *
 
