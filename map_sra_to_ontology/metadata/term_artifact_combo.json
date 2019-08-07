@@ -1,0 +1,91 @@
+[
+    {
+        "required_terms": {
+            "CL:0000084": "T cell" 
+        },
+        "required_artifacts": [
+            [
+                "CD4+",
+                "CD4-positive"
+            ]
+        ],
+        "consequent_term": "CL:0000624"
+    },
+    {
+        "required_terms": {
+            "CL:0000084": "T cell"
+        },
+        "required_artifacts": [
+            [
+                "CD8+",
+                "CD8-positive"
+            ]
+        ],
+        "consequent_term": "CL:0000625"
+    },
+    {
+        "required_terms": {
+            "CL:0000084": "T cell"
+        },
+        "required_artifacts": [
+            [
+                "CD8+",
+                "CD8-positive"
+            ],
+            [
+                "naive"
+            ]
+        ],
+        "consequent_term": "CL:0000900"
+    },
+    {
+        "required_terms": {
+            "CL:0000084": "T cell"
+        },
+        "required_artifacts": [
+            [
+                "CD4+",
+                "CD4-positive"
+            ],
+            [
+                "naive"
+            ]
+        ],
+        "consequent_term": "CL:0000895"
+    },
+    {
+        "required_terms": {
+            "CL:0000084": "T cell"
+        },
+        "required_artifacts": [
+            [
+                "naive"
+            ]
+        ],
+        "consequent_term": "CL:0000898"
+    },
+    {
+        "required_terms": {
+            "CL:0000813": "memory T cell"
+        },
+        "required_artifacts": [
+            [
+                "CD8+",
+                "CD8-positive"
+            ]
+        ],
+        "consequent_term": "CL:0000909"
+    },
+    {
+        "required_terms": {
+            "CL:0000813": "memory T cell"
+        },
+        "required_artifacts": [
+            [
+                "CD4+",
+                "CD4-positive"
+            ]
+        ],
+        "consequent_term": "CL:0000897"
+    }
+]
