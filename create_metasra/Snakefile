@@ -12,9 +12,6 @@ TODAY_DATE = '20-03-13'
 # Location to place the SRA metadata files 
 SRA_DB_DESTINATION = '/tier2/deweylab/mnbernstein/sra_metadb'
 
-# Location of the script for building the subset-database of the SRAdb
-PATH_TO_BUILD_SUBDB_SCRIPT = '/ua/mnbernstein/projects/tbcp/metadata/build_my_sra_db'
-
 # Location to place the input files for Condor that are shared across jobs
 CONDOR_INPUT_LOC = '/tier2/deweylab/scratch/mnbernstein/create_metasra_condor_input'
 
@@ -57,13 +54,25 @@ RAW_MAPPINGS_FILENAME = 'metasra_raw_mappings.{}.json'.format(TODAY_DATE)
 # The name of the file storing the predicted sample types
 SAMPLE_TYPE_PREDICTIONS_FILENAME = 'sample_type_predictions.{}.json'.format(TODAY_DATE)
 
+# One rule to rule them all, one rule to bind them...
 rule all:
     input:
-        '{condor_root}/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
+        '{output_loc}/metasra.RNA_Seq.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        '{output_loc}/metasra.RNA_Seq.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        '{output_loc}/metasra.ChIP_Seq.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        '{output_loc}/metasra.ChIP_Seq.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
         )
-
 
 ##################################################################################
 # Download the SRAdb. This is the database storing the raw
@@ -110,10 +119,10 @@ rule build_custom_SRAdb:
     run:
         commands=[
             'python2.7 {}/build_subdb.py RNA-Seq -t {{input}} -s {{output.rna}}'.format(
-                PATH_TO_BUILD_SUBDB_SCRIPT
+                CREATE_METASRA_SRC
             ),
             'python2.7 {}/build_subdb.py ChIP-Seq -t {{input}} -s {{output.chip}}'.format(
-                PATH_TO_BUILD_SUBDB_SCRIPT
+                CREATE_METASRA_SRC
             )
         ]
         for c in commands:
