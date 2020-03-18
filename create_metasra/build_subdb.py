@@ -3,21 +3,24 @@ import sqlite3
 import collections
 from collections import defaultdict
 
-THE_DB_LOC = "/tier2/deweylab/mnbernstein/sra_metadb/SRAmetadb.09-05-16.sqlite"
-SUB_DB_LOC = "/tier2/deweylab/mnbernstein/sra_metadb/SRAmetadb.subdb.09-05-16.sqlite"
+THE_DB_LOC = "/tier2/deweylab/mnbernstein/sra_metadb/SRAmetadb.17-09-15.sqlite"
+SUB_DB_LOC = "/tier2/deweylab/mnbernstein/sra_metadb/SRAmetadb.subdb.17-09-15.TEST.sqlite"
 
 def main():
+    usage = '%prog <assay> <species>'
     parser = OptionParser()
     parser.add_option("-t", "--the_db", help="Location of the original SRAdb")
     parser.add_option("-s", "--sub_db", help="Location of the 'sub'SRAdb")
     (options, args) = parser.parse_args()
 
-    if options.the_db and options.sub_db:
-        build_subdb(options.the_db, options.sub_db)
-    else:
-        build_subdb(THE_DB_LOC, SUB_DB_LOC)
+    assay = args[0]
 
-def build_subdb(the_db_loc, sub_db_loc):
+    if options.the_db and options.sub_db:
+        build_subdb(options.the_db, options.sub_db, assay)
+    else:
+        build_subdb(THE_DB_LOC, SUB_DB_LOC, assay)
+
+def build_subdb(the_db_loc, sub_db_loc, assay):
 
     ##### Build experiment table
 
@@ -49,32 +52,33 @@ def build_subdb(the_db_loc, sub_db_loc):
         run_date text, submission_accession text, sradb_updated text, 
         PRIMARY KEY (run_accession, experiment_accession))
         """
-
     create_study_table_sql = """CREATE TABLE study (study_accession text NOT NULL, study_title text, 
         study_abstract text, center_name text, study_description text, 
         submission_accession text, sradb_updated text, PRIMARY KEY (study_accession))"""
 
     query_sample_sql = """SELECT sample_accession, sample.center_name, sample.description, sample_url_link,
         sample.xref_link, sample_attribute, sample.submission_accession, sample.sradb_updated FROM 
-        experiment JOIN sample USING (sample_accession) WHERE library_strategy = 'RNA-Seq' 
-        AND scientific_name = 'Homo sapiens' AND platform = 'ILLUMINA'  
-        """
+        experiment JOIN sample USING (sample_accession) WHERE library_strategy = '%s' 
+        AND scientific_name = 'Homo sapiens' AND platform = 'ILLUMINA'
+        """ % assay
+
     query_experiment_sql = """SELECT experiment_accession, title, design_description, study_accession, 
         sample_accession, library_source, library_selection, library_layout, library_construction_protocol,
         spot_length, read_spec, instrument_model, experiment_url_link, experiment.xref_link, experiment_attribute,
         experiment.submission_accession, experiment.sradb_updated FROM experiment JOIN sample USING (sample_accession) WHERE 
-        library_strategy = 'RNA-Seq' AND scientific_name = 'Homo sapiens' AND platform = 'ILLUMINA'
-        """
+        library_strategy = '%s' AND scientific_name = 'Homo sapiens' AND platform = 'ILLUMINA'
+        """ % assay
+
     query_study_sql = """ SELECT study_accession, study_title, study_abstract, center_name, study_description, 
         xref_link, study_attribute, submission_accession, sradb_updated FROM study JOIN (SELECT experiment_accession, 
         study_accession, scientific_name, library_strategy, platform FROM experiment JOIN sample USING (sample_accession)) 
-        USING (study_accession) WHERE scientific_name = 'Homo sapiens' AND library_strategy = 'RNA-Seq' 
-        AND platform = 'ILLUMINA'"""
+        USING (study_accession) WHERE scientific_name = 'Homo sapiens' AND library_strategy = '%s' 
+        AND platform = 'ILLUMINA'""" % assay
 
     query_run_sql = """SELECT run_accession, experiment_accession, run_date, submission_accession, sradb_updated
         FROM run JOIN (SELECT experiment_accession, scientific_name, platform, library_strategy FROM experiment 
-        JOIN sample USING (sample_accession)) USING (experiment_accession) WHERE library_strategy = 'RNA-Seq' 
-        AND scientific_name = "Homo sapiens" AND platform = 'ILLUMINA'"""
+        JOIN sample USING (sample_accession)) USING (experiment_accession) WHERE library_strategy = '%s' 
+        AND scientific_name = "Homo sapiens" AND platform = 'ILLUMINA'""" % assay
 
     insert_update_experiment_sql = """INSERT OR REPLACE INTO experiment VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" 
     insert_update_sample_sql = """INSERT OR REPLACE INTO sample VALUES (?, ?, ?, ?, ?, ?)"""
@@ -138,6 +142,7 @@ def build_subdb(the_db_loc, sub_db_loc):
                 print e            
             print "Creating new 'study' table..."
             sub_c.execute(create_study_table_sql) 
+        
 
             # Grap sample data from SRAdb
             print "Querying relavent sample records from the SRAdb..."
@@ -207,7 +212,7 @@ def build_subdb(the_db_loc, sub_db_loc):
                 exp_d["sample_accession"]                 = row[4]
                 exp_d["library_source"]                   = row[5]
                 exp_d["library_selection"]                = row[6]
-                exp_d["library_layout"]                   = row[7]
+                exp_d["library_layout"]                   = parsed_single_paired_end(row[7])
                 exp_d["library_construction_protocol"]    = row[8]
                 exp_d["spot_length"]                      = row[9]
                 exp_d["read_spec"]                        = row[10]
@@ -310,6 +315,18 @@ def build_subdb(the_db_loc, sub_db_loc):
                     study_d["sradb_updated"])           
                 sub_c.execute(insert_update_study_sql, insert_tuple)
             
+def parsed_single_paired_end(raw_str):
+    # PAIRED - NOMINAL_LENGTH: 101; |132
+    # PAIRED - NOMINAL_LENGTH: 175; NOMINAL_SDEV: 70; |154
+    # PAIRED - NOMINAL_SDEV: 0.0E0; NOMINAL_LENGTH: 0; |422
+    # PAIRED - NOMINAL_SDEV: 50; NOMINAL_LENGTH: 100; |632
+    # PAIRED - NOMINAL_LENGTH: 300; |721
+    # PAIRED - |60535
+    # SINGLE - |74665
+    parsed_str = raw_str.split("-")[0].strip()   
+    print parsed_str
+    return parsed_str
+
 
 if __name__ == "__main__":
     main()

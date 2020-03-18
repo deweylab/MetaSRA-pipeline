@@ -26,6 +26,7 @@ def main():
     condor_exec_f = args[3]
     output_filename = args[4]
     sample_to_metadata_f = args[5]
+    assay = args[6]
 
     with open(sample_to_metadata_f, 'r') as f:
         sample_to_metadata = json.load(f)
@@ -36,7 +37,8 @@ def main():
         condor_bundle_f,
         condor_exec_f,
         output_filename,
-        sample_to_metadata
+        sample_to_metadata,
+        assay
     )
 
     
@@ -46,7 +48,8 @@ def condorize_pipeline(
         condor_bundle_f, 
         condor_exec_f,
         output_filename,
-        sample_to_tag_to_value
+        sample_to_tag_to_value,
+        assay
     ):
     # Create directory in which all job directories are located
     subprocess.call("mkdir %s" % pipeline_root, shell=True, env=None)
@@ -101,7 +104,8 @@ def condorize_pipeline(
             job_dir, 
             arguments=[
                 output_filename,
-                "./%s" % basename(list_f) 
+                "./%s" % basename(list_f),
+                assay 
             ], 
             input_files=in_files_locs, 
             output_files=[output_filename]

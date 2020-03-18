@@ -5,33 +5,36 @@
 
 ####### Pipeline parameters. Set these variables appropriately.
 
-# This variable is used as the ID of the pipeline run. I usually use the current date, 
-# but it can be any string.
-TODAY_DATE = '19-05-08'
+# This variable is used as the ID of the pipeline run. I usually use the data, but it
+# can be any string.
+TODAY_DATE = '20-03-13'
 
 # Location to place the SRA metadata files 
-SRA_DB_DESTINATION = '' # TODO
+SRA_DB_DESTINATION = '/tier2/deweylab/mnbernstein/sra_metadb'
+
+# Location of the script for building the subset-database of the SRAdb
+PATH_TO_BUILD_SUBDB_SCRIPT = '/ua/mnbernstein/projects/tbcp/metadata/build_my_sra_db'
 
 # Location to place the input files for Condor that are shared across jobs
-CONDOR_INPUT_LOC = '' # TODO
+CONDOR_INPUT_LOC = '/tier2/deweylab/scratch/mnbernstein/create_metasra_condor_input'
 
 # Location of the script to create the raw metadata JSON file that is fed to each Condor job
-EXTRACT_METADATA_JSON_LOCATION = '' # TODO
+EXTRACT_METADATA_JSON_LOCATION = '/ua/mnbernstein/projects/tbcp/metadata/ontology/src/create_metasra'
 
 # Location of map_sra_to_ontology
-PIPELINE_SRC_LOC = '' # TODO
+PIPELINE_SRC_LOC = '/ua/mnbernstein/projects/tbcp/metadata/ontology/src'
 
 # Location of pipeline_v53.py
-BUILD_PIPELINE_LOC = '' # TODO
+BUILD_PIPELINE_LOC = '/ua/mnbernstein/projects/tbcp/metadata/ontology/src/all_pipelines'
 
 # Location of all the scripts for running the MetaSRA pipeline (not the MetaSRA code itself)
-CREATE_METASRA_SRC = '' # TODO
+CREATE_METASRA_SRC = '/ua/mnbernstein/projects/tbcp/metadata/ontology/src/create_metasra'
 
 # Location of the Condor root directory
-CONDOR_ROOT_LOC = '' # TODO
+CONDOR_ROOT_LOC = '/scratch/mnbernstein/create_metasra'
 
 # Location of the output files
-OUTPUT_LOC = '' # TODO
+OUTPUT_LOC = '/scratch/mnbernstein/create_metasra_output'
 
 
 ####### These variables can be left alone.
@@ -54,21 +57,11 @@ RAW_MAPPINGS_FILENAME = 'metasra_raw_mappings.{}.json'.format(TODAY_DATE)
 # The name of the file storing the predicted sample types
 SAMPLE_TYPE_PREDICTIONS_FILENAME = 'sample_type_predictions.{}.json'.format(TODAY_DATE)
 
-
-
-##################################################################################
-# This rule will build the MetaSRA in one fell swoop; however, usually there
-# are some hiccups in getting all of the Condor jobs to run successfully.
-##################################################################################
 rule all:
     input:
-        '{output_loc}/metasra.{today}.json'.format(
-            output_loc=OUTPUT_LOC,
-            today=TODAY_DATE
-        ),
-        '{output_loc}/metasra.{today}.sqlite'.format(
-            output_loc=OUTPUT_LOC,
-            today=TODAY_DATE
+        '{condor_root}/{finished_f}'.format(
+            condor_root=CONDOR_ROOT_LOC,
+            finished_f=FINISH_FILENAME
         )
 
 
@@ -106,14 +99,21 @@ rule build_custom_SRAdb:
             date=TODAY_DATE
         )
     output:
-        '{sra_db_dest}/SRAmetadb.subdb.{date}.sqlite'.format(
+        rna='{sra_db_dest}/SRAmetadb.subdb.{date}.RNA_Seq.sqlite'.format(
+            sra_db_dest=SRA_DB_DESTINATION,
+            date=TODAY_DATE
+        ),
+        chip='{sra_db_dest}/SRAmetadb.subdb.{date}.CHiP_Seq.sqlite'.format(
             sra_db_dest=SRA_DB_DESTINATION,
             date=TODAY_DATE
         )
     run:
         commands=[
-            'python2.7 {}/build_subdb.py -t {{input}} -s {{output}}'.format(
-                EXTRACT_METADATA_JSON_LOCATION
+            'python2.7 {}/build_subdb.py RNA-Seq -t {{input}} -s {{output.rna}}'.format(
+                PATH_TO_BUILD_SUBDB_SCRIPT
+            ),
+            'python2.7 {}/build_subdb.py ChIP-Seq -t {{input}} -s {{output.chip}}'.format(
+                PATH_TO_BUILD_SUBDB_SCRIPT
             )
         ]
         for c in commands:
@@ -124,20 +124,30 @@ rule build_custom_SRAdb:
 # JSON file, which is provided as input to all of the downstream
 # Condor jobs. 
 ##################################################################################
-rule extract_json_from_sqlite:
+rule extract_json_from_sqlite_RNA_seq:
     input:
-        '{sra_db_dest}/SRAmetadb.subdb.{date}.sqlite'.format(
+        rna='{sra_db_dest}/SRAmetadb.subdb.{date}.RNA_Seq.sqlite'.format(
+            sra_db_dest=SRA_DB_DESTINATION,
+            date=TODAY_DATE
+        ),
+        chip='{sra_db_dest}/SRAmetadb.subdb.{date}.CHiP_Seq.sqlite'.format(
             sra_db_dest=SRA_DB_DESTINATION,
             date=TODAY_DATE
         )
     output:
-        '{}/sample_to_raw_metadata.json'.format(
+        rna='{}/sample_to_raw_metadata.RNA_Seq.json'.format(
+            CONDOR_INPUT_LOC
+        ),
+        chip='{}/sample_to_raw_metadata.ChIP_Seq.json'.format(
             CONDOR_INPUT_LOC
         )
     run:
         commands=[
             'mkdir -p {}'.format(CONDOR_INPUT_LOC),
-            'python2.7 {}/extract_raw_metadata_json.py {{input}} {{output}}'.format(
+            'python2.7 {}/extract_raw_metadata_json.py {{input.rna}} {{output.rna}}'.format(
+                EXTRACT_METADATA_JSON_LOCATION
+            ),
+            'python2.7 {}/extract_raw_metadata_json.py {{input.chip}} {{output.chip}}'.format(
                 EXTRACT_METADATA_JSON_LOCATION
             )
         ]
@@ -148,68 +158,131 @@ rule extract_json_from_sqlite:
 # Creates a giant tarball with all of the code needed to run the pipeline
 # for each Condor job.
 ##################################################################################
-rule bundle_condor_input:
+rule bundle_condor_input_RNA:
     input:
-        '{}/sample_to_raw_metadata.json'.format(
+        '{}/sample_to_raw_metadata.RNA_Seq.json'.format(
             CONDOR_INPUT_LOC
         )
     output:
-        '{}/create_metasra_condor_bundle.tar.gz'.format(
+        '{}/create_metasra_condor_bundle.RNA_Seq.tar.gz'.format(
             CONDOR_INPUT_LOC
          )
     run:
         commands=[
-            'mkdir -p {}/create_metasra_condor_bundle'.format(
+            'mkdir -p {}/create_metasra_condor_bundle.RNA_Seq'.format(
                 CONDOR_INPUT_LOC
             ),
-            'cp -r {pipeline_src}/map_sra_to_ontology {condor_input}/create_metasra_condor_bundle'.format(
+            'cp -r {pipeline_src}/map_sra_to_ontology {condor_input}/create_metasra_condor_bundle.RNA_Seq'.format(
                 pipeline_src=PIPELINE_SRC_LOC,
                 condor_input=CONDOR_INPUT_LOC
             ),
-            'cp {pipeline_src}/pipeline_v53.py {condor_input}/create_metasra_condor_bundle/pipeline.py'.format(
+            'cp {pipeline_src}/pipeline_v53.py {condor_input}/create_metasra_condor_bundle.RNA_Seq/pipeline.py'.format(
                 pipeline_src=BUILD_PIPELINE_LOC,
                 condor_input=CONDOR_INPUT_LOC
             ),
-            'cp {pipeline_src}/condor_run_pipeline.py {condor_input}/create_metasra_condor_bundle'.format(
+            'cp {pipeline_src}/condor_run_pipeline.py {condor_input}/create_metasra_condor_bundle.RNA_Seq'.format(
                 pipeline_src=CREATE_METASRA_SRC,
                 condor_input=CONDOR_INPUT_LOC
             ),
-            'cp {{input}} {}/create_metasra_condor_bundle'.format(
+            'cp {{input}} {}/create_metasra_condor_bundle.RNA_Seq'.format(
                 CONDOR_INPUT_LOC
             ),          
-            'tar -C {input} -zcf {{output}} create_metasra_condor_bundle'.format(
+            'tar -C {input} -zcf {{output}} create_metasra_condor_bundle.RNA_Seq'.format(
                 input=CONDOR_INPUT_LOC
             )
         ]
         for c in commands:
             shell(c) 
 
-##################################################################################
-# Construct the Condor root directory. This directory contains subdirectories
-# for each job as well as the Condor submit file.
-##################################################################################
-rule prepare_condor_root:
+rule bundle_condor_input_ChIP:
     input:
-        bundle='{}/create_metasra_condor_bundle.tar.gz'.format(
-            CONDOR_INPUT_LOC
-        ),
-        metadata='{}/sample_to_raw_metadata.json'.format(
+        '{}/sample_to_raw_metadata.ChIP_Seq.json'.format(
             CONDOR_INPUT_LOC
         )
     output:
-        '{}/create_metasra.submit'.format(CONDOR_ROOT_LOC)
+        '{}/create_metasra_condor_bundle.ChIP_Seq.tar.gz'.format(
+            CONDOR_INPUT_LOC
+         )
     run:
         commands=[
-            'mkdir -p {}'.format(CONDOR_ROOT_LOC),
-            'python2.7 {src}/create_condorized_pipeline.py {condor_root} {submit_f} {{input.bundle}} {src}/condor_pipeline_executable.bash {job_out_f} {{input.metadata}}'.format(
-                condor_root=CONDOR_ROOT_LOC,
-                submit_f=SUBMIT_FILENAME,
-                src=CREATE_METASRA_SRC,
-                job_out_f=PER_JOB_OUTPUT_FILENAME
+            'mkdir -p {}/create_metasra_condor_bundle.ChIP_Seq'.format(
+                CONDOR_INPUT_LOC
+            ),
+            'cp -r {pipeline_src}/map_sra_to_ontology {condor_input}/create_metasra_condor_bundle.ChIP_Seq'.format(
+                pipeline_src=PIPELINE_SRC_LOC,
+                condor_input=CONDOR_INPUT_LOC
+            ),
+            'cp {pipeline_src}/pipeline_v53.py {condor_input}/create_metasra_condor_bundle.ChIP_Seq/pipeline.py'.format(
+                pipeline_src=BUILD_PIPELINE_LOC,
+                condor_input=CONDOR_INPUT_LOC
+            ),
+            'cp {pipeline_src}/condor_run_pipeline.py {condor_input}/create_metasra_condor_bundle.ChIP_Seq'.format(
+                pipeline_src=CREATE_METASRA_SRC,
+                condor_input=CONDOR_INPUT_LOC
+            ),
+            'cp {{input}} {}/create_metasra_condor_bundle.ChIP_Seq'.format(
+                CONDOR_INPUT_LOC
+            ),
+            'tar -C {input} -zcf {{output}} create_metasra_condor_bundle.ChIP_Seq'.format(
+                input=CONDOR_INPUT_LOC
             )
         ]
         for c in commands:
             shell(c)
+
+
+##################################################################################
+# Construct the Condor root directory. This directory contains subdirectories
+# for each job as well as the Condor submit file.
+##################################################################################
+rule prepare_condor_root_RNA_seq:
+    input:
+        bundle='{}/create_metasra_condor_bundle.RNA_Seq.tar.gz'.format(
+            CONDOR_INPUT_LOC
+        ),
+        metadata='{}/sample_to_raw_metadata.RNA_Seq.json'.format(
+            CONDOR_INPUT_LOC
+        )
+    output:
+        '{}/RNA_Seq/create_metasra.submit'.format(CONDOR_ROOT_LOC)
+    run:
+        commands=[
+            'mkdir -p {}/RNA_Seq'.format(CONDOR_ROOT_LOC),
+            'python2.7 {src}/create_condorized_pipeline.py {condor_root}/RNA_Seq {submit_f} {{input.bundle}} {src}/condor_pipeline_executable.bash {job_out_f} {{input.metadata}} {assay}'.format(
+                condor_root=CONDOR_ROOT_LOC,
+                submit_f=SUBMIT_FILENAME,
+                src=CREATE_METASRA_SRC,
+                job_out_f=PER_JOB_OUTPUT_FILENAME,
+                assay='RNA_Seq'
+            )
+        ]
+        for c in commands:
+            shell(c)
+
+rule prepare_condor_root_ChIP_seq:
+    input:
+        bundle='{}/create_metasra_condor_bundle.ChIP_Seq.tar.gz'.format(
+            CONDOR_INPUT_LOC
+        ),
+        metadata='{}/sample_to_raw_metadata.ChIP_Seq.json'.format(
+            CONDOR_INPUT_LOC
+        )
+    output:
+        '{}/ChIP_Seq/create_metasra.submit'.format(CONDOR_ROOT_LOC)
+    run:
+        commands=[
+            'mkdir -p {}/ChIP_Seq'.format(CONDOR_ROOT_LOC),
+            'python2.7 {src}/create_condorized_pipeline.py {condor_root}/ChIP_Seq {submit_f} {{input.bundle}} {src}/condor_pipeline_executable.bash {job_out_f} {{input.metadata}} {assay}'.format(
+                condor_root=CONDOR_ROOT_LOC,
+                submit_f=SUBMIT_FILENAME,
+                src=CREATE_METASRA_SRC,
+                job_out_f=PER_JOB_OUTPUT_FILENAME,
+                assay='ChIP_Seq'
+            )
+        ]
+        for c in commands:
+            shell(c)
+
 
 ##################################################################################
 # Run the Condor jobs. Note that all of the jobs may not succeed, in which case,
@@ -218,23 +291,41 @@ rule prepare_condor_root:
 # proceed. Note that when jobs are re-run, this file will need to be created 
 # manually.
 ##################################################################################
-rule run_condor:
+rule run_condor_RNA:
     input:
-        '{}/create_metasra.submit'.format(CONDOR_ROOT_LOC)
+        '{}/RNA_Seq/create_metasra.submit'.format(CONDOR_ROOT_LOC)
     output:
-        '{condor_root}/{finished_f}'.format(
+        '{condor_root}/RNA_Seq/{finished_f}'.format(
             condor_root=CONDOR_ROOT_LOC,
             finished_f=FINISH_FILENAME
         )
     run:
         commands=[
-            'python2.7 {src}/run_condor_jobs.py {condor_root} {{input}} {{output}}'.format(
+            'python2.7 {src}/run_condor_jobs.py {condor_root}/RNA_Seq {{input}} {{output}}'.format(
                 src=CREATE_METASRA_SRC,
                 condor_root=CONDOR_ROOT_LOC
             )
         ]
         for c in commands:
             shell(c) 
+
+rule run_condor_ChIP:
+    input:
+        '{}/ChIP_Seq/create_metasra.submit'.format(CONDOR_ROOT_LOC)
+    output:
+        '{condor_root}/ChIP_Seq/{finished_f}'.format(
+            condor_root=CONDOR_ROOT_LOC,
+            finished_f=FINISH_FILENAME
+        )
+    run:
+        commands=[
+            'python2.7 {src}/run_condor_jobs.py {condor_root}/ChIP_Seq {{input}} {{output}}'.format(
+                src=CREATE_METASRA_SRC,
+                condor_root=CONDOR_ROOT_LOC
+            )
+        ]
+        for c in commands:
+            shell(c)
 
 ##################################################################################
 # Gather all of the outputs from the Condor jobs. If we can't decode a job's
@@ -243,24 +334,50 @@ rule run_condor:
 # The file <OUTPUT_LOC>/gather_condor_outputs.log stores information about how many
 # jobs were skipped.
 ##################################################################################
-rule gather_condor_outputs:
+rule gather_condor_outputs_RNA:
     input:
-        '{condor_root}/{finished_f}'.format(
+        '{condor_root}/RNA_Seq/{finished_f}'.format(
             condor_root=CONDOR_ROOT_LOC,
             finished_f=FINISH_FILENAME
         )
     output:
-       result='{condor_output}/{raw_mappings_f}'.format(
+       result='{condor_output}/RNA_Seq/{raw_mappings_f}'.format(
             condor_output=OUTPUT_LOC,
             raw_mappings_f=RAW_MAPPINGS_FILENAME
         ),
-        log='{}/gather_condor_outputs.log'.format(
+        log='{}/RNA_Seq/gather_condor_outputs.log'.format(
             OUTPUT_LOC
         )
     run:
         commands=[
-            'mkdir -p {}'.format(OUTPUT_LOC),
-            'python2.7 {src}/gather_mappings.py {condor_root} {job_out_f} {{output.result}} {{output.log}}'.format(
+            'mkdir -p {}/RNA_Seq'.format(OUTPUT_LOC),
+            'python2.7 {src}/gather_mappings.py {condor_root}/RNA_Seq {job_out_f} {{output.result}} {{output.log}}'.format(
+                src=CREATE_METASRA_SRC,
+                condor_root=CONDOR_ROOT_LOC,
+                job_out_f=PER_JOB_OUTPUT_FILENAME
+            )
+        ]
+        for c in commands:
+            shell(c)
+
+rule gather_condor_outputs_ChIP:
+    input:
+        '{condor_root}/ChIP_Seq/{finished_f}'.format(
+            condor_root=CONDOR_ROOT_LOC,
+            finished_f=FINISH_FILENAME
+        )
+    output:
+       result='{condor_output}/ChIP_Seq/{raw_mappings_f}'.format(
+            condor_output=OUTPUT_LOC,
+            raw_mappings_f=RAW_MAPPINGS_FILENAME
+        ),
+        log='{}/ChIP_Seq/gather_condor_outputs.log'.format(
+            OUTPUT_LOC
+        )
+    run:
+        commands=[
+            'mkdir -p {}/ChIP_Seq'.format(OUTPUT_LOC),
+            'python2.7 {src}/gather_mappings.py {condor_root}/ChIP_Seq {job_out_f} {{output.result}} {{output.log}}'.format(
                 src=CREATE_METASRA_SRC,
                 condor_root=CONDOR_ROOT_LOC,
                 job_out_f=PER_JOB_OUTPUT_FILENAME
@@ -273,26 +390,52 @@ rule gather_condor_outputs:
 # Predict the sample-type for all samples. The file 
 # <OUTPUT_LOC>/predict_sample_type.log stores information about this step.
 ##################################################################################
-rule predict_sample_type:
+rule predict_sample_type_RNA:
     input:
-        metadata='{}/sample_to_raw_metadata.json'.format(
+        metadata='{}/sample_to_raw_metadata.RNA_Seq.json'.format(
             CONDOR_INPUT_LOC
         ),
-        mappings='{condor_output}/{raw_mappings_f}'.format(
+        mappings='{condor_output}/RNA_Seq/{raw_mappings_f}'.format(
             condor_output=OUTPUT_LOC,
             raw_mappings_f=RAW_MAPPINGS_FILENAME
         )
     output:
-        result='{condor_output}/{predictions_f}'.format(
+        result='{condor_output}/RNA_Seq/{predictions_f}'.format(
             condor_output=OUTPUT_LOC,
             predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
         ),
-        log='{}/predict_sample_type.log'.format(
+        log='{}/RNA_Seq/predict_sample_type.log'.format(
             OUTPUT_LOC
         )
     run:
         commands=[
-            'python2.7 {src}/map_sra_to_ontology/predict_sample_type/run_on_entire_dataset.py {{input.metadata}} {{input.mappings}} {{output.result}} {{output.log}}'.format(
+            'python2.7 {src}/predict_sample_type/run_on_entire_dataset.py {{input.metadata}} {{input.mappings}} {{output.result}} {{output.log}}'.format(
+                src=PIPELINE_SRC_LOC
+            )
+        ]
+        for c in commands:
+            shell(c)
+
+rule predict_sample_type_ChIP:
+    input:
+        metadata='{}/sample_to_raw_metadata.ChIP_Seq.json'.format(
+            CONDOR_INPUT_LOC
+        ),
+        mappings='{condor_output}/ChIP_Seq/{raw_mappings_f}'.format(
+            condor_output=OUTPUT_LOC,
+            raw_mappings_f=RAW_MAPPINGS_FILENAME
+        )
+    output:
+        result='{condor_output}/ChIP_Seq/{predictions_f}'.format(
+            condor_output=OUTPUT_LOC,
+            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
+        ),
+        log='{}/ChIP_Seq/predict_sample_type.log'.format(
+            OUTPUT_LOC
+        )
+    run:
+        commands=[
+            'python2.7 {src}/predict_sample_type/run_on_entire_dataset.py {{input.metadata}} {{input.mappings}} {{output.result}} {{output.log}}'.format(
                 src=PIPELINE_SRC_LOC
             )
         ]
@@ -302,22 +445,22 @@ rule predict_sample_type:
 ##################################################################################
 # Build the final database files.
 ##################################################################################
-rule build_database_files:
+rule build_database_files_RNA:
     input:
-        mappings='{condor_output}/{raw_mappings_f}'.format(
+        mappings='{condor_output}/RNA_Seq/{raw_mappings_f}'.format(
             condor_output=OUTPUT_LOC,
             raw_mappings_f=RAW_MAPPINGS_FILENAME
         ),
-        predictions='{condor_output}/{predictions_f}'.format(
+        predictions='{condor_output}/RNA_Seq/{predictions_f}'.format(
             condor_output=OUTPUT_LOC,
             predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
         )
     output:
-        json_f='{output_loc}/metasra.{today}.json'.format(
+        json_f='{output_loc}/metasra.RNA_Seq.{today}.json'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
-        sql_f='{output_loc}/metasra.{today}.sqlite'.format(
+        sql_f='{output_loc}/metasra.RNA_Seq.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         )
@@ -330,5 +473,32 @@ rule build_database_files:
         for c in commands:
             shell(c)
 
+rule build_database_files_ChIP:
+    input:
+        mappings='{condor_output}/ChIP_Seq/{raw_mappings_f}'.format(
+            condor_output=OUTPUT_LOC,
+            raw_mappings_f=RAW_MAPPINGS_FILENAME
+        ),
+        predictions='{condor_output}/ChIP_Seq/{predictions_f}'.format(
+            condor_output=OUTPUT_LOC,
+            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
+        )
+    output:
+        json_f='{output_loc}/metasra.ChIP_Seq.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        sql_f='{output_loc}/metasra.ChIP_Seq.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        )
+    run:
+        commands=[
+            'python2.7 {src}/build_metasra_database_files.py {{input.mappings}} {{input.predictions}} {{output.json_f}} {{output.sql_f}}'.format(
+                src=CREATE_METASRA_SRC
+            )
+        ]
+        for c in commands:
+            shell(c)
 
 
