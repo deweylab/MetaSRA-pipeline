@@ -4,5 +4,5 @@ pipeline is documented in the Snakefile.
 
 The Snakemake pipeline:
 
-![dag](https://github.com/deweylab/MetaSRA-pipeline/blob/master/create_metasra/dag.png) 
+![dag](https://github.com/deweylab/MetaSRA-pipeline/blob/master/create_metasra/dag.png)  
 
