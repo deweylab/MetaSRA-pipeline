@@ -14,13 +14,14 @@ def main():
     (options, args) = parser.parse_args()
 
     assay = args[0]
+    species = args[1]
 
     if options.the_db and options.sub_db:
-        build_subdb(options.the_db, options.sub_db, assay)
+        build_subdb(options.the_db, options.sub_db, assay, species)
     else:
-        build_subdb(THE_DB_LOC, SUB_DB_LOC, assay)
+        build_subdb(THE_DB_LOC, SUB_DB_LOC, assay, species)
 
-def build_subdb(the_db_loc, sub_db_loc, assay):
+def build_subdb(the_db_loc, sub_db_loc, assay, species):
 
     ##### Build experiment table
 
@@ -59,26 +60,26 @@ def build_subdb(the_db_loc, sub_db_loc, assay):
     query_sample_sql = """SELECT sample_accession, sample.center_name, sample.description, sample_url_link,
         sample.xref_link, sample_attribute, sample.submission_accession, sample.sradb_updated FROM 
         experiment JOIN sample USING (sample_accession) WHERE library_strategy = '%s' 
-        AND scientific_name = 'Homo sapiens' AND platform = 'ILLUMINA'
-        """ % assay
+        AND scientific_name = '%s' AND platform = 'ILLUMINA'
+        """ % (assay, species)
 
     query_experiment_sql = """SELECT experiment_accession, title, design_description, study_accession, 
         sample_accession, library_source, library_selection, library_layout, library_construction_protocol,
         spot_length, read_spec, instrument_model, experiment_url_link, experiment.xref_link, experiment_attribute,
         experiment.submission_accession, experiment.sradb_updated FROM experiment JOIN sample USING (sample_accession) WHERE 
-        library_strategy = '%s' AND scientific_name = 'Homo sapiens' AND platform = 'ILLUMINA'
-        """ % assay
+        library_strategy = '%s' AND scientific_name = '%s' AND platform = 'ILLUMINA'
+        """ % (assay, species)
 
     query_study_sql = """ SELECT study_accession, study_title, study_abstract, center_name, study_description, 
         xref_link, study_attribute, submission_accession, sradb_updated FROM study JOIN (SELECT experiment_accession, 
         study_accession, scientific_name, library_strategy, platform FROM experiment JOIN sample USING (sample_accession)) 
-        USING (study_accession) WHERE scientific_name = 'Homo sapiens' AND library_strategy = '%s' 
-        AND platform = 'ILLUMINA'""" % assay
+        USING (study_accession) WHERE scientific_name = '%s' AND library_strategy = '%s' 
+        AND platform = 'ILLUMINA'""" % (species, assay)
 
     query_run_sql = """SELECT run_accession, experiment_accession, run_date, submission_accession, sradb_updated
         FROM run JOIN (SELECT experiment_accession, scientific_name, platform, library_strategy FROM experiment 
         JOIN sample USING (sample_accession)) USING (experiment_accession) WHERE library_strategy = '%s' 
-        AND scientific_name = "Homo sapiens" AND platform = 'ILLUMINA'""" % assay
+        AND scientific_name = '%s' AND platform = 'ILLUMINA'""" % (assay, species)
 
     insert_update_experiment_sql = """INSERT OR REPLACE INTO experiment VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" 
     insert_update_sample_sql = """INSERT OR REPLACE INTO sample VALUES (?, ?, ?, ?, ?, ?)"""
