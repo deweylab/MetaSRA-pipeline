@@ -61,7 +61,7 @@ rule all:
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
-        '{output_loc}/metasra.RNA_Seq.mouse.{today}.sqlite'.format(
+        '{output_loc}/metasra.RNA_Seq.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
@@ -69,11 +69,26 @@ rule all:
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
+        '{output_loc}/metasra.ChIP_Seq.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        '{output_loc}/metasra.RNA_Seq.mouse.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        '{output_loc}/metasra.RNA_Seq.mouse.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        '{output_loc}/metasra.ChIP_Seq.mouse.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
         '{output_loc}/metasra.ChIP_Seq.mouse.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         )
-
 
 ##################################################################################
 # Download the SRAdb. This is the database storing the raw
