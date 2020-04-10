@@ -938,5 +938,11 @@
         "exclude_synonyms": [
             "myeloid progenitor cell"
         ]
+    },
+    "UBERON:0005090": {
+        "name": "muscle structure",
+        "exclude_synonyms": [
+            "musculus"            
+        ]
     }
 }
