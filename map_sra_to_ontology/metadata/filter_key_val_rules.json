@@ -45,7 +45,15 @@
         "DISEASE_ONTOLOGY_URI",
         "SAMPLE_ONTOLOGY_URI",
         "cell ontology uri",
-        "disease ontology uri"
+        "disease ontology uri",
+        "ENA-FIRST-PUBLIC",
+        "ENA-LAST-UPDATE",
+        "ENA checklist",
+        "INSDC center alias",
+        "INSDC center name",
+        "INSDC first public",
+        "INSDC last update",
+        "INSDC status"
     ],
     "filter_values": [
         "-",
@@ -100,6 +108,7 @@
         "uninfected without treatment",
         "No COPD",
         "No history of smoking",
-        "non-tumor"
+        "non-tumor",
+        "Tumor-adjacent"
     ] 
 }
