@@ -7,7 +7,7 @@
 
 # This variable is used as the ID of the pipeline run. I usually use the data, but it
 # can be any string.
-TODAY_DATE = '20-03-13'
+TODAY_DATE = '20-11-11'
 
 # Location to place the SRA metadata files 
 SRA_DB_DESTINATION = '/tier2/deweylab/mnbernstein/sra_metadb'
@@ -109,6 +109,7 @@ rule download_SRAdb:
             "gunzip -f {output}.gz"
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 ##################################################################################
@@ -117,7 +118,7 @@ rule download_SRAdb:
 # this parses the key-value pairs in the SRAdb and stores them into
 # their own table in this 'subset' database.
 ##################################################################################
-rule build_custom_SRAdb_human:
+rule build_custom_SRAdb:
     input:
         '{sra_db_dest}/SRAmetadb.{date}.sqlite'.format(
             sra_db_dest=SRA_DB_DESTINATION,
@@ -156,6 +157,7 @@ rule build_custom_SRAdb_human:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)   
 
 ##################################################################################
@@ -211,6 +213,7 @@ rule extract_json_from_sqlite:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 ##################################################################################
@@ -223,34 +226,35 @@ rule bundle_condor_input_RNA_human:
             CONDOR_INPUT_LOC
         )
     output:
-        '{}/create_metasra_condor_bundle.RNA_Seq.tar.gz'.format(
+        '{}/create_metasra_condor_bundle.RNA_Seq.human.tar.gz'.format(
             CONDOR_INPUT_LOC
          )
     run:
         commands=[
-            'mkdir -p {}/create_metasra_condor_bundle.RNA_Seq'.format(
+            'mkdir -p {}/create_metasra_condor_bundle.RNA_Seq.human'.format(
                 CONDOR_INPUT_LOC
             ),
-            'cp -r {pipeline_src}/map_sra_to_ontology {condor_input}/create_metasra_condor_bundle.RNA_Seq'.format(
+            'cp -r {pipeline_src}/map_sra_to_ontology {condor_input}/create_metasra_condor_bundle.RNA_Seq.human'.format(
                 pipeline_src=PIPELINE_SRC_LOC,
                 condor_input=CONDOR_INPUT_LOC
             ),
-            'cp {pipeline_src}/pipeline_v53.py {condor_input}/create_metasra_condor_bundle.RNA_Seq/pipeline.py'.format(
+            'cp {pipeline_src}/pipeline_v53.py {condor_input}/create_metasra_condor_bundle.RNA_Seq.human/pipeline.py'.format(
                 pipeline_src=BUILD_PIPELINE_LOC,
                 condor_input=CONDOR_INPUT_LOC
             ),
-            'cp {pipeline_src}/condor_run_pipeline.py {condor_input}/create_metasra_condor_bundle.RNA_Seq'.format(
+            'cp {pipeline_src}/condor_run_pipeline.py {condor_input}/create_metasra_condor_bundle.RNA_Seq.human'.format(
                 pipeline_src=CREATE_METASRA_SRC,
                 condor_input=CONDOR_INPUT_LOC
             ),
-            'cp {{input}} {}/create_metasra_condor_bundle.RNA_Seq'.format(
+            'cp {{input}} {}/create_metasra_condor_bundle.RNA_Seq.human'.format(
                 CONDOR_INPUT_LOC
             ),          
-            'tar -C {input} -zcf {{output}} create_metasra_condor_bundle.RNA_Seq'.format(
+            'tar -C {input} -zcf {{output}} create_metasra_condor_bundle.RNA_Seq.human'.format(
                 input=CONDOR_INPUT_LOC
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c) 
 
 rule bundle_condor_input_ChIP_human:
@@ -259,34 +263,35 @@ rule bundle_condor_input_ChIP_human:
             CONDOR_INPUT_LOC
         )
     output:
-        '{}/create_metasra_condor_bundle.ChIP_Seq.tar.gz'.format(
+        '{}/create_metasra_condor_bundle.ChIP_Seq.human.tar.gz'.format(
             CONDOR_INPUT_LOC
          )
     run:
         commands=[
-            'mkdir -p {}/create_metasra_condor_bundle.ChIP_Seq'.format(
+            'mkdir -p {}/create_metasra_condor_bundle.ChIP_Seq.human'.format(
                 CONDOR_INPUT_LOC
             ),
-            'cp -r {pipeline_src}/map_sra_to_ontology {condor_input}/create_metasra_condor_bundle.ChIP_Seq'.format(
+            'cp -r {pipeline_src}/map_sra_to_ontology {condor_input}/create_metasra_condor_bundle.ChIP_Seq.human'.format(
                 pipeline_src=PIPELINE_SRC_LOC,
                 condor_input=CONDOR_INPUT_LOC
             ),
-            'cp {pipeline_src}/pipeline_v53.py {condor_input}/create_metasra_condor_bundle.ChIP_Seq/pipeline.py'.format(
+            'cp {pipeline_src}/pipeline_v53.py {condor_input}/create_metasra_condor_bundle.ChIP_Seq.human/pipeline.py'.format(
                 pipeline_src=BUILD_PIPELINE_LOC,
                 condor_input=CONDOR_INPUT_LOC
             ),
-            'cp {pipeline_src}/condor_run_pipeline.py {condor_input}/create_metasra_condor_bundle.ChIP_Seq'.format(
+            'cp {pipeline_src}/condor_run_pipeline.py {condor_input}/create_metasra_condor_bundle.ChIP_Seq.human'.format(
                 pipeline_src=CREATE_METASRA_SRC,
                 condor_input=CONDOR_INPUT_LOC
             ),
-            'cp {{input}} {}/create_metasra_condor_bundle.ChIP_Seq'.format(
+            'cp {{input}} {}/create_metasra_condor_bundle.ChIP_Seq.human'.format(
                 CONDOR_INPUT_LOC
             ),
-            'tar -C {input} -zcf {{output}} create_metasra_condor_bundle.ChIP_Seq'.format(
+            'tar -C {input} -zcf {{output}} create_metasra_condor_bundle.ChIP_Seq.human'.format(
                 input=CONDOR_INPUT_LOC
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule bundle_condor_input_RNA_mouse:
@@ -323,6 +328,7 @@ rule bundle_condor_input_RNA_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule bundle_condor_input_ChIP_mouse:
@@ -359,6 +365,7 @@ rule bundle_condor_input_ChIP_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 
@@ -368,10 +375,10 @@ rule bundle_condor_input_ChIP_mouse:
 ##################################################################################
 rule prepare_condor_root_RNA_seq_human:
     input:
-        bundle='{}/create_metasra_condor_bundle.RNA_Seq.tar.gz'.format(
+        bundle='{}/create_metasra_condor_bundle.RNA_Seq.human.tar.gz'.format(
             CONDOR_INPUT_LOC
         ),
-        metadata='{}/sample_to_raw_metadata.RNA_Seq.json'.format(
+        metadata='{}/sample_to_raw_metadata.RNA_Seq.human.json'.format(
             CONDOR_INPUT_LOC
         )
     output:
@@ -389,14 +396,15 @@ rule prepare_condor_root_RNA_seq_human:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule prepare_condor_root_ChIP_seq_human:
     input:
-        bundle='{}/create_metasra_condor_bundle.ChIP_Seq.tar.gz'.format(
+        bundle='{}/create_metasra_condor_bundle.ChIP_Seq.human.tar.gz'.format(
             CONDOR_INPUT_LOC
         ),
-        metadata='{}/sample_to_raw_metadata.ChIP_Seq.json'.format(
+        metadata='{}/sample_to_raw_metadata.ChIP_Seq.human.json'.format(
             CONDOR_INPUT_LOC
         )
     output:
@@ -414,6 +422,7 @@ rule prepare_condor_root_ChIP_seq_human:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule prepare_condor_root_RNA_seq_mouse:
@@ -439,6 +448,7 @@ rule prepare_condor_root_RNA_seq_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule prepare_condor_root_ChIP_seq_mouse:
@@ -464,6 +474,7 @@ rule prepare_condor_root_ChIP_seq_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 ##################################################################################
@@ -489,6 +500,7 @@ rule run_condor_RNA_human:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c) 
 
 rule run_condor_ChIP_human:
@@ -507,6 +519,7 @@ rule run_condor_ChIP_human:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule run_condor_RNA_mouse:
@@ -525,8 +538,8 @@ rule run_condor_RNA_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
-
 
 rule run_condor_ChIP_mouse:
     input:
@@ -544,6 +557,7 @@ rule run_condor_ChIP_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 ##################################################################################
@@ -577,6 +591,7 @@ rule gather_condor_outputs_RNA_human:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule gather_condor_outputs_ChIP_human:
@@ -603,6 +618,7 @@ rule gather_condor_outputs_ChIP_human:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule gather_condor_outputs_RNA_mouse:
@@ -629,6 +645,7 @@ rule gather_condor_outputs_RNA_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule gather_condor_outputs_ChIP_mouse:
@@ -655,13 +672,14 @@ rule gather_condor_outputs_ChIP_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 ##################################################################################
 # Predict the sample-type for all samples. The file 
 # <OUTPUT_LOC>/predict_sample_type.log stores information about this step.
 ##################################################################################
-rule predict_sample_type_RNA:
+rule predict_sample_type_RNA_human:
     input:
         metadata='{}/sample_to_raw_metadata.RNA_Seq.json'.format(
             CONDOR_INPUT_LOC
@@ -685,9 +703,10 @@ rule predict_sample_type_RNA:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
-rule predict_sample_type_ChIP:
+rule predict_sample_type_ChIP_human:
     input:
         metadata='{}/sample_to_raw_metadata.ChIP_Seq.json'.format(
             CONDOR_INPUT_LOC
@@ -711,6 +730,7 @@ rule predict_sample_type_ChIP:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule predict_sample_type_RNA_mouse:
@@ -737,6 +757,7 @@ rule predict_sample_type_RNA_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule predict_sample_type_ChIP_mouse:
@@ -763,12 +784,13 @@ rule predict_sample_type_ChIP_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 ##################################################################################
 # Build the final database files.
 ##################################################################################
-rule build_database_files_RNA:
+rule build_database_files_RNA_human:
     input:
         mappings='{condor_output}/RNA_Seq/{raw_mappings_f}'.format(
             condor_output=OUTPUT_LOC,
@@ -794,9 +816,10 @@ rule build_database_files_RNA:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
-rule build_database_files_ChIP:
+rule build_database_files_ChIP_human:
     input:
         mappings='{condor_output}/ChIP_Seq/{raw_mappings_f}'.format(
             condor_output=OUTPUT_LOC,
@@ -822,6 +845,7 @@ rule build_database_files_ChIP:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 
@@ -851,6 +875,7 @@ rule build_database_files_RNA_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
 
 rule build_database_files_ChIP_mouse:
@@ -879,4 +904,70 @@ rule build_database_files_ChIP_mouse:
             )
         ]
         for c in commands:
+            shell('echo "{}"'.format(c))
+            shell(c)
+
+##################################################################################
+# Join the various species and assays files into one JSON and one Sqlite file.
+###################################################################################
+rule build_final_json_db:
+    input:
+        human_rna='{output_loc}/metasra.RNA_Seq.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        human_chip='{output_loc}/metasra.ChIP_Seq.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        mouse_rna='{output_loc}/metasra.RNA_Seq.mouse.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        mouse_chip='{output_loc}/metasra.ChIP_Seq.mouse.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        )
+    output:
+        '{output_loc}/metasra.final.{today}.json'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        )
+    run:
+        commands=[
+            'python2.7 join_assay_json_dbs.py {input.human_rna},{input.human_chip},{input.mouse_rna},{input.mouse_chip} RNA-seq,ChIP-seq,RNA-seq,ChIP-seq human,human,mouse,mouse -o {output}'            
+        ]
+        for c in commands:
+            shell('echo "{}"'.format(c))
+            shell(c)
+
+rule build_final_sqlite_db:
+    input:
+        human_rna='{output_loc}/metasra.RNA_Seq.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        human_chip='{output_loc}/metasra.ChIP_Seq.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        mouse_rna='{output_loc}/metasra.RNA_Seq.mouse.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        ),
+        mouse_chip='{output_loc}/metasra.ChIP_Seq.mouse.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        )
+    output:
+        '{output_loc}/metasra.final.{today}.sqlite'.format(
+            output_loc=OUTPUT_LOC,
+            today=TODAY_DATE
+        )
+    run:
+        commands=[
+            'python2.7 join_assay_sqlite_dbs.py {input.human_rna},{input.human_chip},{input.mouse_rna},{input.mouse_chip} RNA-seq,ChIP-seq,RNA-seq,ChIP-seq human,human,mouse,mouse -o {output}'
+        ]
+        for c in commands:
+            shell('echo "{}"'.format(c))
             shell(c)
