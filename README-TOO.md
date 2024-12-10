@@ -22,6 +22,8 @@ Note that we added the directory `pip-packages`, created by the next step, to in
 
 `init-environment.sh` will also point `$NLTK_DATA` to a local `nltk_data` folder which we'll need below.
 
+**This script should be run at the start of every session.**
+
 ### Dependencies
 
 We put the pip-installable requirements in `requirements.txt`.
@@ -30,6 +32,8 @@ To force pip to install versions compatible with python 2.7 we run it as follows
 ```
 python -m pip install --python-version 2.7 --no-deps --target pip-packages -r requirements.txt
 ```
+
+This should not be strictly necessary since we have specified exact versions, but it can be helpful in troubleshooting.
 
 ### Setup
 
@@ -46,4 +50,7 @@ cd ./setup_map_sra_to_ontology
 ./setup.sh
 ```
 
+## Test Run
+
+Follow the usage example in the main readme to make sure everything is working.
 
