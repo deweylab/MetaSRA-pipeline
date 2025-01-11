@@ -1,0 +1,6 @@
+name: snakemake-env
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - bioconda::snakemake-minimal
