@@ -10,10 +10,10 @@
 TODAY_DATE = '2025-01-11'
 
 # Where to save presistent output
-PRESISTENT_DIR = f'/ua/ml0group/metadata-standardization-automation/metaSRA-build/{TODAY_DATE}'
+PRESISTENT_DIR = f'/ua/ml-group/metadata-standardization-automation/metaSRA-build/{TODAY_DATE}'
 
 # The absolute path of the repo, accessible to condor (i.e. on a shared drive)
-METASRA_REPO = '/ua/ml0group/metadata-standardization-automation/MetaSRA-pipeline'
+METASRA_REPO = '/ua/ml-group/metadata-standardization-automation/MetaSRA-pipeline'
 
 # Location to place the SRA metadata files 
 SRA_DB_DESTINATION = f'{PRESISTENT_DIR}/sra_db'
@@ -43,7 +43,7 @@ OUTPUT_LOC = f'{PRESISTENT_DIR}/create_metasra_output'
 ####### These variables can be left alone.
 
 # Location of SRAdb
-SRA_DB_LOCATION = 'https://s3.amazonaws.com/starbuck1/sradb/SRAmetadb.sqlite.gz'
+SRA_DB_LOCATION = 'https://gbnci.cancer.gov/sra/SRAmetadb.sqlite.gz'
 
 # Name of the file output by each Condor job
 PER_JOB_OUTPUT_FILENAME = 'metasra_mappings.json'
