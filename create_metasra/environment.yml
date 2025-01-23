@@ -1,6 +1,10 @@
 name: snakemake-env
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
+  - nodefaults
 dependencies:
-  - bioconda::snakemake-minimal
+  - python
+  - python-htcondor
+  - snakemake-minimal
+  - snakemake-executor-plugin-cluster-generic
