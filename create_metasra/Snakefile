@@ -376,6 +376,49 @@ rule bundle_condor_input_ChIP_mouse:
 
 
 ##################################################################################
+# Prepare chunks for parallel execution
+##################################################################################
+
+# Todo rule
+# Generates sample lists for chunks
+
+
+##################################################################################
+# Run term mapping job
+##################################################################################
+
+rule run_term_mapping:
+    input:
+        samples_list='tbd',
+        sample_to_raw_metadata=f'{CONDOR_INPUT_LOC}/sample_to_raw_metadata.{{assay}}.{{species}}.json'
+    output:
+        f'{CONDOR_ROOT_LOC}/{{assay}}.{{species}}.{{chunk}}/{FINISH_FILENAME}'
+    shell:
+        f""""
+        cd {METASRA_REPO}
+        source init-environment.sh
+        cd create_metasra
+        python2.7 condor_run_pipeline.py \
+            -s {{input.samples_list}} \
+            -m {{input.sample_to_raw_metadata}} \
+            -o {{output}}
+        """"
+
+
+##################################################################################
+# Gather term mapping outputs
+##################################################################################
+
+rule gather_term_mappings:
+    input:
+        gather_term_mappings_input()
+    output:
+        f'{OUTPUT_LOC}/{{assay}}.{{species}}/{RAW_MAPPINGS_FILENAME}'
+    script:
+        'gather_mappings.py' # Todo: update to python3
+
+
+##################################################################################
 # Construct the Condor root directory. This directory contains subdirectories
 # for each job as well as the Condor submit file.
 ##################################################################################
