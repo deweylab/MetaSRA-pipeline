@@ -3,6 +3,9 @@
 #   the SRAdb. Uses Condor to distribute the work across machines.
 #######################################################################################
 
+# Rules that should not run on cluster backends
+localrules: all, compute_chunks, gather_mappings
+
 ####### Pipeline parameters. Set these variables appropriately.
 
 # This variable is used as the ID of the pipeline run. I usually use the data, but it
@@ -63,19 +66,19 @@ SAMPLE_TYPE_PREDICTIONS_FILENAME = 'sample_type_predictions.{}.json'.format(TODA
 # One rule to rule them all, one rule to bind them...
 rule all:
     input:
-        '{output_loc}/metasra.RNA_Seq.{today}.json'.format(
+        '{output_loc}/metasra.RNA_Seq.human.{today}.json'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
-        '{output_loc}/metasra.RNA_Seq.{today}.sqlite'.format(
+        '{output_loc}/metasra.RNA_Seq.human.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
-        '{output_loc}/metasra.ChIP_Seq.{today}.json'.format(
+        '{output_loc}/metasra.ChIP_Seq.human.{today}.json'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
-        '{output_loc}/metasra.ChIP_Seq.{today}.sqlite'.format(
+        '{output_loc}/metasra.ChIP_Seq.human.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
@@ -395,7 +398,7 @@ checkpoint compute_chunks:
         out_dir = Path(output[0])
         out_dir.mkdir(parents=True, exist_ok=True)
 
-        for i, chunk in enumarate(batched(all_samples, 10000)):
+        for i, chunk in enumerate(batched(all_samples, 10000)):
             with (out_dir / f'chunk_{i}.json').open('wt') as outstream:
                 json.dump(
                     {
@@ -449,411 +452,24 @@ rule gather_term_mappings:
 
 
 ##################################################################################
-# Construct the Condor root directory. This directory contains subdirectories
-# for each job as well as the Condor submit file.
-##################################################################################
-rule prepare_condor_root_RNA_seq_human:
-    input:
-        bundle='{}/create_metasra_condor_bundle.RNA_Seq.human.tar.gz'.format(
-            CONDOR_INPUT_LOC
-        ),
-        metadata='{}/sample_to_raw_metadata.RNA_Seq.human.json'.format(
-            CONDOR_INPUT_LOC
-        )
-    output:
-        '{}/RNA_Seq/create_metasra.submit'.format(CONDOR_ROOT_LOC)
-    run:
-        commands=[
-            'mkdir -p {}/RNA_Seq'.format(CONDOR_ROOT_LOC),
-            'python2.7 {src}/create_condorized_pipeline.py {condor_root}/RNA_Seq {submit_f} {{input.bundle}} {src}/condor_pipeline_executable.bash {job_out_f} {{input.metadata}} {assay} {species}'.format(
-                condor_root=CONDOR_ROOT_LOC,
-                submit_f=SUBMIT_FILENAME,
-                src=CREATE_METASRA_SRC,
-                job_out_f=PER_JOB_OUTPUT_FILENAME,
-                assay='RNA_Seq',
-                species='human'
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule prepare_condor_root_ChIP_seq_human:
-    input:
-        bundle='{}/create_metasra_condor_bundle.ChIP_Seq.human.tar.gz'.format(
-            CONDOR_INPUT_LOC
-        ),
-        metadata='{}/sample_to_raw_metadata.ChIP_Seq.human.json'.format(
-            CONDOR_INPUT_LOC
-        )
-    output:
-        '{}/ChIP_Seq/create_metasra.submit'.format(CONDOR_ROOT_LOC)
-    run:
-        commands=[
-            'mkdir -p {}/ChIP_Seq'.format(CONDOR_ROOT_LOC),
-            'python2.7 {src}/create_condorized_pipeline.py {condor_root}/ChIP_Seq {submit_f} {{input.bundle}} {src}/condor_pipeline_executable.bash {job_out_f} {{input.metadata}} {assay} {species}'.format(
-                condor_root=CONDOR_ROOT_LOC,
-                submit_f=SUBMIT_FILENAME,
-                src=CREATE_METASRA_SRC,
-                job_out_f=PER_JOB_OUTPUT_FILENAME,
-                assay='ChIP_Seq',
-                species='human'
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule prepare_condor_root_RNA_seq_mouse:
-    input:
-        bundle='{}/create_metasra_condor_bundle.RNA_Seq.mouse.tar.gz'.format(
-            CONDOR_INPUT_LOC
-        ),
-        metadata='{}/sample_to_raw_metadata.RNA_Seq.mouse.json'.format(
-            CONDOR_INPUT_LOC
-        )
-    output:
-        '{}/RNA_Seq.mouse/create_metasra.submit'.format(CONDOR_ROOT_LOC)
-    run:
-        commands=[
-            'mkdir -p {}/RNA_Seq'.format(CONDOR_ROOT_LOC),
-            'python2.7 {src}/create_condorized_pipeline.py {condor_root}/{assay}.{species} {submit_f} {{input.bundle}} {src}/condor_pipeline_executable.bash {job_out_f} {{input.metadata}} {assay} {species}'.format(
-                condor_root=CONDOR_ROOT_LOC,
-                submit_f=SUBMIT_FILENAME,
-                src=CREATE_METASRA_SRC,
-                job_out_f=PER_JOB_OUTPUT_FILENAME,
-                assay='RNA_Seq',
-                species='mouse'
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule prepare_condor_root_ChIP_seq_mouse:
-    input:
-        bundle='{}/create_metasra_condor_bundle.ChIP_Seq.mouse.tar.gz'.format(
-            CONDOR_INPUT_LOC
-        ),
-        metadata='{}/sample_to_raw_metadata.ChIP_Seq.mouse.json'.format(
-            CONDOR_INPUT_LOC
-        )
-    output:
-        '{}/ChIP_Seq.mouse/create_metasra.submit'.format(CONDOR_ROOT_LOC)
-    run:
-        commands=[
-            'mkdir -p {}/ChIP_Seq'.format(CONDOR_ROOT_LOC),
-            'python2.7 {src}/create_condorized_pipeline.py {condor_root}/{assay}.{species} {submit_f} {{input.bundle}} {src}/condor_pipeline_executable.bash {job_out_f} {{input.metadata}} {assay} {species}'.format(
-                condor_root=CONDOR_ROOT_LOC,
-                submit_f=SUBMIT_FILENAME,
-                src=CREATE_METASRA_SRC,
-                job_out_f=PER_JOB_OUTPUT_FILENAME,
-                assay='ChIP_Seq',
-                species='mouse'
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-##################################################################################
-# Run the Condor jobs. Note that all of the jobs may not succeed, in which case,
-# the failed jobs need to be re-run. When all jobs are finished, the file
-# <FINISH_FILENAME> is created to signal to Snakemake that the pipeline may 
-# proceed. Note that when jobs are re-run, this file will need to be created 
-# manually.
-##################################################################################
-rule run_condor_RNA_human:
-    input:
-        '{}/RNA_Seq/create_metasra.submit'.format(CONDOR_ROOT_LOC)
-    output:
-        '{condor_root}/RNA_Seq/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
-        )
-    run:
-        commands=[
-            'python2.7 {src}/run_condor_jobs.py {condor_root}/RNA_Seq {{input}} {{output}}'.format(
-                src=CREATE_METASRA_SRC,
-                condor_root=CONDOR_ROOT_LOC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c) 
-
-rule run_condor_ChIP_human:
-    input:
-        '{}/ChIP_Seq/create_metasra.submit'.format(CONDOR_ROOT_LOC)
-    output:
-        '{condor_root}/ChIP_Seq/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
-        )
-    run:
-        commands=[
-            'python2.7 {src}/run_condor_jobs.py {condor_root}/ChIP_Seq {{input}} {{output}}'.format(
-                src=CREATE_METASRA_SRC,
-                condor_root=CONDOR_ROOT_LOC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule run_condor_RNA_mouse:
-    input:
-        '{}/RNA_Seq.mouse/create_metasra.submit'.format(CONDOR_ROOT_LOC)
-    output:
-        '{condor_root}/RNA_Seq.mouse/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
-        )
-    run:
-        commands=[
-            'python2.7 {src}/run_condor_jobs.py {condor_root}/RNA_Seq.mouse {{input}} {{output}}'.format(
-                src=CREATE_METASRA_SRC,
-                condor_root=CONDOR_ROOT_LOC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule run_condor_ChIP_mouse:
-    input:
-        '{}/ChIP_Seq.mouse/create_metasra.submit'.format(CONDOR_ROOT_LOC)
-    output:
-        '{condor_root}/ChIP_Seq.mouse/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
-        )
-    run:
-        commands=[
-            'python2.7 {src}/run_condor_jobs.py {condor_root}/ChIP_Seq.mouse {{input}} {{output}}'.format(
-                src=CREATE_METASRA_SRC,
-                condor_root=CONDOR_ROOT_LOC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-##################################################################################
-# Gather all of the outputs from the Condor jobs. If we can't decode a job's
-# resultant JSON, then that job is simply skipped. Thus, it is important to make
-# sure that all jobs that ran in the previous step (rule 'run_condor') succeeded.
-# The file <OUTPUT_LOC>/gather_condor_outputs.log stores information about how many
-# jobs were skipped.
-##################################################################################
-rule gather_condor_outputs_RNA_human:
-    input:
-        '{condor_root}/RNA_Seq/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
-        )
-    output:
-       result='{condor_output}/RNA_Seq/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        ),
-        log='{}/RNA_Seq/gather_condor_outputs.log'.format(
-            OUTPUT_LOC
-        )
-    run:
-        commands=[
-            'mkdir -p {}/RNA_Seq'.format(OUTPUT_LOC),
-            'python2.7 {src}/gather_mappings.py {condor_root}/RNA_Seq {job_out_f} {{output.result}} {{output.log}}'.format(
-                src=CREATE_METASRA_SRC,
-                condor_root=CONDOR_ROOT_LOC,
-                job_out_f=PER_JOB_OUTPUT_FILENAME
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule gather_condor_outputs_ChIP_human:
-    input:
-        '{condor_root}/ChIP_Seq/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
-        )
-    output:
-       result='{condor_output}/ChIP_Seq/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        ),
-        log='{}/ChIP_Seq/gather_condor_outputs.log'.format(
-            OUTPUT_LOC
-        )
-    run:
-        commands=[
-            'mkdir -p {}/ChIP_Seq'.format(OUTPUT_LOC),
-            'python2.7 {src}/gather_mappings.py {condor_root}/ChIP_Seq {job_out_f} {{output.result}} {{output.log}}'.format(
-                src=CREATE_METASRA_SRC,
-                condor_root=CONDOR_ROOT_LOC,
-                job_out_f=PER_JOB_OUTPUT_FILENAME
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule gather_condor_outputs_RNA_mouse:
-    input:
-        '{condor_root}/RNA_Seq.mouse/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
-        )
-    output:
-       result='{condor_output}/RNA_Seq.mouse/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        ),
-        log='{}/RNA_Seq.mouse/gather_condor_outputs.log'.format(
-            OUTPUT_LOC
-        )
-    run:
-        commands=[
-            'mkdir -p {}/RNA_Seq.mouse'.format(OUTPUT_LOC),
-            'python2.7 {src}/gather_mappings.py {condor_root}/RNA_Seq.mouse {job_out_f} {{output.result}} {{output.log}}'.format(
-                src=CREATE_METASRA_SRC,
-                condor_root=CONDOR_ROOT_LOC,
-                job_out_f=PER_JOB_OUTPUT_FILENAME
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule gather_condor_outputs_ChIP_mouse:
-    input:
-        '{condor_root}/ChIP_Seq.mouse/{finished_f}'.format(
-            condor_root=CONDOR_ROOT_LOC,
-            finished_f=FINISH_FILENAME
-        )
-    output:
-       result='{condor_output}/ChIP_Seq.mouse/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        ),
-        log='{}/ChIP_Seq.mouse/gather_condor_outputs.log'.format(
-            OUTPUT_LOC
-        )
-    run:
-        commands=[
-            'mkdir -p {}/ChIP_Seq.mouse'.format(OUTPUT_LOC),
-            'python2.7 {src}/gather_mappings.py {condor_root}/ChIP_Seq.mouse {job_out_f} {{output.result}} {{output.log}}'.format(
-                src=CREATE_METASRA_SRC,
-                condor_root=CONDOR_ROOT_LOC,
-                job_out_f=PER_JOB_OUTPUT_FILENAME
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-##################################################################################
 # Predict the sample-type for all samples. The file 
 # <OUTPUT_LOC>/predict_sample_type.log stores information about this step.
 ##################################################################################
-rule predict_sample_type_RNA_human:
+rule predict_sample_type:
     input:
-        metadata='{}/sample_to_raw_metadata.RNA_Seq.human.json'.format(
+        metadata='{}/sample_to_raw_metadata.{{assay}}.{{species}}.json'.format(
             CONDOR_INPUT_LOC
         ),
-        mappings='{condor_output}/RNA_Seq/{raw_mappings_f}'.format(
+        mappings='{condor_output}/{{assay}}.{{species}}/{raw_mappings_f}'.format(
             condor_output=OUTPUT_LOC,
             raw_mappings_f=RAW_MAPPINGS_FILENAME
         )
     output:
-        result='{condor_output}/RNA_Seq/{predictions_f}'.format(
+        result='{condor_output}/{{assay}}.{{species}}/{predictions_f}'.format(
             condor_output=OUTPUT_LOC,
             predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
         ),
-        log='{}/RNA_Seq/predict_sample_type.log'.format(
-            OUTPUT_LOC
-        )
-    run:
-        commands=[
-            'python2.7 {src}/predict_sample_type/run_on_entire_dataset.py {{input.metadata}} {{input.mappings}} {{output.result}} {{output.log}}'.format(
-                src=PIPELINE_SRC_LOC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule predict_sample_type_ChIP_human:
-    input:
-        metadata='{}/sample_to_raw_metadata.ChIP_Seq.human.json'.format(
-            CONDOR_INPUT_LOC
-        ),
-        mappings='{condor_output}/ChIP_Seq/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        )
-    output:
-        result='{condor_output}/ChIP_Seq/{predictions_f}'.format(
-            condor_output=OUTPUT_LOC,
-            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
-        ),
-        log='{}/ChIP_Seq/predict_sample_type.log'.format(
-            OUTPUT_LOC
-        )
-    run:
-        commands=[
-            'python2.7 {src}/predict_sample_type/run_on_entire_dataset.py {{input.metadata}} {{input.mappings}} {{output.result}} {{output.log}}'.format(
-                src=PIPELINE_SRC_LOC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule predict_sample_type_RNA_mouse:
-    input:
-        metadata='{}/sample_to_raw_metadata.RNA_Seq.mouse.json'.format(
-            CONDOR_INPUT_LOC
-        ),
-        mappings='{condor_output}/RNA_Seq.mouse/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        )
-    output:
-        result='{condor_output}/RNA_Seq.mouse/{predictions_f}'.format(
-            condor_output=OUTPUT_LOC,
-            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
-        ),
-        log='{}/RNA_Seq.mouse/predict_sample_type.log'.format(
-            OUTPUT_LOC
-        )
-    run:
-        commands=[
-            'python2.7 {src}/predict_sample_type/run_on_entire_dataset.py {{input.metadata}} {{input.mappings}} {{output.result}} {{output.log}}'.format(
-                src=PIPELINE_SRC_LOC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule predict_sample_type_ChIP_mouse:
-    input:
-        metadata='{}/sample_to_raw_metadata.ChIP_Seq.mouse.json'.format(
-            CONDOR_INPUT_LOC
-        ),
-        mappings='{condor_output}/ChIP_Seq.mouse/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        )
-    output:
-        result='{condor_output}/ChIP_Seq.mouse/{predictions_f}'.format(
-            condor_output=OUTPUT_LOC,
-            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
-        ),
-        log='{}/ChIP_Seq.mouse/predict_sample_type.log'.format(
+        log='{}/{{assay}}.{{species}}/predict_sample_type.log'.format(
             OUTPUT_LOC
         )
     run:
@@ -869,110 +485,22 @@ rule predict_sample_type_ChIP_mouse:
 ##################################################################################
 # Build the final database files.
 ##################################################################################
-rule build_database_files_RNA_human:
+rule build_database_files:
     input:
-        mappings='{condor_output}/RNA_Seq/{raw_mappings_f}'.format(
+        mappings='{condor_output}/{{assay}}.{{species}}/{raw_mappings_f}'.format(
             condor_output=OUTPUT_LOC,
             raw_mappings_f=RAW_MAPPINGS_FILENAME
         ),
-        predictions='{condor_output}/RNA_Seq/{predictions_f}'.format(
+        predictions='{condor_output}/{{assay}}.{{species}}/{predictions_f}'.format(
             condor_output=OUTPUT_LOC,
             predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
         )
     output:
-        json_f='{output_loc}/metasra.RNA_Seq.{today}.json'.format(
+        json_f='{output_loc}/metasra.{{assay}}.{{species}}.{today}.json'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
-        sql_f='{output_loc}/metasra.RNA_Seq.{today}.sqlite'.format(
-            output_loc=OUTPUT_LOC,
-            today=TODAY_DATE
-        )
-    run:
-        commands=[
-            'python2.7 {src}/build_metasra_database_files.py {{input.mappings}} {{input.predictions}} {{output.json_f}} {{output.sql_f}}'.format(
-                src=CREATE_METASRA_SRC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule build_database_files_ChIP_human:
-    input:
-        mappings='{condor_output}/ChIP_Seq/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        ),
-        predictions='{condor_output}/ChIP_Seq/{predictions_f}'.format(
-            condor_output=OUTPUT_LOC,
-            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
-        )
-    output:
-        json_f='{output_loc}/metasra.ChIP_Seq.{today}.json'.format(
-            output_loc=OUTPUT_LOC,
-            today=TODAY_DATE
-        ),
-        sql_f='{output_loc}/metasra.ChIP_Seq.{today}.sqlite'.format(
-            output_loc=OUTPUT_LOC,
-            today=TODAY_DATE
-        )
-    run:
-        commands=[
-            'python2.7 {src}/build_metasra_database_files.py {{input.mappings}} {{input.predictions}} {{output.json_f}} {{output.sql_f}}'.format(
-                src=CREATE_METASRA_SRC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-
-rule build_database_files_RNA_mouse:
-    input:
-        mappings='{condor_output}/RNA_Seq.mouse/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        ),
-        predictions='{condor_output}/RNA_Seq.mouse/{predictions_f}'.format(
-            condor_output=OUTPUT_LOC,
-            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
-        )
-    output:
-        json_f='{output_loc}/metasra.RNA_Seq.mouse.{today}.json'.format(
-            output_loc=OUTPUT_LOC,
-            today=TODAY_DATE
-        ),
-        sql_f='{output_loc}/metasra.RNA_Seq.mouse.{today}.sqlite'.format(
-            output_loc=OUTPUT_LOC,
-            today=TODAY_DATE
-        )
-    run:
-        commands=[
-            'python2.7 {src}/build_metasra_database_files.py {{input.mappings}} {{input.predictions}} {{output.json_f}} {{output.sql_f}}'.format(
-                src=CREATE_METASRA_SRC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
-rule build_database_files_ChIP_mouse:
-    input:
-        mappings='{condor_output}/ChIP_Seq.mouse/{raw_mappings_f}'.format(
-            condor_output=OUTPUT_LOC,
-            raw_mappings_f=RAW_MAPPINGS_FILENAME
-        ),
-        predictions='{condor_output}/ChIP_Seq.mouse/{predictions_f}'.format(
-            condor_output=OUTPUT_LOC,
-            predictions_f=SAMPLE_TYPE_PREDICTIONS_FILENAME
-        )
-    output:
-        json_f='{output_loc}/metasra.ChIP_Seq.mouse.{today}.json'.format(
-            output_loc=OUTPUT_LOC,
-            today=TODAY_DATE
-        ),
-        sql_f='{output_loc}/metasra.ChIP_Seq.mouse.{today}.sqlite'.format(
+        sql_f='{output_loc}/metasra.{{assay}}.{{species}}.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         )
@@ -991,11 +519,11 @@ rule build_database_files_ChIP_mouse:
 ###################################################################################
 rule build_final_json_db:
     input:
-        human_rna='{output_loc}/metasra.RNA_Seq.{today}.json'.format(
+        human_rna='{output_loc}/metasra.RNA_Seq.human.{today}.json'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
-        human_chip='{output_loc}/metasra.ChIP_Seq.{today}.json'.format(
+        human_chip='{output_loc}/metasra.ChIP_Seq.human.{today}.json'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
@@ -1022,11 +550,11 @@ rule build_final_json_db:
 
 rule build_final_sqlite_db:
     input:
-        human_rna='{output_loc}/metasra.RNA_Seq.{today}.sqlite'.format(
+        human_rna='{output_loc}/metasra.RNA_Seq.human.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
-        human_chip='{output_loc}/metasra.ChIP_Seq.{today}.sqlite'.format(
+        human_chip='{output_loc}/metasra.ChIP_Seq.human.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
             today=TODAY_DATE
         ),
