@@ -379,9 +379,30 @@ rule bundle_condor_input_ChIP_mouse:
 # Prepare chunks for parallel execution
 ##################################################################################
 
-# Todo rule
-# Generates sample lists for chunks
+checkpoint compute_chunks:
+    input:
+        f'{CONDOR_INPUT_LOC}/sample_to_raw_metadata.{{assay}}.{{species}}.json'
+    output:
+        directory(f'{CONDOR_INPUT_LOC}/sample_chunks.{{assay}}.{{species}}')
+    run:
+        import json
+        from itertools import batched
+        from pathlib import Path
 
+        with open(input[0], 'rt') as instream:
+            all_samples = json.load(instream)
+        
+        out_dir = Path(output[0])
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        for i, chunk in enumarate(batched(all_samples, 10000)):
+            with (out_dir / f'chunk_{i}.json').open('wt') as outstream:
+                json.dump(
+                    {
+                        'sample_accessions': list(chunk)
+                    },
+                    outstream
+                )
 
 ##################################################################################
 # Run term mapping job
@@ -389,12 +410,12 @@ rule bundle_condor_input_ChIP_mouse:
 
 rule run_term_mapping:
     input:
-        samples_list='tbd',
+        samples_list=f'{CONDOR_INPUT_LOC}/sample_chunks.{{assay}}.{{species}}/chunk_{{chunk}}.json',
         sample_to_raw_metadata=f'{CONDOR_INPUT_LOC}/sample_to_raw_metadata.{{assay}}.{{species}}.json'
     output:
         f'{CONDOR_ROOT_LOC}/{{assay}}.{{species}}.{{chunk}}/{FINISH_FILENAME}'
     shell:
-        f""""
+        f"""
         cd {METASRA_REPO}
         source init-environment.sh
         cd create_metasra
@@ -402,16 +423,25 @@ rule run_term_mapping:
             -s {{input.samples_list}} \
             -m {{input.sample_to_raw_metadata}} \
             -o {{output}}
-        """"
+        """
 
 
 ##################################################################################
 # Gather term mapping outputs
 ##################################################################################
 
+def gather_term_mappings_input(wildcards):
+    chunks_dir = checkpoints.compute_chunks.get(**wildcards).output[0]
+    return expand(
+        f'{CONDOR_ROOT_LOC}/{{assay}}.{{species}}.{{chunk}}/{FINISH_FILENAME}',
+        chunk=glob_wildcards(f'{chunks_dir}/chunk_{{chunk}}.json').chunk,
+        **wildcards
+    )
+
+
 rule gather_term_mappings:
     input:
-        gather_term_mappings_input()
+        gather_term_mappings_input
     output:
         f'{OUTPUT_LOC}/{{assay}}.{{species}}/{RAW_MAPPINGS_FILENAME}'
     script:
