@@ -4,7 +4,7 @@
 #######################################################################################
 
 # Rules that should not run on cluster backends
-localrules: all, compute_chunks, gather_mappings
+localrules: all, compute_chunks, gather_term_mappings
 
 ####### Pipeline parameters. Set these variables appropriately.
 
