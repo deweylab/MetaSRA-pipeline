@@ -4,7 +4,7 @@
 #######################################################################################
 
 # Rules that should not run on cluster backends
-localrules: all, download_SRAdb, compute_chunks, gather_term_mappings
+localrules: all, download_SRAdb, compute_chunks, gather_term_mappings, build_final_json_db, build_final_sqlite_db
 
 ####### Pipeline parameters. Set these variables appropriately.
 
@@ -31,13 +31,13 @@ CONDOR_INPUT_LOC = f'{PRESISTENT_DIR}/condor_input'
 #EXTRACT_METADATA_JSON_LOCATION = f'{METASRA_REPO}/create_metasra'
 
 # Location of map_sra_to_ontology
-#PIPELINE_SRC_LOC = f'{METASRA_REPO}'
+PIPELINE_SRC_LOC = f'{METASRA_REPO}'
 
 # Location of pipeline_v53.py
 #BUILD_PIPELINE_LOC = f'{METASRA_REPO}/all_pipelines'
 
 # Location of all the scripts for running the MetaSRA pipeline (not the MetaSRA code itself)
-#CREATE_METASRA_SRC = f'{METASRA_REPO}/create_metasra'
+CREATE_METASRA_SRC = f'{METASRA_REPO}/create_metasra'
 
 # Location of the Condor work directory
 CONDOR_WORK_LOC = f'{PRESISTENT_DIR}/condor_work'
@@ -151,7 +151,7 @@ rule extract_json_from_sqlite:
     output:
         f'{SRA_DB_DESTINATION}/sample_to_raw_metadata.{{assay}}.{{species}}.json'
     conda:
-        'metasra'
+        'metasra-py2'
     shell:
         'python2.7 extract_raw_metadata_json.py {input} {output}'
 
@@ -196,11 +196,11 @@ checkpoint compute_chunks:
 rule run_term_mapping:
     input:
         samples_list=f'{CONDOR_INPUT_LOC}/sample_chunks.{{assay}}.{{species}}/chunk_{{chunk}}.json',
-        sample_to_raw_metadata=f'{CONDOR_INPUT_LOC}/sample_to_raw_metadata.{{assay}}.{{species}}.json'
+        sample_to_raw_metadata=f'{SRA_DB_DESTINATION}/sample_to_raw_metadata.{{assay}}.{{species}}.json'
     output:
         f'{CONDOR_WORK_LOC}/{{assay}}.{{species}}.{{chunk}}/{FINISH_FILENAME}'
     conda:
-        "metasra"
+        "metasra-py2"
     shell:
         #f"""
         #cd {METASRA_REPO}
@@ -232,8 +232,22 @@ rule gather_term_mappings:
         gather_term_mappings_input
     output:
         f'{OUTPUT_LOC}/{{assay}}.{{species}}/{RAW_MAPPINGS_FILENAME}'
-    script:
-        'gather_mappings.py' # Todo: update to python3
+    run:
+        import json
+
+        def read_json(file):
+            with open(file, 'rt') as instream:
+                return json.read(instream)
+
+        with open(input[0], 'wt') as outstream:
+            json.dump(
+                {
+                    k: v
+                    for file in output
+                    for k, v in read_json(file)
+                },
+                outstream
+            )
 
 
 ##################################################################################
@@ -257,15 +271,13 @@ rule predict_sample_type:
         log='{}/{{assay}}.{{species}}/predict_sample_type.log'.format(
             OUTPUT_LOC
         )
-    run:
-        commands=[
-            'python2.7 {src}/predict_sample_type/run_on_entire_dataset.py {{input.metadata}} {{input.mappings}} {{output.result}} {{output.log}}'.format(
-                src=PIPELINE_SRC_LOC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
+    conda:
+        'metasra-py2'
+    shell:
+        (
+            f'python2.7 {PIPELINE_SRC_LOC}/predict_sample_type/run_on_entire_dataset.py'
+            ' {input.metadata} {input.mappings} {output.result} {output.log}'
+        )
 
 ##################################################################################
 # Build the final database files.
@@ -289,15 +301,13 @@ rule build_database_files:
             output_loc=OUTPUT_LOC,
             today=VERSION
         )
-    run:
-        commands=[
-            'python2.7 {src}/build_metasra_database_files.py {{input.mappings}} {{input.predictions}} {{output.json_f}} {{output.sql_f}}'.format(
-                src=CREATE_METASRA_SRC
-            )
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
+    conda:
+        'metasra-py2'
+    shell:
+        (
+            f'python2.7 {CREATE_METASRA_SRC}/build_metasra_database_files.py'
+            ' {input.mappings} {input.predictions} {output.json_f} {output.sql_f}'
+        )
 
 ##################################################################################
 # Join the various species and assays files into one JSON and one Sqlite file.
@@ -325,14 +335,19 @@ rule build_final_json_db:
             output_loc=OUTPUT_LOC,
             today=VERSION
         )
-    run:
-        commands=[
-            'python2.7 join_assay_json_dbs.py {input.human_rna},{input.human_chip},{input.mouse_rna},{input.mouse_chip} RNA-seq,ChIP-seq,RNA-seq,ChIP-seq human,human,mouse,mouse -o {output}'            
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
-
+    conda:
+        'metasra-py2'
+    shell:
+        (
+            'python2.7 join_assay_json_dbs.py '
+            '{input.human_rna},'
+            '{input.human_chip},'
+            '{input.mouse_rna},'
+            '{input.mouse_chip} '
+            'RNA-seq,ChIP-seq,RNA-seq,ChIP-seq '
+            ' human,human,mouse,mouse -o {output}'            
+        )
+        
 rule build_final_sqlite_db:
     input:
         human_rna='{output_loc}/metasra.RNA_Seq.human.{today}.sqlite'.format(
@@ -351,15 +366,21 @@ rule build_final_sqlite_db:
             output_loc=OUTPUT_LOC,
             today=VERSION
         )
+    conda:
+        'metasra-py2'
     output:
         '{output_loc}/metasra.final.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
             today=VERSION
         )
-    run:
-        commands=[
-            'python2.7 join_assay_sqlite_dbs.py {input.human_rna},{input.human_chip},{input.mouse_rna},{input.mouse_chip} RNA-seq,ChIP-seq,RNA-seq,ChIP-seq human,human,mouse,mouse -o {output}'
-        ]
-        for c in commands:
-            shell('echo "{}"'.format(c))
-            shell(c)
+    shell:
+        (
+            'python2.7 join_assay_sqlite_dbs.py '
+            '{input.human_rna},'
+            '{input.human_chip},'
+            '{input.mouse_rna},'
+            '{input.mouse_chip} '
+            'RNA-seq,ChIP-seq,RNA-seq,ChIP-seq '
+            'human,human,mouse,mouse '
+            '-o {output}'
+        )
