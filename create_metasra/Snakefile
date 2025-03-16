@@ -175,7 +175,7 @@ checkpoint compute_chunks:
         out_dir = Path(output[0])
         out_dir.mkdir(parents=True, exist_ok=True)
 
-        chunk_size = 10000
+        chunk_size = 500
 
         for i in range((len(all_samples) // chunk_size)+1):
 
