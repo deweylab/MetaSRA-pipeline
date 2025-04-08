@@ -239,7 +239,7 @@ rule gather_term_mappings:
             with open(file, 'rt') as instream:
                 return json.read(instream)
 
-        with open(input[0], 'wt') as outstream:
+        with open(output[0], 'wt') as outstream:
             json.dump(
                 {
                     k: v
