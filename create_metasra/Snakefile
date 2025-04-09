@@ -235,16 +235,20 @@ rule gather_term_mappings:
     run:
         import json
 
-        def read_json(file):
-            with open(file, 'rt') as instream:
-                return json.load(instream)
+        def read_json(f):
+            try:
+                with open(f, 'rt') as instream:
+                    return json.load(instream)
+            except:
+                print(f'Failed to read {f}')
+                raise
 
         with open(output[0], 'wt') as outstream:
             json.dump(
                 {
                     k: v
-                    for file in output
-                    for k, v in read_json(file)
+                    for f in output
+                    for k, v in read_json(f)
                 },
                 outstream
             )
