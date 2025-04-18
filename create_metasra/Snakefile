@@ -248,7 +248,7 @@ rule gather_term_mappings:
                 {
                     k: v
                     for f in input
-                    for k, v in read_json(f)
+                    for k, v in read_json(f).items()
                 },
                 outstream
             )
