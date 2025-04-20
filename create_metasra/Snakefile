@@ -31,7 +31,7 @@ CONDOR_INPUT_LOC = f'{PRESISTENT_DIR}/condor_input'
 #EXTRACT_METADATA_JSON_LOCATION = f'{METASRA_REPO}/create_metasra'
 
 # Location of map_sra_to_ontology
-PIPELINE_SRC_LOC = f'{METASRA_REPO}'
+PIPELINE_SRC_LOC = f'{METASRA_REPO}/map_sra_to_ontology'
 
 # Location of pipeline_v53.py
 #BUILD_PIPELINE_LOC = f'{METASRA_REPO}/all_pipelines'
