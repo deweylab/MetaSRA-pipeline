@@ -1,0 +1,9 @@
+*.pyc
+.DS_Store
+map_sra_to_ontology/obo
+map_sra_to_ontology/LEX/L*
+map_sra_to_ontology/fuzzy_matching_index
+map_sra_to_ontology/metadata/cellline_to_disease_implied_terms.json
+map_sra_to_ontology/ont_prefix_to_filename.json
+setup_map_sra_to_ontology/term_to_linked_terms.json
+setup_map_sra_to_ontology/term_to_superterm_linked_terms.json
