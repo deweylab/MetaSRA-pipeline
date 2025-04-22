@@ -87,3 +87,5 @@ For example, the pipeline will accept a file with the following content:
         "tissue": "vastus lateralis muscle"
       }
      ]
+
+For quick testing the above content can be found in the `example.json` file.
