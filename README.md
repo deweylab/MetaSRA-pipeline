@@ -8,13 +8,47 @@ The MetaSRA can be searched and downloaded from: http://metasra.biostat.wisc.edu
 
 ## Dependencies
 
-This project requires the following Python libraries:
+This project currently uses Python 2.7 and requires the following Python libraries:
 - numpy (http://www.numpy.org)
 - scipy (https://www.scipy.org/scipylib/)
 - scikit-learn (http://scikit-learn.org/stable/)
 - setuptools (https://pypi.python.org/pypi/setuptools)
 - marisa-trie (https://pypi.python.org/pypi/marisa-trie)
+- dill (https://pypi.org/project/dill/)
+- nltk (http://www.nltk.org/)
+- singledispatch (https://pypi.python.org/pypi/singledispatch)
 
+In addition, the [ahupp/bktree](https://github.com/ahupp/bktree) repository is included as a submodule.
+
+### Installation of dependencies
+
+A conda environment specification is provided in the `environment.yml` file. To create the environment, run the following from the root directory of the repository:
+
+```bash
+mamba env create -n metasra-py2 -f environment.yml
+```
+This will create a conda environment named `metasra-py2` with the required dependencies.  To activate the environment, run:
+
+```bash
+mamba activate metasra-py2
+```
+
+To initialize the bktree submodule, run:
+```bash
+git submodule update --init --recursive
+```
+
+The nltk library requires the punkt tokenizer to be downloaded.  To do this, run:
+
+```bash
+python -c "import nltk; nltk.download('punkt')"
+```
+
+Finally, the PYTHONPATH environment variable must be set to include the current directory and the bktree directory.  This can be done by running:
+
+```bash
+export PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/bktree
+```
 
 ## Setup
 

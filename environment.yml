@@ -1,0 +1,12 @@
+channels:
+  - conda-forge
+dependencies:
+  - python=2.7.15
+  - numpy
+  - scipy
+  - scikit-learn
+  - setuptools
+  - marisa-trie
+  - dill
+  - nltk
+  - singledispatch
