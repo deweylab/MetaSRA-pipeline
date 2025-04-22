@@ -1,6 +1,6 @@
 from bktree import BKTree
-import load_ontology
-import string_metrics
+from map_sra_to_ontology import load_ontology
+from map_sra_to_ontology import string_metrics
 
 from sets import Set
 import json
