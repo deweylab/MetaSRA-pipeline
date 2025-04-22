@@ -456,12 +456,17 @@ def parse_entity(lines, restrict_to_idspaces):
             the second element is the synonym type (e.g. 'EXACT' or 'NARROW')
         """
         synonyms = Set()
+        syn_pattern = re.compile(r'"((?:\\.|[^"\\])*)"\s+(.+?)\s+\[([^\]]*)\]')
         for syn in raw_syns:
-            m = re.search('\".+\"', syn)
+            m = syn_pattern.match(syn)
             if m:
-                syn_type = syn.split('"')[2].strip().split()[0]
-                parsed_syn = m.group(0)[1:-1].strip()
-                synonyms.add(Synonym(parsed_syn, syn_type))
+                parsed_syn = m.group(1).strip()
+                syn_type = m.group(2).split()[0] # ignore optional SynonymType-ID
+            else:
+                print "Error parsing synonym: %s" % syn
+                continue
+
+            synonyms.add(Synonym(parsed_syn, syn_type))
         return synonyms
 
     def extract_xrefs(raw_xrefs):
