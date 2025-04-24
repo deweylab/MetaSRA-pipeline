@@ -44,6 +44,9 @@ def main():
     ont_id_to_og = {x:load_ontology.load(x)[0] for x in ont_name_to_ont_id.values()}
     pipeline = p_53()
 
+    # Initialize sample type predictor
+    predictor = run_sample_type_predictor.SampleTypePredictor(cvcl_og=ont_id_to_og["4"])
+
     all_mappings = []
     for tag_to_val in tag_to_vals:
         sample_acc_to_matches = {}
@@ -57,7 +60,7 @@ def main():
     outputs = []
     for tag_to_val, mappings in zip(tag_to_vals, all_mappings):
         outputs.append(
-            run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings)
+            run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings, predictor)
         )
     output_string = json.dumps(outputs, indent=4, separators=(',', ': '))
     if options.output:
@@ -66,7 +69,7 @@ def main():
     else:
         print output_string
 
-def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data): 
+def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, predictor): 
     
     mapped_terms = []
     real_val_props = []
@@ -91,7 +94,7 @@ def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data):
             sup_terms.update(og.recursive_relationship(term_id, ['is_a', 'part_of']))
     mapped_terms = list(sup_terms)
 
-    predicted, confidence = run_sample_type_predictor.run_sample_type_prediction(
+    predicted, confidence = predictor.predict(
         tag_to_val, 
         mapped_terms, 
         real_val_props
