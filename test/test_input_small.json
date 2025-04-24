@@ -1,0 +1,77 @@
+[
+    {
+        "cell type": "mixture of several clones",
+        "patient": "csc3",
+        "source_name": "mixture of several clones"
+    },
+    {
+        "Sex": "male",
+        "age": "28",
+        "biopsytime": "4mo",
+        "diagnosis": "Ulcerative colitis",
+        "ethnicity": "Caucasian",
+        "patient": "P500",
+        "prognosis": "Pouchitis",
+        "source_name": "P500.5",
+        "tissue": "Ileal pouch"
+    },
+    {
+        "source_name": "Treated Patient-Derived Xenograft (PDX)",
+        "tissue": "Human ovarian PDX tumor"
+    },
+    {
+        "cell type": "monocyte derived macrophage",
+        "individual": "1",
+        "organism": "Homo sapiens"
+    },
+    {
+        "BioSampleModel": "Human",
+        "age": "59",
+        "biomaterial_provider": "Finoccchiaro",
+        "isolate": "R006 RNA primary tumor",
+        "sex": "male",
+        "tissue": "brain"
+    },
+    {
+        "cell type": "luminal epithelial cells",
+        "patient age": "74",
+        "patient number": "HPCa177N",
+        "source_name": "Freshly purified human benign prostatic luminal cells",
+        "tissue": "Prostate"
+    },
+    {
+        "differential stage": "day 10",
+        "knockdown": "wild type",
+        "source_name": "embryonic stem cells",
+        "strain": "H9"
+    },
+    {
+        "cell type": "Peripheral blood monocytes",
+        "disease": "Health control",
+        "source_name": "Monocytes"
+    },
+    {
+        "BioSampleModel": "Human",
+        "age": "68-year-old",
+        "biomaterial_provider": "Erik W Thompson, Institute of Health and Biomedical Innovation and School of Biomedical Sciences, Queensland University of Technology, 60 Musk Avenue, Kelvin Grove, QLD 4059, Australia",
+        "cell_line": "PMC42-ET",
+        "cell_subtype": "parental",
+        "cell_type": "breast cancer",
+        "disease": "adenocarcinoma",
+        "disease_stage": "metastatic",
+        "ethnicity": "Caucasian",
+        "isolate": "not applicable",
+        "replicate": "biological replicate 3",
+        "sample_type": "cell culture",
+        "sex": "female",
+        "tissue": "mammary gland/breast cancer; derived from metastatic site",
+        "treatment": "control"
+    },
+    {
+        "median tin score": "60.71188767",
+        "rin score": "2.4",
+        "source_name": "Prostate cancer (Bone metastasis)",
+        "tissue": "Bone",
+        "tumor stage": "metastatic castration resistant"
+    }
+]
