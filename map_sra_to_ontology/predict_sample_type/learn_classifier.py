@@ -27,7 +27,6 @@ ALGORITHM = "one_vs_rest"
 BALANCE_CLASSES = False
 N = 2 # N-gram size
 ONT_IDS = ["12", "1", "2", "16", "4"]
-OGS = [load_ontology.load(ont_id)[0] for ont_id in ONT_IDS]
 
 TRAINING_DATA_F = "/ua/mnbernstein/projects/tbcp/metadata/ontology/validation_sets/validation_set.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.json"
 #TRAINING_DATA_RAW_MAPPING_F = "matches.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.pip41.json"
@@ -35,6 +34,7 @@ TRAINING_DATA_RAW_MAPPING_F = "matches.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_1
 STUDY_TO_SAMPLES_F = "study_to_sample.3-10_4-3_5-5_6-2_8-1_9-1_10-1_11-1_12-1_13-1_15-1_16-1.json"
 
 def main():
+    OGS = [load_ontology.load(ont_id)[0] for ont_id in ONT_IDS]
 
     def get_all_samples_to_mappings(matches_file_dir):
         print "loading sample to predicted ontology term mappings..."
