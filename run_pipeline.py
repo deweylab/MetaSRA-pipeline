@@ -24,6 +24,8 @@ from map_sra_to_ontology.pipeline_components import *
 def main():
     parser = OptionParser()
     #parser.add_option("-f", "--key_value_file", help="JSON file storing key-value pairs describing sample")
+    parser.add_option("-o", "--output", dest="output", default=None,
+                      help="Output file to which to write results (default: stdout)")
     (options, args) = parser.parse_args()
    
     input_f = args[0]
@@ -57,7 +59,12 @@ def main():
         outputs.append(
             run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings)
         )
-    print json.dumps(outputs, indent=4, separators=(',', ': '))
+    output_string = json.dumps(outputs, indent=4, separators=(',', ': '))
+    if options.output:
+        with open(options.output, "w") as f:
+            f.write(output_string)
+    else:
+        print output_string
 
 def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data): 
     
