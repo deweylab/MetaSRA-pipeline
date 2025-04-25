@@ -1,3 +1,4 @@
+from __future__ import print_function
 from collections import Counter
 
 def bag_dist_multiset_OLD(str_a, str_b):
@@ -55,4 +56,4 @@ def bag_dist(vec_a,vec_b):
         return b_minus_a
     #return max([a_minus_b, b_minus_a])
 
-print bag_dist_multiset("aaab", "aabcc")
+print(bag_dist_multiset("aaab", "aabcc"))

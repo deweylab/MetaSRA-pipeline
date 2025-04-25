@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 QUERY_METASRA_NO_SAMPLE_TYPE = """
     SELECT 
@@ -40,7 +41,7 @@ QUERY_METASRA_YES_SAMPLE_TYPE = """
 
 
 def query_metasra_for_term(db_conn, term_id, sample_type=None):
-    print "Querying database..."
+    print("Querying database...")
     if not sample_type:
         results = db_conn.query(
             QUERY_METASRA_NO_SAMPLE_TYPE,
@@ -51,7 +52,7 @@ def query_metasra_for_term(db_conn, term_id, sample_type=None):
             QUERY_METASRA_YES_SAMPLE_TYPE,
             vars={'term_id':term_id, 'sample_type':sample_type}
         )
-    print "Finished query."
+    print("Finished query.")
     return results
 
 

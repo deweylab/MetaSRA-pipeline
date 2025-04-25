@@ -1,3 +1,4 @@
+from __future__ import print_function
 from optparse import OptionParser
 import json
 import nltk
@@ -37,7 +38,7 @@ def main():
     OGS = [load_ontology.load(ont_id)[0] for ont_id in ONT_IDS]
 
     def get_all_samples_to_mappings(matches_file_dir):
-        print "loading sample to predicted ontology term mappings..."
+        print("loading sample to predicted ontology term mappings...")
         sample_to_predicted_terms = defaultdict(lambda: Set())
         sample_to_real_val_props = {}
         for fname in os.listdir(matches_file_dir):
@@ -100,11 +101,11 @@ def main():
         sorted(v)[0] 
         for v in study_to_samples.values()
     ])
-    print "Test samples are: %s" % train_samples
+    print("Test samples are: %s" % train_samples)
 
     # Build train dataset
     train_dataset = get_dataset(TRAINING_DATA_F)
-    print "Initially %d samples in training set" % len(train_dataset)
+    print("Initially %d samples in training set" % len(train_dataset))
     train_dataset = [
             x 
             for x in train_dataset 
@@ -131,12 +132,12 @@ def main():
         cvcl_og=OGS[4]
     )
 
-    print "Writing trained model to dilled files..."
+    print("Writing trained model to dilled files...")
     with open("sample_type_vectorizor.dill", "w") as f:
         dill.dump(vectorizer, f)
     with open("sample_type_classifier.dill", "w") as f:
         dill.dump(model, f)
-    print "Finished writing trained model to dilled files."
+    print("Finished writing trained model to dilled files.")
 
 
 
@@ -184,7 +185,7 @@ def learn_model(
             for t in training_set
         ]
     )
-    print label_freqs
+    print(label_freqs)
 
     for t in training_set:
         sample_attributes.append(t[0])
@@ -243,7 +244,7 @@ def get_ngrams_from_tag_to_val(tag_to_val):
     return ngrams
 
 def get_samples_to_ngram(dataset):
-    print "building n-gram index..."
+    print("building n-gram index...")
     sample_to_ngrams = defaultdict(lambda: [])
     for d in dataset:
         sample_to_ngrams[d[2]] = get_ngrams_from_tag_to_val(d[0])
@@ -268,7 +269,7 @@ def ngram_features(
             n_gram_to_count[gram] += count
             n_gram_to_doc_freq[gram] += 1
 
-    print "Len of n-grams before trim: %d" % len(Set(n_gram_to_count.keys()))
+    print("Len of n-grams before trim: %d" % len(Set(n_gram_to_count.keys())))
     bag_of_n_grams = Set(
         [
             x 
@@ -282,11 +283,11 @@ def ngram_features(
         for l in f:
             stop_words.add(l.strip())
     bag_of_n_grams = bag_of_n_grams.difference(stop_words)
-    print "Len of n-grams after stop words: %d" % len(bag_of_n_grams)
+    print("Len of n-grams after stop words: %d" % len(bag_of_n_grams))
 
     #bag_of_n_grams = Set(n_gram_to_count.keys())
     vec_scaffold = list(bag_of_n_grams)
-    print "The vector scaffold is: %s" % vec_scaffold
+    print("The vector scaffold is: %s" % vec_scaffold)
 
     return vec_scaffold
 
@@ -318,7 +319,7 @@ def ont_term_features(
     )
     term_vec_scaffold = list(bag_of_terms)
 
-    print "The ontology term features are: %s" % term_vec_scaffold
+    print("The ontology term features are: %s" % term_vec_scaffold)
     return term_vec_scaffold
 
 
@@ -389,7 +390,7 @@ def get_ngrams(text, n):
 
 def get_samples_to_mappings(matches_file, ogs):
 
-    print "loading sample to predicted ontology term mappings..."
+    print("loading sample to predicted ontology term mappings...")
     sample_to_predicted_terms = defaultdict(lambda: Set())
     sample_to_real_val_props = {}
 

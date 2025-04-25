@@ -3,6 +3,7 @@
 # the same name, exact synonym, or related synonym.
 #######################################################################
 
+from __future__ import print_function
 from optparse import OptionParser
 from collections import defaultdict
 import json
@@ -70,7 +71,7 @@ class Mapper:
                 try:
                     tups.append((syn.syn_str.decode('utf-8'), [curr_i]))
                 except UnicodeEncodeError:
-                    print "Warning! Unable to decode unicode of a synonym for term %s" % term.id
+                    print("Warning! Unable to decode unicode of a synonym for term %s" % term.id)
             curr_i += 1
         return mt.RecordTrie("<i", tups), terms_array
 
@@ -88,7 +89,7 @@ def linked_terms(og_a, og_b, link_syn_types=None):
         b_ref_strs += [syn.syn_str for syn in b_term.synonyms if syn.syn_type in link_syn_types]
         for b_str in b_ref_strs:
             for a_term in a_mapper.map_string(b_str):
-                print "LINKING terms: %s=%s: '%s' '%s'='%s'" % (b_term.id, a_term.id, b_str, b_term.name, a_term.name)
+                print("LINKING terms: %s=%s: '%s' '%s'='%s'" % (b_term.id, a_term.id, b_str, b_term.name, a_term.name))
                 b_to_a[b_term.id].add(a_term.id)
     return {k:list(v) for k,v in b_to_a.iteritems()}
 

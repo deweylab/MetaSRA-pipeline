@@ -1,3 +1,4 @@
+from __future__ import print_function
 from collections import Counter
 
 def bag_dist_multiset(str_a, str_b):

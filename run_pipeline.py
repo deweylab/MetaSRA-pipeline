@@ -5,6 +5,7 @@
 #
 ########################################################################
 
+from __future__ import print_function
 from optparse import OptionParser
 import json
 from sets import Set
@@ -67,7 +68,7 @@ def main():
         with open(options.output, "w") as f:
             f.write(output_string)
     else:
-        print output_string
+        print(output_string)
 
 def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, predictor): 
     

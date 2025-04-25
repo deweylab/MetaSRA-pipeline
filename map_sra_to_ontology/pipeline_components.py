@@ -2,6 +2,7 @@
 #   Components for building metadata mapping pipelines. 
 ###########################################################################
 
+from __future__ import print_function
 import json
 from collections import defaultdict, deque
 import re
@@ -121,9 +122,9 @@ class Pipeline:
             tm_graph = stage.run(tm_graph)
 
         if VERBOSE:
-            print "\n---------GRAPH----------"
-            print tm_graph
-            print "------------------------\n"
+            print("\n---------GRAPH----------")
+            print(tm_graph)
+            print("------------------------\n")
 
         return self.extract_mapped_terms(tm_graph)
 
@@ -161,11 +162,11 @@ class Pipeline:
         
             if VERBOSE: 
                 try:
-                    print "Path from ontology node '%s' to closest key-value %s is %s" % (
+                    print("Path from ontology node '%s' to closest key-value %s is %s" % (
                         str(mapped_node).encode('utf-8'), 
                         str(orig_kv_node).encode('utf-8'), 
                         str(path).encode('utf-8')
-                    )
+                    ))
                 except:
                     pass
 
@@ -235,7 +236,7 @@ class Pipeline:
 
 class InitKeyValueTokens_Stage:
     def run(self, text_mining_graph):
-        print "Initializing text reasoning graph..."
+        print("Initializing text reasoning graph...")
         curr_index = 0
         for kv_node in text_mining_graph.key_val_nodes:
 
@@ -253,8 +254,8 @@ class InitKeyValueTokens_Stage:
             curr_index = ind_end
 
             if VERBOSE:
-                print "Generated key node: %s" % (key_node)
-                print "Generated value node: %s" % (val_node)
+                print("Generated key node: %s" % (key_node))
+                print("Generated value node: %s" % (val_node))
 
         return text_mining_graph
 
@@ -273,7 +274,7 @@ class KeyValueFilter_Stage:
             self.perform_filter_values = perform_filter_values
 
     def run(self, text_mining_graph):
-        print "Filtering key-value pairs..."
+        print("Filtering key-value pairs...")
         if self.perform_filter_keys:
             remove_kv_nodes = [
                 x 
@@ -299,7 +300,7 @@ class TwoCharMappings_Stage():
             self.str_to_mappings = json.load(f)
     
     def run(self, text_mining_graph):
-        print "Matching specified two-character artifacts..."
+        print("Matching specified two-character artifacts...")
         for t_node in text_mining_graph.token_nodes:
             if t_node.token_str in self.str_to_mappings:
                 for t_id in self.str_to_mappings[t_node.token_str]:
@@ -329,7 +330,7 @@ class Synonyms_Stage(object):
             self.syn_sets = [set(x) for x in json.load(f)]
 
     def run(self, text_mining_graph):
-        print "Searching for synonyms..."
+        print("Searching for synonyms...")
         edge = DerivesInto("synonym via %s synonym set" % self.syn_set_name)
         tnode_to_edges = defaultdict(lambda: []) # Buffer to store new edges
         for t_node in text_mining_graph.token_nodes:
@@ -366,7 +367,7 @@ class NGram_Stage:
         self.n_thresh = 8
 
     def run(self, text_mining_graph):
-        print "Generating N-grams..."
+        print("Generating N-grams...")
         edge = DerivesInto("N-Gram") # All edges will be of this type
         tnode_to_edges = defaultdict(lambda: []) # Buffer to store new edges
 
@@ -395,7 +396,7 @@ class NGram_Stage:
       
 class Lowercase_Stage:
     def run(self, text_mining_graph):
-        print "Generating lower-cased artifacts..."
+        print("Generating lower-cased artifacts...")
         edge = DerivesInto("Lowercase")
         tnode_to_edges = defaultdict(lambda: [])
         for t_node in text_mining_graph.token_nodes:
@@ -416,7 +417,7 @@ class PropertySpecificSynonym_Stage:
             self.property_id_to_syn_sets = json.load(f)
 
     def run(self, text_mining_graph):
-        print "Searching for property-specific synonyms..."
+        print("Searching for property-specific synonyms...")
         for kv_node in text_mining_graph.key_val_nodes:
             # Find all downstream nodes of the 'key' token-nodes 
             key_term_nodes = set()
@@ -480,7 +481,7 @@ class BlockCellLineNonCellLineKey_Stage:
                     self.cell_line_terms.update(term_to_suplinked[t_id])
 
     def run(self, text_mining_graph):
-        print "Checking cell line terms for proper context..."
+        print("Checking cell line terms for proper context...")
         kv_nodes_cellline_val = deque()
         for kv_node in text_mining_graph.key_val_nodes:
             # Find children of the key that indicate they encode a cell-line value 
@@ -604,7 +605,7 @@ class SPECIALISTLexInflectionalVariants:
         self.specialist_lex = specialist_lex
 
     def run(self, text_mining_graph):
-        print "Generating inflectional variants..." 
+        print("Generating inflectional variants...") 
         edge = DerivesInto("Inflectional variant")
         tnode_to_edges = defaultdict(lambda: [])
         for t_node in text_mining_graph.token_nodes:
@@ -636,7 +637,7 @@ class SPECIALISTSpellingVariants:
         self.specialist_lex = specialist_lex
 
     def run(self, text_mining_graph):
-        print "Generating spelling variants..."
+        print("Generating spelling variants...")
         edge = DerivesInto("Spelling variant")
         tnode_to_edges = defaultdict(lambda: [])
         for t_node in text_mining_graph.token_nodes:
@@ -667,7 +668,7 @@ class Delimit_Stage:
         self.delimiter = delimiter
 
     def run(self, text_mining_graph):
-        print "Delimiting artifacts on special character '%s'..." % self.delimiter
+        print("Delimiting artifacts on special character '%s'..." % self.delimiter)
         node_to_next_nodes = defaultdict(lambda: [])
         for t_node in text_mining_graph.token_nodes:
             split_t_strs = t_node.token_str.split(self.delimiter)
@@ -708,7 +709,7 @@ class FilterOntologyMatchesByPriority_Stage:
                 and isinstance(targ_node, OntologyTermNode) \
                 and targ_node.term_id.split(":")[0] == id_space
 
-        print "Filtering synonym matches by semantic similarity to term..."
+        print("Filtering synonym matches by semantic similarity to term...")
         id_spaces = set([
             x.term_id.split(":")[0] 
             for x in text_mining_graph.ontology_term_nodes
@@ -765,7 +766,7 @@ class ExactStringMatching_Stage:
         self.query_len_thresh = query_len_thresh
         self.match_numeric = match_numeric
         if VERBOSE:
-            print "Building trie..."
+            print("Building trie...")
         tups = deque()
         self.terms_array = deque()
         curr_i = 0
@@ -789,8 +790,8 @@ class ExactStringMatching_Stage:
                         ))
                     except UnicodeEncodeError:
                         if VERBOSE:
-                            print "Warning! Unable to decode unicode of a synonym \
-                                for term %s" % term.id
+                            print("Warning! Unable to decode unicode of a synonym \
+                                for term %s" % term.id)
                 curr_i += 1
         self.map_trie = mt.RecordTrie("<i", tups)
 
@@ -808,7 +809,7 @@ class ExactStringMatching_Stage:
         return mapped
 
     def run(self, text_mining_graph):
-        print "Performing exact string matching..."
+        print("Performing exact string matching...")
         for t_node in text_mining_graph.token_nodes:
             # Skip matching tokens according to fuzzy-matching parameters
             if self.query_len_thresh and len(t_node.token_str) < self.query_len_thresh:
@@ -874,7 +875,7 @@ class FuzzyStringMatching_Stage:
         try:
             within_edit_thresh = self.bk_tree.find(query, 2)
         except UnicodeDecodeError:
-            print "Encoding error querying BK-tree for query: '%s'" % query        
+            print("Encoding error querying BK-tree for query: '%s'" % query)        
             return matched
 
         str1 = query
@@ -887,7 +888,7 @@ class FuzzyStringMatching_Stage:
                 continue
         
             if VERBOSE:
-                print "Retrieved '%s' from BK-tree. It has edit distance of %f" % (str2.encode('utf-8'), dist)
+                print("Retrieved '%s' from BK-tree. It has edit distance of %f" % (str2.encode('utf-8'), dist))
             len1 = len(str1)
             len2 = len(str2)
             max_len = max([len1, len2])
@@ -906,14 +907,14 @@ class FuzzyStringMatching_Stage:
         return matched
 
     def run(self, text_mining_graph):
-        print "Performing fuzzy string matching..."
+        print("Performing fuzzy string matching...")
         c = 0
         if VERBOSE:
-            print "%d total nodes to be matched" % len(text_mining_graph.token_nodes)
+            print("%d total nodes to be matched" % len(text_mining_graph.token_nodes))
         for t_node in text_mining_graph.token_nodes:
             c += 1
             if VERBOSE:
-                print "Searching %dth node in the BK-tree: '%s'" % (c, t_node.token_str)
+                print("Searching %dth node in the BK-tree: '%s'" % (c, t_node.token_str))
 
             # Skip matching tokens according to fuzzy-matching parameters
             if self.query_len_thresh and len(t_node.token_str) <= self.query_len_thresh:
@@ -937,7 +938,7 @@ class FuzzyStringMatching_Stage:
 
                 match_node = OntologyTermNode(term_id)
                 if VERBOSE:
-                    print "Mapping artifact '%s' to term %s" % (matched_str, term_id)
+                    print("Mapping artifact '%s' to term %s" % (matched_str, term_id))
                 text_mining_graph.add_edge(
                     t_node, 
                     match_node, 
@@ -1029,7 +1030,7 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
             else:
                 return False
         
-        print "Blocking subphrases of mapped superphrases..."
+        print("Blocking subphrases of mapped superphrases...")
         mapped_t_nodes = deque()
         for mt_node in text_mining_graph.mapping_target_nodes:
             if not mt_node in text_mining_graph.reverse_edges:
@@ -1050,7 +1051,7 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
                 continue
 
             if VERBOSE:
-                print "\n\nNode %s has superphrase nodes: %s" % (t_node, superphrase_nodes)
+                print("\n\nNode %s has superphrase nodes: %s" % (t_node, superphrase_nodes))
 
             exclude_edges = set([DerivesInto("N-Gram"),  DerivesInto("Delimiter")])
             superphrase_node_to_reachable = {x:text_mining_graph.downstream_nodes(x, exclude_edges=exclude_edges) for x in superphrase_nodes}
@@ -1068,7 +1069,7 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
                         break
                 if reachable_from_all_supernodes:
                     if VERBOSE:
-                        print "The node %s that is reachable from the token node is reachable from all of the superphrase nodes." % mft
+                        print("The node %s that is reachable from the token node is reachable from all of the superphrase nodes." % mft)
                     keep_as_mappable.add(mft)
 
             del_edges = deque()
@@ -1079,7 +1080,7 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
                         del_edges.append((t_node, targ_node, edge))
                     else:
                         if VERBOSE:
-                            print "Target node from the current node, %s, can reach a node that we want to keep as mappable: %s" % (targ_node, reachable_from_targ_node.intersection(keep_as_mappable))
+                            print("Target node from the current node, %s, can reach a node that we want to keep as mappable: %s" % (targ_node, reachable_from_targ_node.intersection(keep_as_mappable)))
 
             for d in del_edges:
                 #print "This edge did not make the cut! %s --%s--> %s" % (t_node, edge, targ_node)
@@ -1096,7 +1097,7 @@ class ExactMatchCustomTargets_Stage:
             self.noun_phrases = set(json.load(f)) 
      
     def run(self, text_mining_graph):
-        print "Matching to custom noun-phrases..."
+        print("Matching to custom noun-phrases...")
         for t_node in text_mining_graph.token_nodes:
             if t_node.token_str in self.noun_phrases:
                 c_node = CustomMappingTargetNode(t_node.token_str)
@@ -1116,7 +1117,7 @@ class CellLineToImpliedDisease_Stage:
             self.term_to_implied_terms = json.load(f)
 
     def run(self, text_mining_graph):
-        print "Finding disease terms implied by cell line terms..."
+        print("Finding disease terms implied by cell line terms...")
         node_to_new_edges = defaultdict(lambda: [])
         edge = Inference("Cell line to implied disease")
         for ont_node in text_mining_graph.ontology_term_nodes:
@@ -1142,7 +1143,7 @@ class AcronymToExpansion_Stage:
             self.acr_to_expansions = json.load(f)
 
     def run(self, text_mining_graph):
-        print "Generating acronym expansions..."
+        print("Generating acronym expansions...")
         node_to_new_edges = defaultdict(lambda: [])
         edge = Inference("Acronym to expansion")
 
@@ -1218,12 +1219,12 @@ class ExtractRealValue_Stage:
             self.default_units = j["default_units"]
 
     def run(self, text_mining_graph):
-        print "Extracting real-value properties..."
+        print("Extracting real-value properties...")
     
         for kv_node in text_mining_graph.key_val_nodes:
             if VERBOSE:
-                print "Checking whether key-value pair node %s encodes a \
-                    real-value property." % kv_node
+                print("Checking whether key-value pair node %s encodes a \
+                    real-value property." % kv_node)
 
             # Find ontology-terms that refer to real-valued properties 
             real_val_term_nodes = set()
@@ -1241,9 +1242,9 @@ class ExtractRealValue_Stage:
                 and x.term_id in self.real_val_tids
             ]
             if VERBOSE:
-                print "Set of real-value properties we are searching \
-                    for: %s" % self.real_val_tids
-                print "Found property nodes: %s" % real_val_term_nodes
+                print("Set of real-value properties we are searching \
+                    for: %s" % self.real_val_tids)
+                print("Found property nodes: %s" % real_val_term_nodes)
             if len(real_val_term_nodes) == 0:
                 continue
         
@@ -1257,7 +1258,7 @@ class ExtractRealValue_Stage:
                         )    
 
             if VERBOSE:
-                print "The real-value candidates are: %s" % real_val_candidates
+                print("The real-value candidates are: %s" % real_val_candidates)
             numeric_nodes = [
                 x 
                 for x in real_val_candidates 
@@ -1265,7 +1266,7 @@ class ExtractRealValue_Stage:
                 and is_number(x.token_str)
             ]
             if VERBOSE:
-                print "Found numeric nodes: %s" % numeric_nodes
+                print("Found numeric nodes: %s" % numeric_nodes)
             unit_nodes = [
                 x 
                 for x in real_val_candidates 
@@ -1273,7 +1274,7 @@ class ExtractRealValue_Stage:
                 and x.term_id.split(":")[0] == "UO"
             ]
             if VERBOSE:
-                print "Found unit nodes: %s" % unit_nodes
+                print("Found unit nodes: %s" % unit_nodes)
 
             # If there is one real-value ontology term, one numeric token, 
             # and one unit node, then create real-value-property node
@@ -1610,7 +1611,7 @@ def nltk_n_grams(in_str, n):
             result_grams.append(match)
         else:
             if VERBOSE:
-                print "Regex failed on %s" % gram
+                print("Regex failed on %s" % gram)
     return result_grams
 
 
@@ -1695,7 +1696,7 @@ def main():
             for x in real_val_props
         ]
     }
-    print json.dumps(result, indent=4, separators=(',', ': '))
+    print(json.dumps(result, indent=4, separators=(',', ': ')))
     
     #print json.dumps([x.to_dict() for x in p.run(tag_to_val)], indent=4, separators=(',', ': '))
 

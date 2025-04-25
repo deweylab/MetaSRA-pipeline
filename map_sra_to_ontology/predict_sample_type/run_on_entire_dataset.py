@@ -1,3 +1,4 @@
+from __future__ import print_function
 from optparse import OptionParser
 import json
 import sys
@@ -21,7 +22,7 @@ OGS = [load_ontology.load(ont_id)[0] for ont_id in ONT_IDS]
 SAMPLE_TO_TAG_TO_VALUES_F = "/ua/mnbernstein/projects/tbcp/metadata/ontology/src/map_sra_to_ontology/metadata/sample_to_tag_to_values.json"
 
 def get_all_samples_to_mappings(mappings_f):
-    print "loading sample to predicted ontology term mappings..."
+    print("loading sample to predicted ontology term mappings...")
     sample_to_predicted_terms = {}
     sample_to_real_val_props = {}
     #for fname in os.listdir(matches_file_dir):
@@ -127,7 +128,7 @@ def main():
                 sample_to_tag_to_values[sample_acc]
             )
         except:
-            print "Error retrieving n-grams!"
+            print("Error retrieving n-grams!")
             n_grams = []
         feat_v = vectorizer.convert_to_features(
             n_grams, 
@@ -143,8 +144,8 @@ def main():
             pred_none += 1
         sample_to_prediction[sample_acc] = (predicted, confidence)
 
-    print "%d samples were not found in mappings file" % not_found
-    print "%d samples were predicted as none" % pred_none
+    print("%d samples were not found in mappings file" % not_found)
+    print("%d samples were predicted as none" % pred_none)
     log_data = {
         'Number samples in metadata, but not mapping file': not_found,
         'Number of samples with prediction errors': pred_none 

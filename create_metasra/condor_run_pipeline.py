@@ -3,6 +3,7 @@
 #   pipeline for a given list of sample accessions.
 ###############################################################
 
+from __future__ import print_function
 import json
 import sys
 import  os
@@ -65,7 +66,7 @@ def run_pipeline(pipeline_func, sample_accs, sample_to_metadata):
     c = 1
     for sample_acc in sample_accs:
         try:
-            print "Sample #%d: %s" % (c, sample_acc)
+            print("Sample #%d: %s" % (c, sample_acc))
             c += 1
             tag_to_val = sample_to_metadata[sample_acc]
 
@@ -93,8 +94,8 @@ def run_pipeline(pipeline_func, sample_accs, sample_to_metadata):
                 ]
             }
         except Exception as e:
-            print "ERROR! An error occurred processing sample %s. %s" % (sample_acc, e)
-            print traceback.print_exc()
+            print("ERROR! An error occurred processing sample %s. %s" % (sample_acc, e))
+            print(traceback.print_exc())
     return sample_acc_to_matches
 
 if __name__ == "__main__":

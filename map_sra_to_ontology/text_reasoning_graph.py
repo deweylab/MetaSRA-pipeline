@@ -2,7 +2,7 @@
 #   Implements the Text Reasoning Graph
 #########################################################################
 
-
+from __future__ import print_function
 from optparse import OptionParser
 from sets import Set
 from collections import defaultdict, deque
@@ -10,7 +10,7 @@ from collections import defaultdict, deque
 try:
     import pygraphviz as pgv
 except:
-    print "Unable to import pygraphviz. Visualization is disabled."
+    print("Unable to import pygraphviz. Visualization is disabled.")
 
 class EEdge(object):
     def __init__(self, weight):
@@ -337,7 +337,7 @@ class TextReasoningGraph:
                     r_str += "%s %s %s\n" % (node_source, edge, node_target)
             return r_str
         except UnicodeDecodeError:
-            print "Unicode decode error. Error converting graph to string..."
+            print("Unicode decode error. Error converting graph to string...")
             return "" 
         
    
@@ -427,7 +427,7 @@ class TextReasoningGraph:
             self._add_edge(node_a, node_b, edge)
             if self.is_cycle_present():
                 self.delete_edge(node_a, node_b, edge)
-                print "Warning! Adding edge %s -- %s --> %s causes a cycle. Edge was not created." % (node_a, edge, node_b)
+                print("Warning! Adding edge %s -- %s --> %s causes a cycle. Edge was not created." % (node_a, edge, node_b))
         else:
             self._add_edge(node_a, node_b, edge)
 

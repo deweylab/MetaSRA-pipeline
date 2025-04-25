@@ -1,3 +1,4 @@
+from __future__ import print_function
 from optparse import OptionParser
 import sqlite3
 import collections
@@ -96,57 +97,57 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
             # Drop existing tables, create new table
             try: 
                 # Drop existing tables, create new tables
-                print "Dropping old 'experiment' table..."
+                print("Dropping old 'experiment' table...")
                 sub_c.execute(drop_experiment_table_sql)
             except sqlite3.OperationalError as e:
-                print e
-            print "Creating new 'experiment' table..."
+                print(e)
+            print("Creating new 'experiment' table...")
             sub_c.execute(create_experiment_table_sql)
 
             try:
-                print "Dropping old 'read_spec' table..."
+                print("Dropping old 'read_spec' table...")
                 sub_c.execute(drop_read_spec_table_sql)
             except sqlite3.OperationalError as e:
-                print e                
-            print "Creating new 'read_spec' table..."
+                print(e)                
+            print("Creating new 'read_spec' table...")
             sub_c.execute(create_read_spec_table_sql)
 
             try:
-                print "Dropping old 'sample' table..."
+                print("Dropping old 'sample' table...")
                 sub_c.execute(drop_sample_table_sql)
             except sqlite3.OperationalError as e:
-                print e
-            print "Creating new 'sample' table..."
+                print(e)
+            print("Creating new 'sample' table...")
             sub_c.execute(create_sample_table_sql)
 
             try:
-                print "Dropping old 'sample_attribute' table..."
+                print("Dropping old 'sample_attribute' table...")
                 sub_c.execute(drop_sample_attribute_table_sql)
             except sqlite3.OperationalError as e:
-                print e
-            print "Creating new 'sample_attribute' table..."
+                print(e)
+            print("Creating new 'sample_attribute' table...")
             sub_c.execute(create_sample_attribute_table_sql)
 
 
             try:
-                print "Dropping old 'run' table..."
+                print("Dropping old 'run' table...")
                 sub_c.execute(drop_run_table_sql)
             except sqlite3.OperationalError as e:
-                print e
-            print "Creating new 'run' table..."
+                print(e)
+            print("Creating new 'run' table...")
             sub_c.execute(create_run_table_sql)
 
             try:
-                print "Dropping old 'study' table..."
+                print("Dropping old 'study' table...")
                 sub_c.execute(drop_study_table_sql)
             except sqlite3.OperationalError as e:
-                print e            
-            print "Creating new 'study' table..."
+                print(e)            
+            print("Creating new 'study' table...")
             sub_c.execute(create_study_table_sql) 
         
 
             # Grap sample data from SRAdb
-            print "Querying relavent sample records from the SRAdb..."
+            print("Querying relavent sample records from the SRAdb...")
             sample_data = []
             returned = the_c.execute(query_sample_sql)
             for r in returned:
@@ -163,7 +164,7 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
                 sample_data.append(sam_d)
 
             # Parse 'sample_attribute' field to get tag-value pairs
-            print "Parsing sample attributes..."
+            print("Parsing sample attributes...")
             sample_to_tag_to_val = {}
             for sam_d in sample_data:
                 if sam_d["sample_attribute"]:
@@ -184,14 +185,14 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
                     sam_d["dbgap_accession"] = None
            
             # Create sample attribute table
-            print "Inserting entries into 'sample_attribute' table..."
+            print("Inserting entries into 'sample_attribute' table...")
             for sam_acc, tag_to_val in sample_to_tag_to_val.iteritems():
                 for tag, val in tag_to_val.iteritems():
                     insert_tuple = (sam_acc, tag.decode('utf-8'), val.decode('utf-8'))
                     sub_c.execute(insert_update_sample_attribute_sql, insert_tuple) 
 
             # Create sample table
-            print "Inserting entries into 'sample' table..."
+            print("Inserting entries into 'sample' table...")
             for sam_d in sample_data:
                 insert_tuple = (sam_d["sample_accession"], sam_d["center_name"], 
                     sam_d["description"], sam_d["submission_accession"], 
@@ -199,7 +200,7 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
                 sub_c.execute(insert_update_sample_sql, insert_tuple)    
             
             # Grab experiment data from SRAdb
-            print "Querying relavent experiment records from the SRAdb..."
+            print("Querying relavent experiment records from the SRAdb...")
             experiment_data = []
             exp_to_tag_to_val = {}
             returned = the_c.execute(query_experiment_sql)
@@ -251,7 +252,7 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
                     exp_to_read_datas[exp_d["experiment_accession"]].append(read_data)
 
             # Create read-spec table
-            print "Inserting entries into 'read_spec' table..."
+            print("Inserting entries into 'read_spec' table...")
             for exp_acc, read_datas in exp_to_read_datas.iteritems():
                 for read_data in read_datas:
                     insert_tuple = (exp_acc, read_data["read_index"], read_data["read_class"], 
@@ -259,7 +260,7 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
                     sub_c.execute(insert_update_read_spec_sql, insert_tuple)
 
             # Create experiment table
-            print "Inserting entries into 'experiment' table..."
+            print("Inserting entries into 'experiment' table...")
             for exp_d in experiment_data:
                 insert_tuple = (exp_d["experiment_accession"], exp_d["title"],
                     exp_d["design_description"], exp_d["study_accession"], exp_d["sample_accession"],
@@ -269,7 +270,7 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
                 sub_c.execute(insert_update_experiment_sql, insert_tuple)                
 
             # Query run table
-            print "Querying relavent run records from the SRAdb..."
+            print("Querying relavent run records from the SRAdb...")
             run_data = []
             returned = the_c.execute(query_run_sql)
             for r in returned:
@@ -283,14 +284,14 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
                 run_data.append(run_d)
                 
             # Create run table
-            print "Inserting entries into 'run' table..."
+            print("Inserting entries into 'run' table...")
             for run_d in run_data:
                 insert_tuple = (run_d["run_accession"], run_d["experiment_accession"], 
                     run_d["run_date"], run_d["submission_accession"], run_d["sradb_update"])
                 sub_c.execute(insert_update_run_sql, insert_tuple)
 
             # Query study table
-            print "Querying relavent study records from the SRAdb..."
+            print("Querying relavent study records from the SRAdb...")
             study_data = []
             returned = the_c.execute(query_study_sql)
             for r in returned:
@@ -308,7 +309,7 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
                 study_data.append(study_d)
 
             # Create study table
-            print "Inserting entries into 'study' table..."
+            print("Inserting entries into 'study' table...")
             for study_d in study_data:
                 insert_tuple = (study_d["study_accession"], study_d["study_title"],
                     study_d["study_abstract"], study_d["center_name"],
@@ -325,7 +326,7 @@ def parsed_single_paired_end(raw_str):
     # PAIRED - |60535
     # SINGLE - |74665
     parsed_str = raw_str.split("-")[0].strip()   
-    print parsed_str
+    print(parsed_str)
     return parsed_str
 
 

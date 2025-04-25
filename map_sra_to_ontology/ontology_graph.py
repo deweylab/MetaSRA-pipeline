@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from __future__ import print_function
 import re
 from optparse import OptionParser
 from Queue import Queue
@@ -7,7 +8,7 @@ from sets import Set
 try:
     import pygraphviz as pgv
 except:
-    print "Unable to import pygraphviz. Visualization is disabled."
+    print("Unable to import pygraphviz. Visualization is disabled.")
 import config
 
 import pkg_resources as pr
@@ -93,7 +94,7 @@ class OntologyGraph:
     def subtype_names(self, supertype_name):
         id = self.name_to_ids[supertype_name]
         for t in self.id_to_term[id].inv_is_a():
-            print self.id_to_term[t].name
+            print(self.id_to_term[t].name)
 
     def graphviz(self, root_id=None):
         g = pgv.AGraph(directed='True')               
@@ -111,7 +112,7 @@ class OntologyGraph:
                     g.add_edge(self.id_to_term[curr_id].name, 
                         self.id_to_term[sub_id].name)
                     q.put(sub_id)
-        print str(g)
+        print(str(g))
      
     def direct_subterms(self, id):
         return Set([
@@ -296,8 +297,8 @@ def parse_obos(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False):
                 sup_term.relationships[inverse_relation].append(term.id)
             else:
                 if VERBOSE:
-                    print "Warning! Attempted to create inverse edge in term %s. \
-                        Not found in not in the ontology" % sup_term_id
+                    print("Warning! Attempted to create inverse edge in term %s. \
+                        Not found in not in the ontology" % sup_term_id)
                 # Remove superterm from term's relationship list because it 
                 # is not in the current ontology
                 while sup_term_id in term.relationships[relation]:
@@ -345,7 +346,7 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
         entity = parse_entity(curr_lines, restrict_to_idspaces)
         if not entity:
             if VERBOSE:
-                print "ERROR!"
+                print("ERROR!")
         elif entity[0] == ENTITY_TERM:
             term = entity[1]
             is_obsolete = entity[2]
@@ -364,8 +365,8 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
                 sup_term.relationships[inverse_relation].append(term.id)
             else:
                 if VERBOSE:
-                    print "Warning! Attempted to create inverse edge in term %s. \
-                        Not found in not in the ontology" % sup_term_id
+                    print("Warning! Attempted to create inverse edge in term %s. \
+                        Not found in not in the ontology" % sup_term_id)
                 # Remove superterm from term's relationship list because it 
                 # is not in the current ontology
                 while sup_term_id in term.relationships[relation]:
@@ -375,7 +376,7 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
         
 
     header_info = {}
-    print "Loading ontology from %s ..." % obo_file
+    print("Loading ontology from %s ..." % obo_file)
     name_to_ids = {}
     id_to_term = {}
     with open(obo_file, 'r') as f:
@@ -463,7 +464,7 @@ def parse_entity(lines, restrict_to_idspaces):
                 parsed_syn = m.group(1).strip()
                 syn_type = m.group(2).split()[0] # ignore optional SynonymType-ID
             else:
-                print "Error parsing synonym: %s" % syn
+                print("Error parsing synonym: %s" % syn)
                 continue
 
             synonyms.add(Synonym(parsed_syn, syn_type))
@@ -571,6 +572,6 @@ def parse_entity(lines, restrict_to_idspaces):
 
     else:
         if VERBOSE:
-            print "Unable to parse chunk: %s" % lines
+            print("Unable to parse chunk: %s" % lines)
        
         

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import pkg_resources as pr
 import json
 
@@ -30,7 +31,7 @@ def load(ontology_index):
 
 def main():
     og, i, r = load("4")
-    print og.id_to_term["CVCL:C792"]
+    print(og.id_to_term["CVCL:C792"])
 
 if __name__ == "__main__":
     main()

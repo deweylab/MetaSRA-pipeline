@@ -2,6 +2,7 @@
 #   Add extra synonyms to the Experimental Factor Ontology
 #################################################################
 
+from __future__ import print_function
 from optparse import OptionParser
 from collections import defaultdict
 import json
@@ -37,7 +38,7 @@ def efo_cvcl_syns():
     term_id_to_syns = defaultdict(lambda: [])
     for term in og.get_mappable_terms():
 
-        print "Adding synonyms to term %d/%d with id %s" % (c, total_terms, term.id)
+        print("Adding synonyms to term %d/%d with id %s" % (c, total_terms, term.id))
         c += 1
         for syn_set in syn_sets:
             current_term_strs = [x.syn_str for x in term.synonyms]
@@ -48,7 +49,7 @@ def efo_cvcl_syns():
                 if c_str in syn_set:
                     for syn in syn_set:
                         if syn not in current_term_strs and syn not in Set(term_id_to_syns[term.id]):
-                            print "Added synonym %s to term with name %s" % (syn, term.name)
+                            print("Added synonym %s to term with name %s" % (syn, term.name))
                             term_id_to_syns[term.id].append(syn)
     return term_id_to_syns
 
@@ -82,7 +83,7 @@ def uncaps_EFO_syns():
     term_id_to_syns = defaultdict(lambda: [])
     for term in og.id_to_term.values():
         
-        print "Looking at term %s" % term.id
+        print("Looking at term %s" % term.id)
 
         # Names of term
         ref_strs = [term.name]
@@ -92,7 +93,7 @@ def uncaps_EFO_syns():
         for r_str in ref_strs:
             new_str = uncap_str(r_str)
             if new_str not in ref_strs:
-                print "Derived '%s' from '%s'" % (new_str, r_str)
+                print("Derived '%s' from '%s'" % (new_str, r_str))
                 term_id_to_syns[term.id].append(new_str) 
         
     return term_id_to_syns 

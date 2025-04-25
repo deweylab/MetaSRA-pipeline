@@ -1,3 +1,4 @@
+from __future__ import print_function
 import pkg_resources as pr
 import os
 from os.path import join

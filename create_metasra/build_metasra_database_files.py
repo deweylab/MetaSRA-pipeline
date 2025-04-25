@@ -3,6 +3,7 @@
 # jobs.
 ###########################################################################################
 
+from __future__ import print_function
 import os
 from os.path import join
 from optparse import OptionParser
@@ -72,7 +73,7 @@ def gather_mapped_terms(mappings_f):
 
 def build_metasra_json(mappings_f, sample_type_predictions_f, out_f, date_str=None):
     sample_to_mapped_terms, sample_to_real_val_props = gather_mapped_terms(mappings_f)
-    print "Gathered %d samples" % len(sample_to_mapped_terms)  
+    print("Gathered %d samples" % len(sample_to_mapped_terms))  
  
     raw_pred_to_sample_type = {
         "cell_line":"cell line",
@@ -91,7 +92,7 @@ def build_metasra_json(mappings_f, sample_type_predictions_f, out_f, date_str=No
         )
     sample_to_predictions = mod_sample_to_predictions 
 
-    print "Hmm... now there are %d samples" % len(sample_to_predictions)
+    print("Hmm... now there are %d samples" % len(sample_to_predictions))
 
     sample_to_annotated_data = {
         x: {

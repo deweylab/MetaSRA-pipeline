@@ -1,3 +1,4 @@
+from __future__ import print_function
 from optparse import OptionParser
 from collections import defaultdict
 import json
@@ -42,7 +43,7 @@ def main():
     efo_disease_og, x,y = load_ontology.load("3")
     efo_cellline_og, x,y = load_ontology.load("10")
 
-    print "Generating cell line to disease implications..."
+    print("Generating cell line to disease implications...")
     term_to_implications = generate_implications(efo_disease_og, efo_cellline_og)
     temp = generate_implications(doid_disease_og, efo_cellline_og)
     for term, implied_terms in temp.iteritems():
@@ -78,7 +79,7 @@ class Mapper:
                 try:
                     tups.append((syn.syn_str.decode('utf-8'), [curr_i]))
                 except UnicodeEncodeError:
-                    print "Warning! Unable to decode unicode of a synonym for term %s" % term.id
+                    print("Warning! Unable to decode unicode of a synonym for term %s" % term.id)
             curr_i += 1
         return mt.RecordTrie("<i", tups), terms_array
 
@@ -109,7 +110,7 @@ def subterm_consequent_terms(og_a, og_b):
     for a_term in og_a.id_to_term.values():
 
         if c % 100 == 0:
-            print "Examined %d/%d terms" % (c, total)
+            print("Examined %d/%d terms" % (c, total))
         c += 1
 
 
@@ -135,7 +136,7 @@ def subterm_consequent_terms(og_a, og_b):
  
                         if a_str_in_b_str and a_str in b_str and a_str != b_str and len(a_str) > 2 and len(b_str) > 2:
                             term_to_implications[b_term.id].append(a_term.id)
-                            print "Found match %s --> %s: '%s' --> '%s'" % (b_term.id, a_term.id, b_str, a_str)
+                            print("Found match %s --> %s: '%s' --> '%s'" % (b_term.id, a_term.id, b_str, a_str))
                     except UnicodeDecodeError:
                         pass
                         #print "Error decoding strings trying match %s with %s" % (b_term.id, a_term.id)

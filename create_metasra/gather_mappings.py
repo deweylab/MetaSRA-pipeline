@@ -3,6 +3,7 @@
 #   Condor job and aggregate them into a single JSON file.
 ##############################################################################################
 
+from __future__ import print_function
 from optparse import OptionParser
 import os
 from os.path import isdir, join
@@ -33,15 +34,15 @@ def main():
                     all_metasra_mappings[k] = v
                     n_found += 1
         except ValueError as e:
-            print "Could not decode %s. Error: %s" % (metasra_mappings_f, str(e))
+            print("Could not decode %s. Error: %s" % (metasra_mappings_f, str(e)))
             log_data['Failed job output files'].append(
                 metasra_mappings_f
             )
             
-    print "Extracted %d mappings..." % n_found
+    print("Extracted %d mappings..." % n_found)
     log_data['Total samples with mappings'] = n_found
 
-    print len(all_metasra_mappings)    
+    print(len(all_metasra_mappings))    
     with open(out_file, 'w') as f:
         json.dump(
             all_metasra_mappings,

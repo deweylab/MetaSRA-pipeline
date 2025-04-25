@@ -5,6 +5,7 @@
 #   species and assay.
 #########################################################
 
+from __future__ import print_function
 from optparse import OptionParser
 import os
 from os.path import isdir, join

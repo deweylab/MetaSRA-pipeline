@@ -1,3 +1,4 @@
+from __future__ import print_function
 import time
 from sets import Set
 import json
@@ -89,7 +90,7 @@ class download_search_result:
                 confidence = r["confidence"]
                 tsv_str += "%s\t%s\t%s\t%s\t%0.3f\n" % (sample_acc, study_acc, r_terms_csv, r_sample_type, confidence)
         tsv_str = tsv_str[:-1] # remove trailing line-break
-        print "Returning %d results" % n_results
+        print("Returning %d results" % n_results)
         return tsv_str 
         
 
@@ -129,7 +130,7 @@ class index:
                 results = query_metasra.query_metasra_for_term(metasra_db, term_id, sample_type=in_sample_type)
 
 
-            print "Preparing results..."
+            print("Preparing results...")
             for r in results:
                 r_sample_acc = r["sample_accession"]
                 r_study_acc = r["study_accession"]
@@ -151,9 +152,9 @@ class index:
                     r_terms_elem,
                     r_attrs_elem
                 ])
-            print "Finished preparing results."
+            print("Finished preparing results.")
 
-        print "Returning %d results" % len(request_results)
+        print("Returning %d results" % len(request_results))
 
         return json.dumps({"error_message":error_message, "search_results":request_results})
 
@@ -165,7 +166,7 @@ def get_searched_term_ids(usr_in):
         vars={'term_name':usr_in}
     )
     term_ids = Set([r["term_id"].encode('utf-8') for r in results])
-    print "Found term IDs for query '%s': %s" % (usr_in, term_ids)
+    print("Found term IDs for query '%s': %s" % (usr_in, term_ids))
 
     # If no terms were found check if the input was an ontology term ID
     if len(term_ids) == 0 and len(usr_in.split(":")) == 2:
@@ -174,7 +175,7 @@ def get_searched_term_ids(usr_in):
         valid_pref = pref in Set(["DOID", "UBERON", "CVCL", "CL", "EFO"])
         valid_suff = suff.isdigit()
         if valid_pref and valid_suff:
-            print "User input '%s' can be interpreted as a term ID" % usr_in
+            print("User input '%s' can be interpreted as a term ID" % usr_in)
             term_ids = Set([usr_in])
 
     return term_ids
