@@ -8,7 +8,6 @@
 from __future__ import print_function
 from optparse import OptionParser
 import json
-from sets import Set
 import sys
 from collections import defaultdict, deque
 import json
@@ -89,7 +88,7 @@ def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, predictor):
         real_val_props.append(real_val_prop)
 
     # Add super-terms of mapped terms to the list of ontology term features   
-    sup_terms = Set()
+    sup_terms = set()
     for og in ont_id_to_og.values():
         for term_id in mapped_terms:
             sup_terms.update(og.recursive_relationship(term_id, ['is_a', 'part_of']))

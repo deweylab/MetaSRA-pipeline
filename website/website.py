@@ -1,6 +1,5 @@
 from __future__ import print_function
 import time
-from sets import Set
 import json
 from collections import defaultdict, deque
 
@@ -165,18 +164,18 @@ def get_searched_term_ids(usr_in):
         "SELECT term_id FROM term_names WHERE term_name=$term_name", 
         vars={'term_name':usr_in}
     )
-    term_ids = Set([r["term_id"].encode('utf-8') for r in results])
+    term_ids = set([r["term_id"].encode('utf-8') for r in results])
     print("Found term IDs for query '%s': %s" % (usr_in, term_ids))
 
     # If no terms were found check if the input was an ontology term ID
     if len(term_ids) == 0 and len(usr_in.split(":")) == 2:
         pref = usr_in.split(":")[0]
         suff = usr_in.split(":")[1]
-        valid_pref = pref in Set(["DOID", "UBERON", "CVCL", "CL", "EFO"])
+        valid_pref = pref in set(["DOID", "UBERON", "CVCL", "CL", "EFO"])
         valid_suff = suff.isdigit()
         if valid_pref and valid_suff:
             print("User input '%s' can be interpreted as a term ID" % usr_in)
-            term_ids = Set([usr_in])
+            term_ids = set([usr_in])
 
     return term_ids
     

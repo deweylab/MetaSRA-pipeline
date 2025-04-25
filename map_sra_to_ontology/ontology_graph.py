@@ -4,7 +4,6 @@ from __future__ import print_function
 import re
 from optparse import OptionParser
 from Queue import Queue
-from sets import Set
 try:
     import pygraphviz as pgv
 except:
@@ -100,7 +99,7 @@ class OntologyGraph:
         g = pgv.AGraph(directed='True')               
         
         # Breadth-first traversal from root
-        visited_ids = Set()
+        visited_ids = set()
         curr_id = root_id
         q = Queue()
         q.put(curr_id)
@@ -115,7 +114,7 @@ class OntologyGraph:
         print(str(g))
      
     def direct_subterms(self, id):
-        return Set([
+        return set([
             self.id_to_term[x] 
             for x in self.id_to_term[id].relationships["inv_is_a"]
         ])
@@ -131,12 +130,12 @@ class OntologyGraph:
         To be used with caution? 
         """
         if t_id not in self.id_to_term:
-            return Set()
-        gathered_ids = Set()
+            return set()
+        gathered_ids = set()
         curr_id = t_id
         q = Queue()
         q.put(curr_id)
-        visited_ids = Set()
+        visited_ids = set()
         while not q.empty():
             curr_id = q.get()
             visited_ids.add(curr_id)
@@ -163,10 +162,10 @@ class MappableOntologyGraph(OntologyGraph):
                 be mapped to
         """
         if not nonmappable_terms:
-            self.nonmappable_terms = Set()
+            self.nonmappable_terms = set()
         else:
-            self.nonmappable_terms = Set(nonmappable_terms)
-        self.mappable_term_ids = Set(self.id_to_term.keys()).difference(self.nonmappable_terms)
+            self.nonmappable_terms = set(nonmappable_terms)
+        self.mappable_term_ids = set(self.id_to_term.keys()).difference(self.nonmappable_terms)
 
     def get_mappable_term_ids(self):
         return self.mappable_term_ids
@@ -209,7 +208,7 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
         term_remove_syns = json.load(f)
     for t_id, rem_syn_data in term_remove_syns.iteritems():
         if t_id in og.id_to_term:
-            exclude_syns = Set(rem_syn_data["exclude_synonyms"])
+            exclude_syns = set(rem_syn_data["exclude_synonyms"])
             term = og.id_to_term[t_id]
             term.synonyms = [
                 x 
@@ -218,7 +217,7 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
             ]
 
     if restrict_to_roots:
-        keep_ids = Set() # The IDs that we will keep  
+        keep_ids = set() # The IDs that we will keep  
  
         # Get the subterms of terms that we want to keep
         for root_id in restrict_to_roots:
@@ -253,7 +252,7 @@ def most_specific_terms(term_ids, og, sup_relations=["is_a"]):
         sup_relations: the relationship types through which 
             to define children
     """
-    term_ids = Set([x for x in term_ids if x in og.id_to_term])
+    term_ids = set([x for x in term_ids if x in og.id_to_term])
 
     if len(term_ids) < 1:
         return term_ids    
@@ -266,7 +265,7 @@ def most_specific_terms(term_ids, og, sup_relations=["is_a"]):
         term_id_to_superterm_ids[term.id] = og.recursive_relationship(term.id, sup_relations)
 
     # Create "more-general-than" tree
-    have_relations = Set()
+    have_relations = set()
     more_general_than = {}
     for term_a in term_id_to_superterm_ids.keys():
         for term_b, b_superterms in term_id_to_superterm_ids.iteritems():
@@ -283,7 +282,7 @@ def most_specific_terms(term_ids, og, sup_relations=["is_a"]):
         for s in subs:
             if not s in more_general_than.keys():
                 most_specific_terms.append(s)
-    return list(Set(most_specific_terms + list(Set(term_ids) - have_relations))) # TODO Clean this up
+    return list(set(most_specific_terms + list(set(term_ids) - have_relations))) # TODO Clean this up
 
 
 def parse_obos(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False):
@@ -353,7 +352,7 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
             if not is_obsolete or include_obsolete:
                 id_to_term[term.id] = term
                 if term.name not in name_to_ids:
-                    name_to_ids[term.name]= Set()
+                    name_to_ids[term.name]= set()
                 name_to_ids[term.name].add(term.id)
 
     def add_inverse_relationship_to_parents(term, relation, inverse_relation):
@@ -428,7 +427,7 @@ def parse_entity(lines, restrict_to_idspaces):
         """
         relationships = {}
         # 'is_a' relationship
-        is_a = [x.split("!")[0].split()[0].strip() for x in attrs["is_a"]] if "is_a" in attrs else Set()
+        is_a = [x.split("!")[0].split()[0].strip() for x in attrs["is_a"]] if "is_a" in attrs else set()
         if restrict_to_idspaces:
             is_a = [x for x in is_a if x.split(":")[0] in restrict_to_idspaces]
         if len(is_a) > 0: # Always add 'is_a' relationship
@@ -456,7 +455,7 @@ def parse_entity(lines, restrict_to_idspaces):
             A set of tuples where the first element is the synonym string and 
             the second element is the synonym type (e.g. 'EXACT' or 'NARROW')
         """
-        synonyms = Set()
+        synonyms = set()
         syn_pattern = re.compile(r'"((?:\\.|[^"\\])*)"\s+(.+?)\s+\[([^\]]*)\]')
         for syn in raw_syns:
             m = syn_pattern.match(syn)
@@ -471,7 +470,7 @@ def parse_entity(lines, restrict_to_idspaces):
         return synonyms
 
     def extract_xrefs(raw_xrefs):
-        xrefs = Set()
+        xrefs = set()
         for xref in raw_xrefs:
             xrefs.add(xref.split("!")[0].strip())
         return list(xrefs)
@@ -497,7 +496,7 @@ def parse_entity(lines, restrict_to_idspaces):
         return is_obsolete
 
     def parse_synonyms(attrs):
-        return extract_synonyms(attrs["synonym"]) if "synonym" in attrs.keys() else Set()
+        return extract_synonyms(attrs["synonym"]) if "synonym" in attrs.keys() else set()
 
     def parse_definition(attrs):
         return attrs["def"][0] if "def" in attrs.keys() else None
@@ -509,7 +508,7 @@ def parse_entity(lines, restrict_to_idspaces):
         return xrefs
 
     def extract_property_values(raw_prop_vals):
-        prop_vals = Set()
+        prop_vals = set()
         for prop_val in raw_prop_vals:
             if "\"" in prop_val:
                 m = re.search('\".+\"', prop_val)
@@ -524,11 +523,11 @@ def parse_entity(lines, restrict_to_idspaces):
     
     def parse_subsets(attrs):
         if "subset" in attrs:
-            return Set(attrs["subset"])
-        return Set()
+            return set(attrs["subset"])
+        return set()
 
     def parse_property_values(attrs):
-        return extract_property_values(attrs["property_value"]) if "property_value" in attrs.keys() else Set()
+        return extract_property_values(attrs["property_value"]) if "property_value" in attrs.keys() else set()
 
     def parse_comment(attrs):
         if "comment" in attrs:
@@ -561,7 +560,7 @@ def parse_entity(lines, restrict_to_idspaces):
 
         # Build term
         term = Term(attrs["id"][0], attrs["name"][0].strip(), 
-            definition=definition, synonyms=Set(synonyms), xrefs=xrefs, 
+            definition=definition, synonyms=set(synonyms), xrefs=xrefs, 
             relationships=relationships, property_values=property_values, 
             comment=comment, subsets=subsets)
  

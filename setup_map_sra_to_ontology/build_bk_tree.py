@@ -3,7 +3,6 @@ from pybktree import BKTree
 from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import string_metrics
 
-from sets import Set
 import json
 import pickle
 from collections import defaultdict
@@ -22,7 +21,7 @@ def main():
     str_to_terms = defaultdict(lambda: [])
 
     print("Gathering all term string identifiers in ontologies...")
-    string_identifiers = Set()
+    string_identifiers = set()
     for og in ogs:
         for id, term in og.id_to_term.iteritems():
             str_to_terms[term.name].append([term.id, "TERM_NAME"])

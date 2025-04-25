@@ -6,7 +6,6 @@ import os
 from os.path import join
 import dill
 
-from sets import Set
 from collections import Counter, defaultdict
 
 import numpy as np
@@ -29,7 +28,7 @@ def get_all_samples_to_mappings(mappings_f):
     with open(mappings_f, 'r') as f:
         j = json.load(f)
         for sample_acc, map_data in j.iteritems():
-            sample_to_predicted_terms[sample_acc] = Set()
+            sample_to_predicted_terms[sample_acc] = set()
             mapped_term_ids = [
                 x["term_id"] 
                 for x in map_data["mapped_terms"]
@@ -51,7 +50,7 @@ def get_all_samples_to_mappings(mappings_f):
             sample_to_real_val_props[sample_acc] = real_val_props
 
         for sample_acc, predicted_terms in sample_to_predicted_terms.iteritems():
-            sup_terms = Set()
+            sup_terms = set()
             for og in OGS:
                 for term in predicted_terms:
                     sup_terms.update(

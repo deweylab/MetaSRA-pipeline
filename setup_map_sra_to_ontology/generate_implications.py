@@ -2,7 +2,6 @@ from __future__ import print_function
 from optparse import OptionParser
 from collections import defaultdict
 import json
-from sets import Set
 from collections import deque
 import marisa_trie as mt
 
@@ -28,8 +27,8 @@ def generate_implications(og_a, og_b):
     new_term_to_implications = defaultdict(lambda: [])
     for term, conseq_terms in term_to_implications.iteritems():
         if term in term_to_superterm_linked_terms:
-            linked_terms = Set(term_to_superterm_linked_terms[term])
-            conseq_terms = Set(conseq_terms).difference(linked_terms)
+            linked_terms = set(term_to_superterm_linked_terms[term])
+            conseq_terms = set(conseq_terms).difference(linked_terms)
             if len(conseq_terms) > 0:
                 new_term_to_implications[term] = list(conseq_terms)
         else:
@@ -127,7 +126,7 @@ def subterm_consequent_terms(og_a, og_b):
                     try:
                         # Make sure substring is of full tokens
                         a_str_in_b_str = True
-                        b_toks = Set(b_str.split(" "))
+                        b_toks = set(b_str.split(" "))
                         a_toks = a_str.split(" ")
                         for a_tok in a_toks:
                             if a_tok not in b_toks:

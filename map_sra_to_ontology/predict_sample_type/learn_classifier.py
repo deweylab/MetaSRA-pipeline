@@ -5,7 +5,6 @@ import nltk
 from nltk.tokenize import word_tokenize
 import dill
 import numpy as np
-from sets import Set
 from collections import Counter, defaultdict 
 
 import os
@@ -39,7 +38,7 @@ def main():
 
     def get_all_samples_to_mappings(matches_file_dir):
         print("loading sample to predicted ontology term mappings...")
-        sample_to_predicted_terms = defaultdict(lambda: Set())
+        sample_to_predicted_terms = defaultdict(lambda: set())
         sample_to_real_val_props = {}
         for fname in os.listdir(matches_file_dir):
             with open(join(matches_file_dir, fname), "r") as f:
@@ -66,7 +65,7 @@ def main():
                     sample_to_real_val_props[sample_acc] = real_val_props
 
             for sample_acc, predicted_terms in sample_to_predicted_terms.iteritems():
-                sup_terms = Set()
+                sup_terms = set()
                 for og in OGS:
                     for term in predicted_terms:
                         sup_terms.update(
@@ -97,7 +96,7 @@ def main():
     # Determine which samples should be in the training set
     with open(STUDY_TO_SAMPLES_F, 'r') as f:
         study_to_samples = json.load(f)
-    train_samples = Set([
+    train_samples = set([
         sorted(v)[0] 
         for v in study_to_samples.values()
     ])
@@ -259,7 +258,7 @@ def ngram_features(
     if not USE_NGRAM_FEATURES:
         return []
 
-    bag_of_grams = Set()
+    bag_of_grams = set()
     n_gram_to_count = defaultdict(lambda: 0)
     n_gram_to_doc_freq = defaultdict(lambda: 0)
 
@@ -269,8 +268,8 @@ def ngram_features(
             n_gram_to_count[gram] += count
             n_gram_to_doc_freq[gram] += 1
 
-    print("Len of n-grams before trim: %d" % len(Set(n_gram_to_count.keys())))
-    bag_of_n_grams = Set(
+    print("Len of n-grams before trim: %d" % len(set(n_gram_to_count.keys())))
+    bag_of_n_grams = set(
         [
             x 
             for x in n_gram_to_count.keys() 
@@ -278,14 +277,14 @@ def ngram_features(
         ]
     )
 
-    stop_words = Set()
+    stop_words = set()
     with open("stop_words.09-23-16.json", "r") as f:
         for l in f:
             stop_words.add(l.strip())
     bag_of_n_grams = bag_of_n_grams.difference(stop_words)
     print("Len of n-grams after stop words: %d" % len(bag_of_n_grams))
 
-    #bag_of_n_grams = Set(n_gram_to_count.keys())
+    #bag_of_n_grams = set(n_gram_to_count.keys())
     vec_scaffold = list(bag_of_n_grams)
     print("The vector scaffold is: %s" % vec_scaffold)
 
@@ -302,7 +301,7 @@ def ont_term_features(
     if not USE_ONTOLOGY_TERMS:
         return []
 
-    bag_of_ont_terms = Set()
+    bag_of_ont_terms = set()
     term_to_doc_freq = defaultdict(lambda: 0)
 
     for sample in sample_accs:
@@ -310,7 +309,7 @@ def ont_term_features(
         for term, count in Counter(terms).iteritems():
             term_to_doc_freq[term] += 1
 
-    bag_of_terms = Set(
+    bag_of_terms = set(
         [
             x 
             for x in term_to_doc_freq.keys() 
@@ -391,7 +390,7 @@ def get_ngrams(text, n):
 def get_samples_to_mappings(matches_file, ogs):
 
     print("loading sample to predicted ontology term mappings...")
-    sample_to_predicted_terms = defaultdict(lambda: Set())
+    sample_to_predicted_terms = defaultdict(lambda: set())
     sample_to_real_val_props = {}
 
     with open(matches_file, "r") as f:
@@ -417,7 +416,7 @@ def get_samples_to_mappings(matches_file, ogs):
             sample_to_real_val_props[sample_acc] = real_val_props
 
     for sample_acc, predicted_terms in sample_to_predicted_terms.iteritems():
-        sup_terms = Set()
+        sup_terms = set()
         for og in ogs:
             for term in predicted_terms:
                 s = og.recursive_relationship(

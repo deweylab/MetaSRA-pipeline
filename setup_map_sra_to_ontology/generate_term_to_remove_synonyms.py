@@ -8,7 +8,6 @@ from __future__ import print_function
 from optparse import OptionParser
 from collections import defaultdict
 import json
-from sets import Set
 from collections import deque
 
 import map_sra_to_ontology

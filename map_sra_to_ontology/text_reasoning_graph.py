@@ -4,7 +4,6 @@
 
 from __future__ import print_function
 from optparse import OptionParser
-from sets import Set
 from collections import defaultdict, deque
 
 try:
@@ -294,13 +293,13 @@ class RealValuePropertyNode(ENode):
 
 class TextReasoningGraph:
     def __init__(self, prohibit_cycles=True):
-        self.token_nodes = Set()
-        self.key_val_nodes = Set()
-        self.ontology_term_nodes = Set()
-        self.custom_mapping_target_nodes = Set()
-        self.real_value_nodes = Set()
-        self.forward_edges = defaultdict(lambda: defaultdict(lambda: Set())) 
-        self.reverse_edges = defaultdict(lambda: defaultdict(lambda: Set()))    
+        self.token_nodes = set()
+        self.key_val_nodes = set()
+        self.ontology_term_nodes = set()
+        self.custom_mapping_target_nodes = set()
+        self.real_value_nodes = set()
+        self.forward_edges = defaultdict(lambda: defaultdict(lambda: set())) 
+        self.reverse_edges = defaultdict(lambda: defaultdict(lambda: set()))    
         self.prohibit_cycles = prohibit_cycles
 
     
@@ -440,10 +439,10 @@ class TextReasoningGraph:
             self.reverse_edges[node_b][edge].add(node_a) 
 
     def all_nodes(self):
-        return Set(self.token_nodes).union(self.key_val_nodes).union(self.ontology_term_nodes).union(self.real_value_nodes).union(self.custom_mapping_target_nodes)
+        return set(self.token_nodes).union(self.key_val_nodes).union(self.ontology_term_nodes).union(self.real_value_nodes).union(self.custom_mapping_target_nodes)
 
     def get_children(self, node):
-        children = Set()
+        children = set()
         if not node in self.forward_edges:
             return children
         for edge in self.forward_edges[node]:
@@ -466,7 +465,7 @@ class TextReasoningGraph:
         dist = {}       # maps node to shortest distance to source
         prev = {}       # maps node to (next node, edge type) tuple needed to reach source through shortest path
         queue = []      # queue of nodes with current estimated distance to source
-        in_q = Set()    # stores all nodes in the queue
+        in_q = set()    # stores all nodes in the queue
 
 
         # Initialization 
@@ -523,7 +522,7 @@ class TextReasoningGraph:
             else:
                 curr_node = q.popleft()
 
-            if curr_node in Set(downstream):
+            if curr_node in set(downstream):
                 continue
             downstream.append(curr_node)
             if curr_node in self.forward_edges:
@@ -531,8 +530,8 @@ class TextReasoningGraph:
                     if exclude_edges and edge in exclude_edges:
                         continue
                     for targ_node in self.forward_edges[curr_node][edge]:
-                        #if targ_node not in Set(q) and targ_node not in Set(downstream):
-                        if targ_node not in Set(downstream):
+                        #if targ_node not in set(q) and targ_node not in set(downstream):
+                        if targ_node not in set(downstream):
                             q.append(targ_node)       
  
         return downstream
@@ -549,13 +548,13 @@ class TextReasoningGraph:
                         return True
             return False 
 
-        removed_nodes = Set([x for x in self.all_nodes() if x not in self.reverse_edges])
+        removed_nodes = set([x for x in self.all_nodes() if x not in self.reverse_edges])
         remaining_nodes = self.all_nodes().difference(removed_nodes)
         deletion_occurred = True
         while deletion_occurred:
 
             deletion_occurred = False
-            to_remove = Set()
+            to_remove = set()
             for node in remaining_nodes:
                 has_in_edge = has_incoming_edge(node, removed_nodes, remaining_nodes) 
                 if not has_in_edge:

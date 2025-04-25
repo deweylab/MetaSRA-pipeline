@@ -6,7 +6,6 @@ from __future__ import print_function
 from optparse import OptionParser
 from collections import defaultdict
 import json
-from sets import Set
 
 import map_sra_to_ontology
 from map_sra_to_ontology import load_ontology
@@ -30,7 +29,7 @@ def efo_cvcl_syns():
     og, x, y = load_ontology.load("10")
     syn_sets = None
     with open("../map_sra_to_ontology/synonym_sets/cvcl_syn_sets.json", "r") as f:
-        syn_sets = [Set(x) for x in json.load(f)]
+        syn_sets = [set(x) for x in json.load(f)]
 
     # Add synonyms
     total_terms = len(og.get_mappable_terms())
@@ -43,12 +42,12 @@ def efo_cvcl_syns():
         for syn_set in syn_sets:
             current_term_strs = [x.syn_str for x in term.synonyms]
             current_term_strs.append(term.name)
-            current_term_strs = Set(current_term_strs)
+            current_term_strs = set(current_term_strs)
 
             for c_str in current_term_strs:
                 if c_str in syn_set:
                     for syn in syn_set:
-                        if syn not in current_term_strs and syn not in Set(term_id_to_syns[term.id]):
+                        if syn not in current_term_strs and syn not in set(term_id_to_syns[term.id]):
                             print("Added synonym %s to term with name %s" % (syn, term.name))
                             term_id_to_syns[term.id].append(syn)
     return term_id_to_syns
@@ -88,7 +87,7 @@ def uncaps_EFO_syns():
         # Names of term
         ref_strs = [term.name]
         ref_strs += [x.syn_str for x in term.synonyms]
-        ref_strs = Set(ref_strs)
+        ref_strs = set(ref_strs)
 
         for r_str in ref_strs:
             new_str = uncap_str(r_str)
