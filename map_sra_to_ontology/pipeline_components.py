@@ -23,8 +23,8 @@ from text_reasoning_graph import *
 import ball_tree_distance
 from load_specialist_lex import SpecialistLexicon
 
-import bktree
-from bktree import BKTree
+import pybktree
+from pybktree import BKTree
 import marisa_trie as mt
 
 # Relative paths to resources
@@ -872,7 +872,7 @@ class FuzzyStringMatching_Stage:
         matched = []
 
         try:
-            within_edit_thresh = self.bk_tree.query(query, 2)
+            within_edit_thresh = self.bk_tree.find(query, 2)
         except UnicodeDecodeError:
             print "Encoding error querying BK-tree for query: '%s'" % query        
             return matched

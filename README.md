@@ -17,8 +17,7 @@ This project currently uses Python 2.7 and requires the following Python librari
 - dill (https://pypi.org/project/dill/)
 - nltk (http://www.nltk.org/)
 - singledispatch (https://pypi.python.org/pypi/singledispatch)
-
-In addition, the [ahupp/bktree](https://github.com/ahupp/bktree) repository is included as a submodule.
+- pybktree (https://pypi.python.org/pypi/pybktree)
 
 ### Installation of dependencies
 
@@ -33,26 +32,21 @@ This will create a conda environment named `metasra-py2` with the required depen
 mamba activate metasra-py2
 ```
 
-To initialize the bktree submodule, run:
-```bash
-git submodule update --init --recursive
-```
-
 The nltk library requires the punkt tokenizer to be downloaded.  To do this, run:
 
 ```bash
 python -c "import nltk; nltk.download('punkt')"
 ```
 
-Finally, the PYTHONPATH environment variable must be set to include the current directory and the bktree directory.  This can be done by running:
+Finally, the PYTHONPATH environment variable must be set to include the current directory.  This can be done by running:
 
 ```bash
-export PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/bktree
+export PYTHONPATH=$PYTHONPATH:$(pwd)
 ```
 
 ## Setup
 
-In order to run the pipeline, a few external resources must be downloaded and configured.  First, set up the PYTHONPATH environment variable to point to the directory containing the map_sra_to_ontology directory as well as to the bktree directory.  Then, to set up the pipeline, run the following commands:
+In order to run the pipeline, a few external resources must be downloaded and configured.  First, set up the PYTHONPATH environment variable as described above.  Then, to set up the pipeline, run the following commands:
   
     cd ./setup_map_sra_to_ontology
     ./setup.sh

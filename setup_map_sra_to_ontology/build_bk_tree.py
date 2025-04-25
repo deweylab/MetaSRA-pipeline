@@ -1,4 +1,4 @@
-from bktree import BKTree
+from pybktree import BKTree
 from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import string_metrics
 
