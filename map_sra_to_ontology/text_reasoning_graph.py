@@ -326,13 +326,13 @@ class TextReasoningGraph:
                 r_str += "%s\n" % cmt_node 
 
             r_str += "\nforward_edges:\n"
-            for node_source, etype_to_node in self.forward_edges.iteritems():
-                for edge, node_target in etype_to_node.iteritems():
+            for node_source, etype_to_node in self.forward_edges.items():
+                for edge, node_target in etype_to_node.items():
                     r_str += "%s %s %s\n" % (node_source, edge, node_target) 
 
             r_str += "\nreverse_edges:\n"
-            for node_source, etype_to_node in self.reverse_edges.iteritems():
-                for edge, node_target in etype_to_node.iteritems():
+            for node_source, etype_to_node in self.reverse_edges.items():
+                for edge, node_target in etype_to_node.items():
                     r_str += "%s %s %s\n" % (node_source, edge, node_target)
             return r_str
         except UnicodeDecodeError:
@@ -492,7 +492,7 @@ class TextReasoningGraph:
             except KeyError:
                 pass # TODO this is bad practice. Should output to a log
 
-            for edge, targ_nodes in cons_edges[node].iteritems():
+            for edge, targ_nodes in cons_edges[node].items():
                 for targ_node in targ_nodes:
                     alt = dist[node] + edge.weight
                     if alt < dist[targ_node] and targ_node in in_q:

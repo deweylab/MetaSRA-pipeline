@@ -110,7 +110,7 @@ class Pipeline:
                 
         # Create initial text-mining-graph
         tokens = set()
-        for tag, val in tag_to_val.iteritems():
+        for tag, val in tag_to_val.items():
             kv_node = KeyValueNode(
                 tag.encode('utf-8'), 
                 val.encode('utf-8')
@@ -345,7 +345,7 @@ class Synonyms_Stage(object):
                             )
                         )
 
-        for source_node, target_nodes in tnode_to_edges.iteritems():
+        for source_node, target_nodes in tnode_to_edges.items():
             for target_node in target_nodes:
                 text_mining_graph.add_edge(source_node, target_node, edge)
 
@@ -387,7 +387,7 @@ class NGram_Stage:
                     )
                     tnode_to_edges[t_node].append(new_t_node)
         
-        for source_node, target_nodes in tnode_to_edges.iteritems():
+        for source_node, target_nodes in tnode_to_edges.items():
             for target_node in target_nodes:
                 text_mining_graph.add_edge(source_node, target_node, edge)
 
@@ -406,7 +406,7 @@ class Lowercase_Stage:
                 t_node.origin_gram_end
             )
  
-        for source_node, target_node in tnode_to_edges.iteritems():
+        for source_node, target_node in tnode_to_edges.items():
             text_mining_graph.add_edge(source_node, target_node, edge)
         return text_mining_graph
 
@@ -581,7 +581,7 @@ class PrioritizeExactMatchOverFuzzyMatch:
 
             if found_exact:
                 for t_node in t_node_set:
-                    for edge, target_nodes in text_mining_graph.forward_edges[t_node].iteritems():
+                    for edge, target_nodes in text_mining_graph.forward_edges[t_node].items():
                         if isinstance(edge, FuzzyStringMatch) and edge.edit_dist > 0:
 #                            print "Found match w/ edit distance > 0: %s --%s--> %s" % (t_node, edge, target_nodes)
                             remove_edge_args += [
@@ -626,7 +626,7 @@ class SPECIALISTLexInflectionalVariants:
                     )
                 )
             
-        for source_node, target_nodes in tnode_to_edges.iteritems():
+        for source_node, target_nodes in tnode_to_edges.items():
             for target_node in target_nodes:
                 text_mining_graph.add_edge(source_node, target_node, edge)
         return text_mining_graph
@@ -652,7 +652,7 @@ class SPECIALISTSpellingVariants:
                 new_str = t_node.token_str[:-len_last_gram] + infl_var
                 tnode_to_edges[t_node].append(TokenNode(new_str, t_node.origin_gram_start, t_node.origin_gram_end))
 
-        for source_node, target_nodes in tnode_to_edges.iteritems():
+        for source_node, target_nodes in tnode_to_edges.items():
             for target_node in target_nodes:
                 text_mining_graph.add_edge(source_node, target_node, edge)
         return text_mining_graph
@@ -682,7 +682,7 @@ class Delimit_Stage:
                 curr_interval_begin += len(split_t_str) + len(self.delimiter)
 
         edge = DerivesInto("Delimiter")
-        for s_node, next_nodes in node_to_next_nodes.iteritems():
+        for s_node, next_nodes in node_to_next_nodes.items():
             for t_node in next_nodes:
                 text_mining_graph.add_edge(s_node, t_node, edge)
 
@@ -718,7 +718,7 @@ class FilterOntologyMatchesByPriority_Stage:
             for t_node in text_mining_graph.token_nodes:
                 # Detect whether this token matched to a term-name or exact-synonym
                 discard = False
-                for edge, target_nodes in text_mining_graph.forward_edges[t_node].iteritems():
+                for edge, target_nodes in text_mining_graph.forward_edges[t_node].items():
                     for targ_node in target_nodes:
                         if is_edge_to_node_a_match(edge, targ_node, id_space) and is_edge_direct_match(edge):
                             discard = True
@@ -730,7 +730,7 @@ class FilterOntologyMatchesByPriority_Stage:
                 # non-exact-synonym matches
                 if discard:
                     del_edges = []
-                    for edge, target_nodes in text_mining_graph.forward_edges[t_node].iteritems():
+                    for edge, target_nodes in text_mining_graph.forward_edges[t_node].items():
                         for targ_node in target_nodes:
                             if is_edge_to_node_a_match(edge, targ_node, id_space) and not is_edge_direct_match(edge):
                                 del_edges.append((t_node, targ_node, edge))
@@ -1063,7 +1063,7 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
                 # Check if this mapped node from this token node is also reachable from all superphrase nodes.
                 # If so, we want to maintain its reachability from the current token node.
                 reachable_from_all_supernodes = True
-                for superphrase_node, reachable_from_superphrase in superphrase_node_to_reachable.iteritems():
+                for superphrase_node, reachable_from_superphrase in superphrase_node_to_reachable.items():
                     if mft not in reachable_from_superphrase:
                         reachable_from_all_supernodes = False
                         break
@@ -1126,7 +1126,7 @@ class CellLineToImpliedDisease_Stage:
                     new_ont_node = OntologyTermNode(implied_term_id)
                     node_to_new_edges[ont_node].append((new_ont_node, edge))
 
-        for node, new_edges in node_to_new_edges.iteritems():
+        for node, new_edges in node_to_new_edges.items():
             for e in new_edges:
                 text_mining_graph.add_edge(node, e[0], e[1])
 
@@ -1153,7 +1153,7 @@ class AcronymToExpansion_Stage:
                     new_t_node = TokenNode(expansion, t_node.origin_gram_start, t_node.origin_gram_end)
                     node_to_new_edges[t_node].append((new_t_node, edge))
 
-        for node, new_edges in node_to_new_edges.iteritems():
+        for node, new_edges in node_to_new_edges.items():
             for e in new_edges:
                 text_mining_graph.add_edge(node, e[0], e[1])
 
@@ -1418,7 +1418,7 @@ class ParseTimeWithUnit_Stage:
                 pass
         
         parse_edge = DerivesInto("Parse time and unit")
-        for source_node, target_nodes in tnode_to_edges.iteritems():
+        for source_node, target_nodes in tnode_to_edges.items():
             for target_node in target_nodes:
                 text_mining_graph.add_edge(source_node, target_node, parse_edge)
 
@@ -1453,7 +1453,7 @@ class CustomConsequentTerms_Stage:
                     new_ont_node = OntologyTermNode(implied_term_id)
                     node_to_new_edges[ont_node].append((new_ont_node, edge))
 
-        for node, new_edges in node_to_new_edges.iteritems():
+        for node, new_edges in node_to_new_edges.items():
             for e in new_edges:
                 text_mining_graph.add_edge(node, e[0], e[1])
 
@@ -1475,7 +1475,7 @@ class LinkedTermsOfSuperterms_Stage:
                     new_ont_node = OntologyTermNode(implied_term_id)
                     node_to_new_edges[ont_node].append((new_ont_node, edge))
 
-        for node, new_edges in node_to_new_edges.iteritems():
+        for node, new_edges in node_to_new_edges.items():
             for e in new_edges:
                 text_mining_graph.add_edge(node, e[0], e[1])
 
@@ -1536,7 +1536,7 @@ class InferCellLineTerms_Stage:
                     onode_to_edges[o_node].append(new_rv_node)
 
         edge = Inference("Inferred from cell line data")
-        for source_node, target_nodes in onode_to_edges.iteritems():
+        for source_node, target_nodes in onode_to_edges.items():
             for target_node in target_nodes:
                 text_mining_graph.add_edge(source_node, target_node, edge)
         return text_mining_graph

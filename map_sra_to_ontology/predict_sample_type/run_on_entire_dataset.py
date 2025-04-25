@@ -27,7 +27,7 @@ def get_all_samples_to_mappings(mappings_f):
     #for fname in os.listdir(matches_file_dir):
     with open(mappings_f, 'r') as f:
         j = json.load(f)
-        for sample_acc, map_data in j.iteritems():
+        for sample_acc, map_data in j.items():
             sample_to_predicted_terms[sample_acc] = set()
             mapped_term_ids = [
                 x["term_id"] 
@@ -49,7 +49,7 @@ def get_all_samples_to_mappings(mappings_f):
             ]
             sample_to_real_val_props[sample_acc] = real_val_props
 
-        for sample_acc, predicted_terms in sample_to_predicted_terms.iteritems():
+        for sample_acc, predicted_terms in sample_to_predicted_terms.items():
             sup_terms = set()
             for og in OGS:
                 for term in predicted_terms:
@@ -115,7 +115,7 @@ def main():
     sample_to_prediction = {}
     not_found = 0
     pred_none = 0
-    for sample_acc, tag_to_values in sample_to_tag_to_values.iteritems(): 
+    for sample_acc, tag_to_values in sample_to_tag_to_values.items():
         if sample_acc not in sample_to_predicted_terms_all:
             # The mapping process may have failed for this sample
             not_found += 1

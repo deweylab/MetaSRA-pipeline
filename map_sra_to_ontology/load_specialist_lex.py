@@ -30,7 +30,7 @@ class SpecialistLexicon:
         print("building SPECIALIST Lexicon trie...")
         tups = []
         curr_i = 0
-        for eui, lex_info in self.lexicon.iteritems():
+        for eui, lex_info in self.lexicon.items():
             self.eui_array.append(eui)
 
             tups.append((lex_info["base"].decode('utf-8'), [curr_i]))

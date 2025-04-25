@@ -175,7 +175,7 @@ class MappableOntologyGraph(OntologyGraph):
 
     def get_mappable_terms(self):
         return [y
-            for x,y in self.id_to_term.iteritems() 
+            for x,y in self.id_to_term.items()
             if x not in self.nonmappable_terms
         ]
  
@@ -209,7 +209,7 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
     term_remove_syns = None
     with open(term_to_remove_syns_f, "r") as f:
         term_remove_syns = json.load(f)
-    for t_id, rem_syn_data in term_remove_syns.iteritems():
+    for t_id, rem_syn_data in term_remove_syns.items():
         if t_id in og.id_to_term:
             exclude_syns = set(rem_syn_data["exclude_synonyms"])
             term = og.id_to_term[t_id]
@@ -233,7 +233,7 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
             id_to_term[t_id] =  og.id_to_term[t_id]
 
             # Update the relationships between terms to remove dangling edges
-            for rel, rel_ids in og.id_to_term[t_id].relationships.iteritems():
+            for rel, rel_ids in og.id_to_term[t_id].relationships.items():
                 og.id_to_term[t_id].relationships[rel] = [
                     x 
                     for x in rel_ids 
@@ -271,7 +271,7 @@ def most_specific_terms(term_ids, og, sup_relations=["is_a"]):
     have_relations = set()
     more_general_than = {}
     for term_a in term_id_to_superterm_ids.keys():
-        for term_b, b_superterms in term_id_to_superterm_ids.iteritems():
+        for term_b, b_superterms in term_id_to_superterm_ids.items():
             if term_a == term_b:
                 continue
             if term_a in b_superterms:
@@ -313,12 +313,12 @@ def parse_obos(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False):
     name_to_ids = {}    
 
     # Iterate through OBO files and build up the ontology
-    for ont, loc in ont_to_loc.iteritems():
+    for ont, loc in ont_to_loc.items():
         i_to_t, n_to_is = parse_obo(loc, 
             restrict_to_idspaces=restrict_to_idspaces, 
             include_obsolete=include_obsolete)
         id_to_term.update(i_to_t)
-        for name, ids in n_to_is.iteritems():
+        for name, ids in n_to_is.items():
             if name not in name_to_ids:
                 name_to_ids[name] = ids
             else:

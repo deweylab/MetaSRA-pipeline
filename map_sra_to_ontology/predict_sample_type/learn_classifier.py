@@ -43,7 +43,7 @@ def main():
         for fname in os.listdir(matches_file_dir):
             with open(join(matches_file_dir, fname), "r") as f:
                 j = json.load(f)
-                for sample_acc, map_data in j.iteritems():
+                for sample_acc, map_data in j.items():
                     mapped_term_ids = [
                         x["term_id"] 
                         for x in map_data["mapped_terms"]
@@ -64,7 +64,7 @@ def main():
                     ]
                     sample_to_real_val_props[sample_acc] = real_val_props
 
-            for sample_acc, predicted_terms in sample_to_predicted_terms.iteritems():
+            for sample_acc, predicted_terms in sample_to_predicted_terms.items():
                 sup_terms = set()
                 for og in OGS:
                     for term in predicted_terms:
@@ -229,7 +229,7 @@ def learn_model(
 
 def get_ngrams_from_tag_to_val(tag_to_val):
     ngrams = []
-    for tag, val in tag_to_val.iteritems():
+    for tag, val in tag_to_val.items():
         for n in range(1, N+1):
             ngrams += [
                 x.lower()  
@@ -264,7 +264,7 @@ def ngram_features(
 
     for i, doc in enumerate(sample_attributes):
         n_grams = sample_to_ngrams[sample_accs[i]]
-        for gram, count in Counter(n_grams).iteritems():
+        for gram, count in Counter(n_grams).items():
             n_gram_to_count[gram] += count
             n_gram_to_doc_freq[gram] += 1
 
@@ -306,7 +306,7 @@ def ont_term_features(
 
     for sample in sample_accs:
         terms = sample_to_predicted_terms[sample]
-        for term, count in Counter(terms).iteritems():
+        for term, count in Counter(terms).items():
             term_to_doc_freq[term] += 1
 
     bag_of_terms = set(
@@ -395,7 +395,7 @@ def get_samples_to_mappings(matches_file, ogs):
 
     with open(matches_file, "r") as f:
         j = json.load(f)
-        for sample_acc, map_data in j.iteritems():
+        for sample_acc, map_data in j.items():
             mapped_term_ids = [
                 x["term_id"] 
                 for x in map_data["mapped_terms"]
@@ -415,7 +415,7 @@ def get_samples_to_mappings(matches_file, ogs):
             ]
             sample_to_real_val_props[sample_acc] = real_val_props
 
-    for sample_acc, predicted_terms in sample_to_predicted_terms.iteritems():
+    for sample_acc, predicted_terms in sample_to_predicted_terms.items():
         sup_terms = set()
         for og in ogs:
             for term in predicted_terms:

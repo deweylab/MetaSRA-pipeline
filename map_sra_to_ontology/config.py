@@ -13,7 +13,7 @@ PREFIX_TO_FNAME = pr.resource_filename(resource_package,
 def ontology_name_to_location():
     prefix_to_location = {}
     with open(PREFIX_TO_FNAME, "r") as f:
-        for prefix, fname in json.load(f).iteritems():
+        for prefix, fname in json.load(f).items():
             prefix_to_location[prefix] = join(OBO_DIR, fname)
     return prefix_to_location
     

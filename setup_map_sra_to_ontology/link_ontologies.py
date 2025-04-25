@@ -90,7 +90,7 @@ def linked_terms(og_a, og_b, link_syn_types=None):
             for a_term in a_mapper.map_string(b_str):
                 print("LINKING terms: %s=%s: '%s' '%s'='%s'" % (b_term.id, a_term.id, b_str, b_term.name, a_term.name))
                 b_to_a[b_term.id].add(a_term.id)
-    return {k:list(v) for k,v in b_to_a.iteritems()}
+    return {k:list(v) for k,v in b_to_a.items()}
 
 
 if __name__ == "__main__":

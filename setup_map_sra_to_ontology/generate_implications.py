@@ -17,7 +17,7 @@ def generate_implications(og_a, og_b):
 
     term_to_implications = defaultdict(lambda: [])
     temp = subterm_consequent_terms(og_a, og_b)
-    for term, implied_terms in temp.iteritems():
+    for term, implied_terms in temp.items():
         term_to_implications[term] += implied_terms
 
     # Filter terms 
@@ -25,7 +25,7 @@ def generate_implications(og_a, og_b):
     with open("term_to_superterm_linked_terms.json", "r") as f:
         term_to_superterm_linked_terms = json.load(f)
     new_term_to_implications = defaultdict(lambda: [])
-    for term, conseq_terms in term_to_implications.iteritems():
+    for term, conseq_terms in term_to_implications.items():
         if term in term_to_superterm_linked_terms:
             linked_terms = set(term_to_superterm_linked_terms[term])
             conseq_terms = set(conseq_terms).difference(linked_terms)
@@ -45,7 +45,7 @@ def main():
     print("Generating cell line to disease implications...")
     term_to_implications = generate_implications(efo_disease_og, efo_cellline_og)
     temp = generate_implications(doid_disease_og, efo_cellline_og)
-    for term, implied_terms in temp.iteritems():
+    for term, implied_terms in temp.items():
         term_to_implications[term] += implied_terms
     with open("cellline_to_disease_implied_terms.json", "w") as f:
         f.write(json.dumps(term_to_implications, indent=4, separators=(',', ': '), sort_keys=True))

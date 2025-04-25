@@ -17,7 +17,7 @@ def main():
 
     date_str = datetime.datetime.now().strftime("%y-%m-%d")
     with open("lex_file_to_url.json", "r") as f:
-        for lex_f, url in json.load(f).iteritems():
+        for lex_f, url in json.load(f).items():
             lex_f_name = join(lex_rel_loc, "%s" % lex_f)
             output_f = open(lex_f_name, "w")
             subprocess.call(["curl", url], stdout=output_f)   

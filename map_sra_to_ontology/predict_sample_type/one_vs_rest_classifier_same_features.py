@@ -173,7 +173,7 @@ class OneVsRestClassifier:
 
         class_to_confidence = {}
 
-        for clss, classif in self.class_to_classifier.iteritems():
+        for clss, classif in self.class_to_classifier.items():
             new_q_feature_v = self._features(q_feature_v)
             pred_probs = classif.predict_proba(
                 sparse.csr_matrix([new_q_feature_v])
@@ -260,13 +260,13 @@ class OneVsRestClassifier:
         if sum_conf > 0:
             class_to_confidence = {
                 k:v/sum_conf 
-                for k,v in class_to_confidence.iteritems()
+                for k,v in class_to_confidence.items()
             }
         print("Class to confidence: %s" % class_to_confidence)
         return max(
             [
                 (k,v) 
-                for k,v in class_to_confidence.iteritems()
+                for k,v in class_to_confidence.items()
             ], 
             key=lambda x: x[1]
         )

@@ -186,8 +186,8 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
            
             # Create sample attribute table
             print("Inserting entries into 'sample_attribute' table...")
-            for sam_acc, tag_to_val in sample_to_tag_to_val.iteritems():
-                for tag, val in tag_to_val.iteritems():
+            for sam_acc, tag_to_val in sample_to_tag_to_val.items():
+                for tag, val in tag_to_val.items():
                     insert_tuple = (sam_acc, tag.decode('utf-8'), val.decode('utf-8'))
                     sub_c.execute(insert_update_sample_attribute_sql, insert_tuple) 
 
@@ -253,7 +253,7 @@ def build_subdb(the_db_loc, sub_db_loc, assay, species):
 
             # Create read-spec table
             print("Inserting entries into 'read_spec' table...")
-            for exp_acc, read_datas in exp_to_read_datas.iteritems():
+            for exp_acc, read_datas in exp_to_read_datas.items():
                 for read_data in read_datas:
                     insert_tuple = (exp_acc, read_data["read_index"], read_data["read_class"], 
                         read_data["read_type"], read_data["base_coord"])

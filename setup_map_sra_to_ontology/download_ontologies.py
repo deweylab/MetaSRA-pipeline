@@ -15,7 +15,7 @@ def main():
     prefix_to_filename = {}
     date_str = datetime.datetime.now().strftime("%y-%m-%d")
     with open("ontology_name_to_url.json", "r") as f:
-        for ont_prefix, url in json.load(f).iteritems():
+        for ont_prefix, url in json.load(f).items():
             obo_f_name = join(obo_rel_loc, "%s.%s.obo" % (ont_prefix, date_str))
             output_f = open(obo_f_name, "w")
             subprocess.call(["curl", url], stdout=output_f)   

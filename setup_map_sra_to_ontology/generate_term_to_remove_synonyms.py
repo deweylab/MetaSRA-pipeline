@@ -16,7 +16,7 @@ from map_sra_to_ontology import load_ontology
 def main():
     og, x, y = load_ontology.load("13")
     problematic_terms = deque()
-    for t_id, term in og.id_to_term.iteritems():
+    for t_id, term in og.id_to_term.items():
         if "carcinoma" in term.name or "adenocarcinoma" in term.name:
             problematic_terms.append(term)
 

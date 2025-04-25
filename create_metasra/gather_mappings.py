@@ -30,7 +30,7 @@ def main():
             with open(metasra_mappings_f, 'r') as f:
                 #print "loading %s..." % metasra_mappings_f
                 mappings = json.load(f)
-                for k,v in mappings.iteritems():
+                for k,v in mappings.items():
                     all_metasra_mappings[k] = v
                     n_found += 1
         except ValueError as e:

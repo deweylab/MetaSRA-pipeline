@@ -15,7 +15,7 @@ def main():
     cvcl_id_to_syns = efo_cvcl_syns()
 
     term_id_to_syns = uncaps_id_to_syns
-    for t_id, syns in cvcl_id_to_syns.iteritems():
+    for t_id, syns in cvcl_id_to_syns.items():
         term_id_to_syns[t_id] += syns
 
     with open("term_to_extra_synonyms.json", "w") as f:

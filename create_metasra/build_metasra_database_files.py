@@ -49,7 +49,7 @@ def gather_mapped_terms(mappings_f):
     #for fname in os.listdir(matches_file_dir):
     with open(mappings_f, 'r') as f:
         j = json.load(f)
-        for sample_acc, mapping_data in j.iteritems():
+        for sample_acc, mapping_data in j.items():
             sample_to_mapped_terms[sample_acc] = set()
             sample_to_real_val_props[sample_acc] = []
             if len(mapping_data["mapped_terms"]) == 0:
@@ -85,7 +85,7 @@ def build_metasra_json(mappings_f, sample_type_predictions_f, out_f, date_str=No
     with open(sample_type_predictions_f, "r") as f:
         sample_to_predictions = json.load(f)
     mod_sample_to_predictions = defaultdict(lambda: [None, None])
-    for sample, prediction in sample_to_predictions.iteritems():
+    for sample, prediction in sample_to_predictions.items():
         mod_sample_to_predictions[sample] = (
             raw_pred_to_sample_type[prediction[0]], 
             prediction[1]
@@ -120,7 +120,7 @@ def build_metasra_sqlite(mappings_f, sample_type_predictions_f, out_f):
     with open(sample_type_predictions_f, "r") as f:
         sample_to_predictions = json.load(f)
     mod_sample_to_predictions = defaultdict(lambda: [None, None])
-    for sample, prediction in sample_to_predictions.iteritems():
+    for sample, prediction in sample_to_predictions.items():
         mod_sample_to_predictions[sample] = (raw_pred_to_sample_type[prediction[0]], prediction[1])
     sample_to_predictions = mod_sample_to_predictions
 
@@ -159,12 +159,12 @@ def build_metasra_sqlite(mappings_f, sample_type_predictions_f, out_f):
         c.execute(create_mapped_ontology_table_sql)
         c.execute(create_real_val_prop_table_sql)
         c.execute(create_sample_type_table_sql)
-        for sample_acc, term_ids in sample_to_mapped_terms.iteritems():
+        for sample_acc, term_ids in sample_to_mapped_terms.items():
             for term_id in term_ids:
                 insert_tuple = (sample_acc, term_id)
                 c.execute(insert_ontology_term_sql, insert_tuple)
         
-        for sample_acc, real_val_props in sample_to_real_val_props.iteritems():
+        for sample_acc, real_val_props in sample_to_real_val_props.items():
             for real_val_prop in real_val_props: 
                 insert_tuple = (
                     sample_acc, 
@@ -174,7 +174,7 @@ def build_metasra_sqlite(mappings_f, sample_type_predictions_f, out_f):
                 )
                 c.execute( insert_real_val_prop_sql, insert_tuple)
          
-        for sample_acc, prediction in sample_to_predictions.iteritems():
+        for sample_acc, prediction in sample_to_predictions.items():
             insert_tuple = (sample_acc, prediction[0], prediction[1])
             c.execute(insert_sample_type_sql, insert_tuple)
 

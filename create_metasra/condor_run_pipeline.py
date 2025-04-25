@@ -72,7 +72,7 @@ def run_pipeline(pipeline_func, sample_accs, sample_to_metadata):
 
             # Make sure the key-value pairs are unicode strings
             decoded_tag_to_val = {}
-            for tag, val in tag_to_val.iteritems():
+            for tag, val in tag_to_val.items():
                 if isinstance(tag, unicode) and not isinstance(val, unicode):
                     decoded_tag_to_val[tag] = val.decode('utf-8')
                 elif not isinstance(tag, unicode) and isinstance(val, unicode):

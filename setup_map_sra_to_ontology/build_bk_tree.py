@@ -23,7 +23,7 @@ def main():
     print("Gathering all term string identifiers in ontologies...")
     string_identifiers = set()
     for og in ogs:
-        for id, term in og.id_to_term.iteritems():
+        for id, term in og.id_to_term.items():
             str_to_terms[term.name].append([term.id, "TERM_NAME"])
             string_identifiers.add(term.name)
             for syn in term.synonyms:
