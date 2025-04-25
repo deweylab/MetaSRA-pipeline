@@ -1,7 +1,7 @@
 {
-    "LEXICON": "https://lsg3.nlm.nih.gov/LexSysGroup/Projects/lexicon/2016/release/LEX/LEXICON",
-    "LRAGR": "https://lsg3.nlm.nih.gov/LexSysGroup/Projects/lexicon/2016/release/LEX/LRAGR",
-    "LRNOM": "https://lsg3.nlm.nih.gov/LexSysGroup/Projects/lexicon/2016/release/LEX/LRNOM",
-    "LRSPL": "https://lsg3.nlm.nih.gov/LexSysGroup/Projects/lexicon/2016/release/LEX/LRSPL",
-    "LRTRM": "https://lsg3.nlm.nih.gov/LexSysGroup/Projects/lexicon/2016/release/LEX/LRTRM" 
+    "LEXICON": "https://data.lhncbc.nlm.nih.gov/public/lsg/lexicon/2025/release/LEX_DOC/LEXICON",
+    "LRAGR": "https://data.lhncbc.nlm.nih.gov/public/lsg/lexicon/2025/release/LEX_DOC/LRAGR",
+    "LRNOM": "https://data.lhncbc.nlm.nih.gov/public/lsg/lexicon/2025/release/LEX_DOC/LRNOM",
+    "LRSPL": "https://data.lhncbc.nlm.nih.gov/public/lsg/lexicon/2025/release/LEX_DOC/LRSPL",
+    "LRTRM": "https://data.lhncbc.nlm.nih.gov/public/lsg/lexicon/2025/release/LEX_DOC/LRTRM" 
 }
