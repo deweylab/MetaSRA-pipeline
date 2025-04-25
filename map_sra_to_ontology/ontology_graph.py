@@ -8,7 +8,7 @@ try:
     import pygraphviz as pgv
 except:
     print("Unable to import pygraphviz. Visualization is disabled.")
-import config
+from map_sra_to_ontology import config
 
 import pkg_resources as pr
 import os

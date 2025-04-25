@@ -19,10 +19,10 @@ import json
 import os
 from os.path import join
 
-import load_ontology
-from text_reasoning_graph import *
-import ball_tree_distance
-from load_specialist_lex import SpecialistLexicon
+from . import load_ontology
+from .text_reasoning_graph import *
+from . import ball_tree_distance
+from .load_specialist_lex import SpecialistLexicon
 
 import pybktree
 from pybktree import BKTree

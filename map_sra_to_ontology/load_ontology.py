@@ -2,8 +2,8 @@ from __future__ import print_function
 import pkg_resources as pr
 import json
 
-import config
-import ontology_graph
+from . import config
+from . import ontology_graph
 
 def load(ontology_index):
     resource_package = __name__

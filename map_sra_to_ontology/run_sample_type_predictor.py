@@ -5,8 +5,8 @@ import os
 from os.path import join
 import pkg_resources as pr
 
-import predict_sample_type
-from predict_sample_type.learn_classifier import *
+from . import predict_sample_type
+from .predict_sample_type.learn_classifier import *
 
 # The dilled objects need the python path to point to the predict_sample_type
 # directory
