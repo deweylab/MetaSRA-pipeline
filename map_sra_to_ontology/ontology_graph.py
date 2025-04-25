@@ -3,7 +3,10 @@
 from __future__ import print_function
 import re
 from optparse import OptionParser
-from Queue import Queue
+try:
+    from queue import Queue
+except ImportError: # Python 2
+    from Queue import Queue
 try:
     import pygraphviz as pgv
 except:
