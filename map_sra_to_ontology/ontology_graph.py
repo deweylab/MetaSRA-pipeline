@@ -313,7 +313,9 @@ def parse_obos(ont_to_loc, restrict_to_idspaces=None, include_obsolete=False):
     name_to_ids = {}    
 
     # Iterate through OBO files and build up the ontology
-    for ont, loc in ont_to_loc.items():
+    # Iterate in order of the ontology names for 
+    # deterministic behavior when multiple ontologies have the same term
+    for ont, loc in sorted(ont_to_loc.items()):
         i_to_t, n_to_is = parse_obo(loc, 
             restrict_to_idspaces=restrict_to_idspaces, 
             include_obsolete=include_obsolete)
