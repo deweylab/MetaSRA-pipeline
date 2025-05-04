@@ -1,7 +1,9 @@
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from pybktree import BKTree
 from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import string_metrics
+from map_sra_to_ontology import jsonio
 
 import json
 import pickle
@@ -33,11 +35,11 @@ def main():
     print("Building the BK-Tree...")
     bk_tree = BKTree(string_metrics.bag_dist_multiset, string_identifiers)
 
-    with open("fuzzy_match_bk_tree.pickle", "w") as f:
+    with open("fuzzy_match_bk_tree.pickle", "wb") as f:
         pickle.dump(bk_tree, f)
 
     with open("fuzzy_match_string_data.json", "w") as f:
-        f.write(json.dumps(str_to_terms, indent=4, separators=(',', ': ')))
+        f.write(jsonio.dumps(str_to_terms))
 
 
 if __name__ == "__main__":

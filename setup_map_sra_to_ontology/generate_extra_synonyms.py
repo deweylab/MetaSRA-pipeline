@@ -3,12 +3,14 @@
 #################################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from optparse import OptionParser
 from collections import defaultdict
 import json
 
 import map_sra_to_ontology
 from map_sra_to_ontology import load_ontology
+from map_sra_to_ontology import jsonio
 
 def main():
     uncaps_id_to_syns = uncaps_EFO_syns()
@@ -19,7 +21,7 @@ def main():
         term_id_to_syns[t_id] += syns
 
     with open("term_to_extra_synonyms.json", "w") as f:
-        f.write(json.dumps(term_id_to_syns, indent=4, sort_keys=True, separators=(',', ': ')))
+        f.write(jsonio.dumps(term_id_to_syns))
 
 def efo_cvcl_syns():
     """

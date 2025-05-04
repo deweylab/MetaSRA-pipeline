@@ -4,6 +4,7 @@
 #######################################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from optparse import OptionParser
 from collections import defaultdict
 import json
@@ -12,6 +13,7 @@ import marisa_trie as mt
 
 import map_sra_to_ontology
 from map_sra_to_ontology import load_ontology
+from map_sra_to_ontology import jsonio
 
 def main():
     efo_celltype_og, x,y = load_ontology.load("11")
@@ -37,7 +39,7 @@ def main():
     term_to_linked_terms.update(linked_terms(cvcl_og, efo_cellline_og, link_syn_types=["EXACT", "RELATED"]))
 
     with open("term_to_linked_terms.json", "w") as f:
-        f.write(json.dumps(term_to_linked_terms, indent=4, sort_keys=True, separators=(',', ': ')))
+        f.write(jsonio.dumps(term_to_linked_terms))
     
 
 class Mapper:
@@ -64,13 +66,10 @@ class Mapper:
         curr_i = 0
         for term in og.get_mappable_terms():
             terms_array.append(term)
-            tups.append((term.name.decode('utf-8'), [curr_i]))
+            tups.append((term.name, [curr_i]))
             #for syn in [x for x in term.synonyms if x.syn_type == "EXACT"]:
             for syn in [x for x in term.synonyms if x.syn_type in self.link_syn_types]:
-                try:
-                    tups.append((syn.syn_str.decode('utf-8'), [curr_i]))
-                except UnicodeEncodeError:
-                    print("Warning! Unable to decode unicode of a synonym for term %s" % term.id)
+                tups.append((syn.syn_str, [curr_i]))
             curr_i += 1
         return mt.RecordTrie("<i", tups), terms_array
 

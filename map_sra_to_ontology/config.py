@@ -1,4 +1,5 @@
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 import pkg_resources as pr
 import os
 from os.path import join

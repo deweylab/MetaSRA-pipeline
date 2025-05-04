@@ -4,6 +4,7 @@
 ###########################################################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 import os
 from os.path import join
 from optparse import OptionParser
@@ -13,6 +14,7 @@ import sqlite3
 
 import map_sra_to_ontology
 from map_sra_to_ontology import load_ontology
+from map_sra_to_ontology import jsonio
 
 ONT_NAME_TO_ONT_ID = {"UBERON":"12", "CL":"1", "DOID":"2", "EFO":"16", "CVCL":"4"}
 ONT_ID_TO_OG = {x:load_ontology.load(x)[0] for x in ONT_NAME_TO_ONT_ID.values()}
@@ -105,7 +107,7 @@ def build_metasra_json(mappings_f, sample_type_predictions_f, out_f, date_str=No
     }
 
     with open(out_f, 'w') as f:
-        f.write(json.dumps(sample_to_annotated_data, indent=4, sort_keys=True, separators=(',', ': ')))
+        f.write(jsonio.dumps(sample_to_annotated_data))
 
 def build_metasra_sqlite(mappings_f, sample_type_predictions_f, out_f):
     sample_to_mapped_terms, sample_to_real_val_props = gather_mapped_terms(mappings_f)

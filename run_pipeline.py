@@ -6,6 +6,7 @@
 ########################################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from optparse import OptionParser
 import json
 import sys
@@ -18,6 +19,7 @@ from os.path import join
 from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import config
 from map_sra_to_ontology import run_sample_type_predictor
+from map_sra_to_ontology import jsonio
 from predict_sample_type.learn_classifier import *
 from map_sra_to_ontology.pipeline_components import *
 
@@ -62,7 +64,7 @@ def main():
         outputs.append(
             run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings, predictor)
         )
-    output_string = json.dumps(outputs, indent=4, separators=(',', ': '))
+    output_string = jsonio.dumps(outputs)
     if options.output:
         with open(options.output, "w") as f:
             f.write(output_string)

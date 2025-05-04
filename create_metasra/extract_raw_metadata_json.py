@@ -4,9 +4,11 @@
 #############################################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from optparse import OptionParser
 import sqlite3
 import json
+from map_sra_to_ontology import jsonio
 
 def main():
     parser = OptionParser()
@@ -21,9 +23,9 @@ def main():
         db_cursor = db_conn.cursor()
         returned = db_cursor.execute(sql_cmd)
         for r in returned:
-            sample_acc = r[0].encode('utf-8')
-            tag = r[1].encode('utf-8')
-            value = r[2].encode('utf-8')
+            sample_acc = r[0]
+            tag = r[1]
+            value = r[2]
 
             if sample_acc not in sample_to_tag_to_value:   
                 sample_to_tag_to_value[sample_acc] = {}    
@@ -31,12 +33,7 @@ def main():
             sample_to_tag_to_value[sample_acc][tag] = value
 
     with open(out_file, 'w') as f:
-        f.write(json.dumps(
-            sample_to_tag_to_value, 
-            sort_keys=True, 
-            indent=4, 
-            separators=(',', ': ')
-        ))
+        f.write(jsonio.dumps(sample_to_tag_to_value))
 
 
 

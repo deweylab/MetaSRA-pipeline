@@ -1,10 +1,12 @@
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from optparse import OptionParser
 import datetime
 import subprocess
 import json
 import os
 from os.path import join
+from map_sra_to_ontology import jsonio
 
 def main():
     parser = OptionParser()
@@ -22,7 +24,7 @@ def main():
             prefix_to_filename[ont_prefix] = "%s.%s.obo" % (ont_prefix, date_str)
 
     with open("../map_sra_to_ontology/ont_prefix_to_filename.json", "w") as f:
-        f.write(json.dumps(prefix_to_filename, indent=4, separators=(',', ': '))) 
+        f.write(jsonio.dumps(prefix_to_filename))
     
     
 

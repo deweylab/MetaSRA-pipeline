@@ -4,11 +4,14 @@
 ###############################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 import json
 import sys
 import  os
 from os.path import realpath
 from optparse import OptionParser
+
+from map_sra_to_ontology import jsonio
 
 def get_script_path():
     return os.path.dirname(realpath(sys.argv[0]))
@@ -53,12 +56,7 @@ def main():
         sample_to_metadata
     )
     with open(options.pipeline_results_file, 'w') as f:
-        f.write(json.dumps(
-            sample_acc_to_matches, 
-            sort_keys=True, 
-            indent=4, 
-            separators=(',', ': ')
-        ))
+        f.write(jsonio.dumps(sample_acc_to_matches))
 
 
 def run_pipeline(pipeline_func, sample_accs, sample_to_metadata):
@@ -73,14 +71,7 @@ def run_pipeline(pipeline_func, sample_accs, sample_to_metadata):
             # Make sure the key-value pairs are unicode strings
             decoded_tag_to_val = {}
             for tag, val in tag_to_val.items():
-                if isinstance(tag, unicode) and not isinstance(val, unicode):
-                    decoded_tag_to_val[tag] = val.decode('utf-8')
-                elif not isinstance(tag, unicode) and isinstance(val, unicode):
-                    decoded_tag_to_val[tag.decode('utf-8')] = val
-                elif not isinstance(tag, unicode) and not isinstance(val, unicode):
-                    decoded_tag_to_val[tag.decode('utf-8')] = val.decode('utf-8')
-                else:
-                    decoded_tag_to_val[tag] = val
+                decoded_tag_to_val[tag] = val
             tag_to_val = decoded_tag_to_val
             mapped_terms, real_props = pipeline_func.run(tag_to_val)
             sample_acc_to_matches[sample_acc] = {

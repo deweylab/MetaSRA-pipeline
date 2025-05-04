@@ -1,4 +1,5 @@
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 import os
 import sys
 import time

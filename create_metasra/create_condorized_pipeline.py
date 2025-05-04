@@ -1,4 +1,5 @@
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from optparse import OptionParser
 import os
 from os.path import join, basename, realpath
@@ -7,6 +8,7 @@ import subprocess
 import json
 import math
 
+from map_sra_to_ontology import jsonio
 import condor_submit_tools
 
 BLACKLIST = [
@@ -89,7 +91,7 @@ def condorize_pipeline(
         fname = "chunk_%d.json" % i
         list_f = join(job_dir, fname)
         with open(list_f, 'w') as f:
-            f.write(json.dumps(j))
+            f.write(jsonio.dumps(j))
 
         # Copy input files into root directory
         in_files_locs = [

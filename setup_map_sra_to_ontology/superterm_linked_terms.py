@@ -4,6 +4,7 @@
 ###################################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from collections import defaultdict
 import json
 from collections import deque
@@ -11,6 +12,7 @@ import marisa_trie as mt
 
 import map_sra_to_ontology
 from map_sra_to_ontology import load_ontology
+from map_sra_to_ontology import jsonio
 
 def main():
     efo_cell_og, x,y = load_ontology.load("11")
@@ -35,7 +37,7 @@ def main():
         
 
     with open("term_to_superterm_linked_terms.json", "w") as f:
-        f.write(json.dumps(term_to_linkedsup_terms, indent=4, sort_keys=True, separators=(',', ': ')))
+        f.write(jsonio.dumps(term_to_linkedsup_terms))
 
 def term_to_linked_superterms(og):
     term_to_linked_terms = None

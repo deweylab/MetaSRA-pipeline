@@ -3,19 +3,29 @@
 #########################################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from optparse import OptionParser
 from collections import defaultdict, deque
+import sys
 
 try:
     import pygraphviz as pgv
 except:
     print("Unable to import pygraphviz. Visualization is disabled.")
 
+# Class decorator to make classes compatible with Python 2 and 3
+# Inspired by future.utils.python_2_unicode_compatible
+def py2_unicode_compatible(cls):
+    if sys.version_info[0] < 3:
+        cls.__unicode__ = cls.__str__
+        cls.__str__ = lambda self: unicode(self).encode('utf-8')
+    return cls
+
 class EEdge(object):
     def __init__(self, weight):
         self.weight = weight
 
-
+@py2_unicode_compatible
 class Inference(EEdge):
     def __init__(self, inference_type):
         super(Inference, self).__init__(1.0)
@@ -39,6 +49,7 @@ class Inference(EEdge):
     def __repr__(self):
         return self.__str__()
 
+@py2_unicode_compatible
 class FuzzyStringMatch(EEdge):
     def __init__(
         self, 
@@ -85,7 +96,7 @@ class FuzzyStringMatch(EEdge):
     def __str__(self):
         return "FuzzyStringMatch(weight=%f, query_str='%s', matched_str='%s', match_target='%s', edit_dist=%d)" % (
             self.weight, 
-            self.query_str.decode('utf-8', 'replace'), 
+            self.query_str, 
             self.matched_str, 
             self.match_target, 
             self.edit_dist
@@ -94,6 +105,7 @@ class FuzzyStringMatch(EEdge):
     def __repr__(self):
         return self.__str__()
 
+@py2_unicode_compatible
 class DerivesInto(EEdge):
     def __init__(self, derivation_type):
         # TODO map derivation type to weight
@@ -123,6 +135,7 @@ class ENode(object):
     def __init__(self):
         pass
 
+@py2_unicode_compatible
 class KeyValueNode(ENode):
     def __init__(self, key, value):
         super(KeyValueNode, self).__init__() 
@@ -145,7 +158,7 @@ class KeyValueNode(ENode):
         return self.__str__()
 
 
-
+@py2_unicode_compatible
 class TokenNode(ENode):
     def __init__(self, token_str, origin_gram_start, origin_gram_end):
         super(TokenNode, self).__init__()
@@ -191,7 +204,7 @@ class MappingTargetNode(ENode):
         super(MappingTargetNode, self).__init__()
 
 
-
+@py2_unicode_compatible
 class CustomMappingTargetNode(MappingTargetNode):
     def __init__(self, rep_str):
         super(CustomMappingTargetNode, self).__init__()
@@ -213,7 +226,7 @@ class CustomMappingTargetNode(MappingTargetNode):
         return self.__str__()
 
 
-
+@py2_unicode_compatible
 class OntologyTermNode(MappingTargetNode):
     def __init__(self, term_id):
         super(OntologyTermNode, self).__init__()
@@ -237,7 +250,7 @@ class OntologyTermNode(MappingTargetNode):
     def namespace(self):
         return self.term_id.split(":")[0]
 
-
+@py2_unicode_compatible
 class OntologyTermNode_OLD(MappingTargetNode):
     def __init__(self, term_id, consequent=False):
         super(OntologyTermNode, self).__init__()
@@ -262,7 +275,7 @@ class OntologyTermNode_OLD(MappingTargetNode):
     def namespace(self):
         return self.term_id.split(":")[0]
 
-
+@py2_unicode_compatible
 class RealValuePropertyNode(ENode):
     def __init__(self, property_term_id, value, unit_term_id):
         super(RealValuePropertyNode, self).__init__()
@@ -290,7 +303,7 @@ class RealValuePropertyNode(ENode):
         return self.__str__()
 
 
-
+@py2_unicode_compatible
 class TextReasoningGraph:
     def __init__(self, prohibit_cycles=True):
         self.token_nodes = set()

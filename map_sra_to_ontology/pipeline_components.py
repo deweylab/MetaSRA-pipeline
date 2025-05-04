@@ -3,6 +3,7 @@
 ###########################################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 import json
 from collections import defaultdict, deque
 import re
@@ -15,10 +16,10 @@ from nltk.util import ngrams
 from nltk.metrics.distance import edit_distance
 
 import pkg_resources as pr
-import json
 import os
 from os.path import join
 
+from . import jsonio
 from . import load_ontology
 from .text_reasoning_graph import *
 from . import ball_tree_distance
@@ -112,8 +113,8 @@ class Pipeline:
         tokens = set()
         for tag, val in tag_to_val.items():
             kv_node = KeyValueNode(
-                tag.encode('utf-8'), 
-                val.encode('utf-8')
+                tag, 
+                val
             )    
             tm_graph.add_node(kv_node)
 
@@ -450,7 +451,7 @@ class PropertySpecificSynonym_Stage:
                                     for syn_set in self.property_id_to_syn_sets[key_term_node.term_id]:
                                         #print "Is the issue with %s" % down_node.token_str
                                         #print down_node.token_str
-                                        down_node_str = down_node.token_str.decode('utf-8')
+                                        down_node_str = down_node.token_str
                                         if down_node_str in syn_set:
                                             for syn in syn_set:
                                                 if syn != down_node_str:
@@ -779,19 +780,15 @@ class ExactStringMatching_Stage:
             for term in og.get_mappable_terms():
                 self.terms_array.append(term)
                 tups.append((
-                    term.name.decode('utf-8'), 
+                    term.name, 
                     [curr_i]
                 ))
                 for syn in term.synonyms:
-                    try:
-                        tups.append((
-                            syn.syn_str.decode('utf-8'), 
-                            [curr_i]
-                        ))
-                    except UnicodeEncodeError:
-                        if VERBOSE:
-                            print("Warning! Unable to decode unicode of a synonym \
-                                for term %s" % term.id)
+                    tups.append((
+                        syn.syn_str, 
+                        [curr_i]
+                    ))
+
                 curr_i += 1
         self.map_trie = mt.RecordTrie("<i", tups)
 
@@ -860,7 +857,7 @@ class FuzzyStringMatching_Stage:
             self.str_to_terms = json.load(f)
 
         fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_bk_tree.pickle"))
-        with open(fname, "r") as f:
+        with open(fname, "rb") as f:
             self.bk_tree = pickle.load(f)
         
         self.query_len_thresh = query_len_thresh
@@ -1696,7 +1693,7 @@ def main():
             for x in real_val_props
         ]
     }
-    print(json.dumps(result, indent=4, separators=(',', ': ')))
+    print(jsonio.dumps(result))
     
     #print json.dumps([x.to_dict() for x in p.run(tag_to_val)], indent=4, separators=(',', ': '))
 

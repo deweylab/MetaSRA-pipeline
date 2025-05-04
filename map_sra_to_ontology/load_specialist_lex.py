@@ -5,6 +5,7 @@
 ###############################################################################
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 from optparse import OptionParser
 import os
 from os.path import join
@@ -33,19 +34,19 @@ class SpecialistLexicon:
         for eui, lex_info in self.lexicon.items():
             self.eui_array.append(eui)
 
-            tups.append((lex_info["base"].decode('utf-8'), [curr_i]))
+            tups.append((lex_info["base"], [curr_i]))
 
             if "spelling variants" in lex_info:
                 for spell_var in lex_info["spelling variants"]:
-                    tups.append((spell_var.decode('utf-8'), [curr_i]))
+                    tups.append((spell_var, [curr_i]))
 
             if "nominalization" in lex_info:
                 for nom in lex_info["nominalization"]:
-                    tups.append((nom.decode('utf-8'), [curr_i]))
+                    tups.append((nom, [curr_i]))
 
             if "inflection variants" in lex_info:
                 for infl_var in lex_info["inflection variants"]:
-                    tups.append((infl_var.decode('utf-8'), [curr_i]))
+                    tups.append((infl_var, [curr_i]))
 
             curr_i += 1
 

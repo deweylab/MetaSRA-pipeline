@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from __future__ import print_function
+from io import open # Python 2/3 compatibility
 import re
 from optparse import OptionParser
 try:
