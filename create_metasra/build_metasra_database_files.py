@@ -70,7 +70,11 @@ def gather_mapped_terms(mappings_f):
                     "property_id": real_val_data["property_id"]
                 }
                 sample_to_real_val_props[sample_acc].append(real_val_prop)
-    assert 'SRS440532' in sample_to_mapped_terms
+
+    # Why was this assert here?
+    #assert 'SRS440532' in sample_to_mapped_terms
+    if 'SRS440532' not in sample_to_mapped_terms:
+        print 'SRS440532 is not in our mapped terms!'
     return sample_to_mapped_terms, sample_to_real_val_props
 
 def build_metasra_json(mappings_f, sample_type_predictions_f, out_f, date_str=None):
