@@ -47,7 +47,10 @@ def main():
     pipeline = p_53()
 
     # Initialize sample type predictor
-    predictor = run_sample_type_predictor.SampleTypePredictor(cvcl_og=ont_id_to_og["4"])
+    if sys.version_info[0] == 2:
+        predictor = run_sample_type_predictor.SampleTypePredictor(cvcl_og=ont_id_to_og["4"])
+    else:
+        predictor = None
 
     all_mappings = []
     for tag_to_val in tag_to_vals:
@@ -96,11 +99,15 @@ def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, predictor):
             sup_terms.update(og.recursive_relationship(term_id, ['is_a', 'part_of']))
     mapped_terms = list(sup_terms)
 
-    predicted, confidence = predictor.predict(
-        tag_to_val, 
-        mapped_terms, 
-        real_val_props
-    )
+    if predictor:
+        predicted, confidence = predictor.predict(
+            tag_to_val, 
+            mapped_terms, 
+            real_val_props
+        )
+    else:
+        predicted = None
+        confidence = None
 
     mapping_data = {
         "mapped ontology terms": mapped_terms, 
