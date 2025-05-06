@@ -4,7 +4,7 @@ from optparse import OptionParser
 import json
 import nltk
 from nltk.tokenize import word_tokenize
-import dill
+import pickle
 import numpy as np
 from collections import Counter, defaultdict 
 
@@ -132,12 +132,12 @@ def main():
         cvcl_og=OGS[4]
     )
 
-    print("Writing trained model to dilled files...")
-    with open("sample_type_vectorizor.dill", "w") as f:
-        dill.dump(vectorizer, f)
-    with open("sample_type_classifier.dill", "w") as f:
-        dill.dump(model, f)
-    print("Finished writing trained model to dilled files.")
+    print("Writing trained model to pickle files...")
+    with open("sample_type_vectorizer.pickle", "wb") as f:
+        pickle.dump(vectorizer, f)
+    with open("sample_type_classifier.pickle", "wb") as f:
+        pickle.dump(model, f)
+    print("Finished writing trained model to pickle files.")
 
 
 

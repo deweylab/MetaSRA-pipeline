@@ -7,7 +7,6 @@ dependencies:
   - scikit-learn
   - setuptools
   - marisa-trie
-  - dill
   - nltk
   - singledispatch
   - pybktree

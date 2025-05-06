@@ -1,6 +1,6 @@
 from __future__ import print_function
 from io import open # Python 2/3 compatibility
-import dill
+import pickle
 import sys
 import os
 from os.path import join
@@ -9,7 +9,7 @@ import pkg_resources as pr
 from . import predict_sample_type
 from .predict_sample_type.learn_classifier import *
 
-# The dilled objects need the python path to point to the predict_sample_type
+# The pickled objects need the python path to point to the predict_sample_type
 # directory
 sys.path.append(pr.resource_filename(__name__, "predict_sample_type"))
 
@@ -18,12 +18,15 @@ class SampleTypePredictor:
     # versions of the Cellosaurus. The default is None, which will use the
     # Cellosaurus version that was used to train the classifier.
     def __init__(self, cvcl_og=None):
-        vectorizer_f = pr.resource_filename(__name__, join("predict_sample_type", "sample_type_vectorizor.dill"))
-        classifier_f = pr.resource_filename(__name__, join("predict_sample_type", "sample_type_classifier.dill"))
+        vectorizer_f = pr.resource_filename(__name__, join("predict_sample_type", "sample_type_vectorizer.pickle"))
+        classifier_f = pr.resource_filename(__name__, join("predict_sample_type", "sample_type_classifier.pickle"))
         with open(vectorizer_f, "rb") as f:
-            self.vectorizer = dill.load(f)
+            self.vectorizer = pickle.load(f)
         with open(classifier_f, "rb") as f:
-            self.model = dill.load(f)
+            if sys.version_info[0] == 2:
+                self.model = pickle.load(f)
+            else:
+                self.model = pickle.load(f, encoding='latin1')
         if cvcl_og is not None:
             self.model.cvcl_og = cvcl_og
     

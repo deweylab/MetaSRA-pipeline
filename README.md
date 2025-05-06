@@ -14,7 +14,6 @@ This project currently uses Python 2.7 and requires the following Python librari
 - scikit-learn (http://scikit-learn.org/stable/)
 - setuptools (https://pypi.python.org/pypi/setuptools)
 - marisa-trie (https://pypi.python.org/pypi/marisa-trie)
-- dill (https://pypi.org/project/dill/)
 - nltk (http://www.nltk.org/)
 - singledispatch (https://pypi.python.org/pypi/singledispatch)
 - pybktree (https://pypi.python.org/pypi/pybktree)

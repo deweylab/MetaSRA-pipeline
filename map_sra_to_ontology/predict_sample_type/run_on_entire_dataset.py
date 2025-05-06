@@ -5,8 +5,7 @@ import json
 import sys
 import os
 from os.path import join
-import dill
-
+import pickle
 from collections import Counter, defaultdict
 
 import numpy as np
@@ -97,16 +96,19 @@ def main():
 
     vectorizer_f = pr.resource_filename(
         __name__, 
-        "sample_type_vectorizor.dill"
+        "sample_type_vectorizer.pickle"
     )
     classifier_f = pr.resource_filename(
         __name__, 
-        "sample_type_classifier.dill"
+        "sample_type_classifier.pickle"
     ) 
     with open(vectorizer_f, 'rb') as f:
-        vectorizer = dill.load(f)
+        vectorizer = pickle.load(f)
     with open(classifier_f, 'rb') as f:
-        model = dill.load(f)
+        if sys.version_info[0] == 2:
+            model = pickle.load(f)
+        else:
+            model = pickle.load(f, encoding='latin1')
 
     # Build sample to tag to values
     with open(sample_to_metadata_f, 'r') as f:
