@@ -12,7 +12,7 @@ import numpy as np
 import pkg_resources as pr
 resource_package = __name__
 sys.path.append(pr.resource_filename(resource_package, ".."))
-import learn_classifier as lc
+from . import learn_classifier as lc
 import load_ontology
 
 ONT_IDS = ["12", "1", "2", "16", "4"]
