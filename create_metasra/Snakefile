@@ -10,7 +10,7 @@ localrules: all, download_SRAdb, compute_chunks, gather_term_mappings, build_fin
 
 # This variable is used as the ID of the pipeline run. I usually use the date, but it
 # can be any string.
-VERSION = '2025-02-18'
+VERSION = '2025-06-02'
 
 # Where to save presistent output
 PRESISTENT_DIR = f'/ua/ml-group/metadata-standardization-automation/metaSRA-build/{VERSION}'
