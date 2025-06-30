@@ -415,12 +415,14 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
 
 def parse_entity(lines, restrict_to_idspaces):
     def parse_term_attrs(lines):
-        attrs = {}
+        attrs = defaultdict(list)
         for line in lines:
-            tokens = line.split(":")
-            if not tokens[0].strip() in attrs.keys():
-                attrs[tokens[0].strip()] = []
-            attrs[tokens[0].strip()].append(":".join(tokens[1:]).strip())
+            try:
+                tag, value = line.split(":", 1)
+                attrs[tag.strip()].append(value.strip())
+            except ValueError:
+                print("Error parsing line: %s" % line)
+                continue
         return attrs
 
     def parse_relationships(attrs):
@@ -547,7 +549,7 @@ def parse_entity(lines, restrict_to_idspaces):
 
 
     if lines[0].strip() == "[Term]":
-        attrs = parse_term_attrs(lines)
+        attrs = parse_term_attrs(lines[1:])
 
         if not is_include_term(attrs):
             return (ENTITY_EXCLUDED_TERM, None)
