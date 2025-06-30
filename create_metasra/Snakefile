@@ -48,6 +48,9 @@ OUTPUT_LOC = f'{PRESISTENT_DIR}/create_metasra_output'
 
 ####### These variables can be left alone.
 
+# Conda environment to use for running steps
+CONDA_ENV = '../environment.yml'
+
 # Location of SRAdb
 SRA_DB_LOCATION = 'https://gbnci.cancer.gov/sra/SRAmetadb.sqlite.gz'
 
@@ -151,7 +154,7 @@ rule extract_json_from_sqlite:
     output:
         f'{SRA_DB_DESTINATION}/sample_to_raw_metadata.{{assay}}.{{species}}.json'
     conda:
-        'metasra-py2'
+        CONDA_ENV
     shell:
         'python2.7 extract_raw_metadata_json.py {input} {output}'
 
@@ -200,14 +203,14 @@ rule run_term_mapping:
     output:
         f'{CONDOR_WORK_LOC}/{{assay}}.{{species}}.{{chunk}}/{FINISH_FILENAME}'
     conda:
-        "metasra-py2"
+        CONDA_ENV
     shell:
         #f"""
         #cd {METASRA_REPO}
         #source init-environment.sh
         #cd create_metasra
         """
-        python2.7 condor_run_pipeline.py \
+        python condor_run_pipeline.py \
             -s {input.samples_list} \
             -m {input.sample_to_raw_metadata} \
             -o {output}
@@ -276,10 +279,10 @@ rule predict_sample_type:
             OUTPUT_LOC
         )
     conda:
-        'metasra-py2'
+        CONDA_ENV
     shell:
         (
-            f'python2.7 {PIPELINE_SRC_LOC}/predict_sample_type/run_on_entire_dataset.py'
+            f'python {PIPELINE_SRC_LOC}/predict_sample_type/run_on_entire_dataset.py'
             ' {input.metadata} {input.mappings} {output.result} {output.log}'
         )
 
@@ -306,10 +309,10 @@ rule build_database_files:
             today=VERSION
         )
     conda:
-        'metasra-py2'
+        CONDA_ENV
     shell:
         (
-            f'python2.7 {CREATE_METASRA_SRC}/build_metasra_database_files.py'
+            f'python {CREATE_METASRA_SRC}/build_metasra_database_files.py'
             ' {input.mappings} {input.predictions} {output.json_f} {output.sql_f}'
         )
 
@@ -340,7 +343,7 @@ rule build_final_json_db:
             today=VERSION
         )
     conda:
-        'metasra-py2'
+        CONDA_ENV
     shell:
         (
             'python2.7 join_assay_json_dbs.py '
@@ -371,7 +374,7 @@ rule build_final_sqlite_db:
             today=VERSION
         )
     conda:
-        'metasra-py2'
+        CONDA_ENV
     output:
         '{output_loc}/metasra.final.{today}.sqlite'.format(
             output_loc=OUTPUT_LOC,
