@@ -768,7 +768,8 @@ class ExactStringMatching_Stage:
         self.match_numeric = match_numeric
         if VERBOSE:
             print("Building trie...")
-        tups = deque()
+        trie_keys = []
+        trie_values = []
         self.terms_array = deque()
         curr_i = 0
 
@@ -779,18 +780,15 @@ class ExactStringMatching_Stage:
         for og in ontology_graphs:
             for term in og.get_mappable_terms():
                 self.terms_array.append(term)
-                tups.append((
-                    term.name, 
-                    [curr_i]
-                ))
+                value = (curr_i,)
+                trie_keys.append(term.name)
+                trie_values.append(value)
                 for syn in term.synonyms:
-                    tups.append((
-                        syn.syn_str, 
-                        [curr_i]
-                    ))
+                    trie_keys.append(syn.syn_str)
+                    trie_values.append(value)
 
                 curr_i += 1
-        self.map_trie = mt.RecordTrie("<i", tups)
+        self.map_trie = mt.RecordTrie("<i", zip(trie_keys, trie_values))
 
     def map_string(self, query):
         mapped = []
