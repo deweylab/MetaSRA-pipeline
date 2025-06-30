@@ -93,7 +93,7 @@ def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, predictor):
     for og in ont_id_to_og.values():
         for term_id in mapped_terms:
             sup_terms.update(og.recursive_relationship(term_id, ['is_a', 'part_of']))
-    mapped_terms = list(sup_terms)
+    mapped_terms = sorted(sup_terms)
 
     predicted, confidence = predictor.predict(
         tag_to_val, 
