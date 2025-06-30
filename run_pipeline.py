@@ -27,6 +27,8 @@ def main():
     #parser.add_option("-f", "--key_value_file", help="JSON file storing key-value pairs describing sample")
     parser.add_option("-o", "--output", dest="output", default=None,
                       help="Output file to which to write results (default: stdout)")
+    parser.add_option("-f", "--fine_grained", dest="fine_grained", default=False,
+                      action="store_true", help="Output mappings stratified by explicit and consequent")
     (options, args) = parser.parse_args()
    
     input_f = args[0]
@@ -61,7 +63,7 @@ def main():
     outputs = []
     for tag_to_val, mappings in zip(tag_to_vals, all_mappings):
         outputs.append(
-            run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings, predictor)
+            run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings, predictor, options.fine_grained)
         )
     output_string = jsonio.dumps(outputs)
     if options.output:
@@ -70,16 +72,21 @@ def main():
     else:
         print(output_string)
 
-def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, predictor): 
-    
-    mapped_terms = []
+def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, predictor, fine_grained=False): 
+    explicitly_mapped_terms = []
+    consequent_terms = []
     real_val_props = []
     for mapped_term_data in mapping_data["mapped_terms"]:
         term_id = mapped_term_data["term_id"]
+        is_consequent = mapped_term_data["consequent"]
         for ont in ont_id_to_og.values():
             if term_id in ont.get_mappable_term_ids():
-                mapped_terms.append(term_id)
+                if is_consequent:
+                    consequent_terms.append(term_id)
+                else:
+                    explicitly_mapped_terms.append(term_id)
                 break
+    mapped_terms = explicitly_mapped_terms + consequent_terms
     for real_val_data in mapping_data["real_value_properties"]:
         real_val_prop = {
             "unit_id":real_val_data["unit_id"], 
@@ -106,6 +113,10 @@ def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, predictor):
         "real-value properties": real_val_props, 
         "sample type": predicted, 
         "sample-type confidence": confidence}
+    
+    if fine_grained:
+        mapping_data["explicitly_mapped_terms"] = explicitly_mapped_terms
+        mapping_data["consequent_terms"] = consequent_terms
 
     return mapping_data
     #print json.dumps(mapping_data, indent=4, separators=(',', ': '))
