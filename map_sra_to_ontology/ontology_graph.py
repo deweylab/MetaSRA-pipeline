@@ -18,6 +18,7 @@ import pkg_resources as pr
 import os
 from os.path import join
 import json
+from collections import defaultdict
 
 resource_package = __name__
 
