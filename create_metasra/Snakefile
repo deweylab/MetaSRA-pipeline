@@ -156,7 +156,7 @@ rule extract_json_from_sqlite:
     conda:
         CONDA_ENV
     shell:
-        'python2.7 extract_raw_metadata_json.py {input} {output}'
+        'python extract_raw_metadata_json.py {input} {output}'
 
 
 ##################################################################################
