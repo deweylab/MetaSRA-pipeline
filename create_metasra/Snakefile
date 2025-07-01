@@ -346,7 +346,7 @@ rule build_final_json_db:
         CONDA_ENV
     shell:
         (
-            'python2.7 join_assay_json_dbs.py '
+            'python join_assay_json_dbs.py '
             '{input.human_rna},'
             '{input.human_chip},'
             '{input.mouse_rna},'
@@ -382,7 +382,7 @@ rule build_final_sqlite_db:
         )
     shell:
         (
-            'python2.7 join_assay_sqlite_dbs.py '
+            'python join_assay_sqlite_dbs.py '
             '{input.human_rna},'
             '{input.human_chip},'
             '{input.mouse_rna},'
