@@ -216,7 +216,7 @@ def build_subdb(the_db_loc, sub_db_loc, assay, taxon):
             print("Inserting entries into 'sample_attribute' table...")
             for sam_acc, tag_to_val in sample_to_tag_to_val.items():
                 for tag, val in tag_to_val.items():
-                    insert_tuple = (sam_acc, tag.decode('utf-8'), val.decode('utf-8'))
+                    insert_tuple = (sam_acc, tag, val)
                     sub_c.execute(insert_update_sample_attribute_sql, insert_tuple) 
 
             # Create sample table
