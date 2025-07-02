@@ -209,11 +209,12 @@ rule run_term_mapping:
         #cd {METASRA_REPO}
         #source init-environment.sh
         #cd create_metasra
-        """
+        f"""
+        PYTHONPATH={METASRA_REPO} \
         python condor_run_pipeline.py \
-            -s {input.samples_list} \
-            -m {input.sample_to_raw_metadata} \
-            -o {output}
+            -s {{input.samples_list}} \
+            -m {{input.sample_to_raw_metadata}} \
+            -o {{output}}
         """
 
 
