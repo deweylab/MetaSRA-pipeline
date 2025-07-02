@@ -1,17 +1,6 @@
-from optparse import OptionParser
-import json
-from sets import Set
-import sys
-from collections import defaultdict, deque
-import time
-import traceback
-import os
-from os.path import join, realpath
+from collections import defaultdict
 
-import map_sra_to_ontology
 from map_sra_to_ontology import config
-from map_sra_to_ontology import ontology_graph
-from map_sra_to_ontology import load_ontology as lo
 from map_sra_to_ontology.pipeline_components import *
 
 INCLUDED_ONTOLOGIES = ["CL", "DOID", "UBERON"]
