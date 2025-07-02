@@ -156,8 +156,10 @@ rule extract_json_from_sqlite:
     conda:
         CONDA_ENV
     shell:
-        'python extract_raw_metadata_json.py {input} {output}'
-
+        (
+            f'PYTHONPATH={METASRA_REPO} '
+            'python extract_raw_metadata_json.py {input} {output}'
+        )
 
 ##################################################################################
 # Prepare chunks for parallel execution
