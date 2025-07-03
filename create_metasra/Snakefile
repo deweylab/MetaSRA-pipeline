@@ -285,6 +285,7 @@ rule predict_sample_type:
         CONDA_ENV
     shell:
         (
+            f'PYTHONPATH={METASRA_REPO} '
             f'python {PIPELINE_SRC_LOC}/predict_sample_type/run_on_entire_dataset.py'
             ' {input.metadata} {input.mappings} {output.result} {output.log}'
         )

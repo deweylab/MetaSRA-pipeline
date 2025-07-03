@@ -10,10 +10,9 @@ from collections import Counter, defaultdict
 
 import numpy as np
 import pkg_resources as pr
-resource_package = __name__
-sys.path.append(pr.resource_filename(resource_package, ".."))
-from . import learn_classifier as lc
-import load_ontology
+
+from map_sra_to_ontology.predict_sample_type import learn_classifier as lc
+from map_sra_to_ontology import load_ontology
 
 ONT_IDS = ["12", "1", "2", "16", "4"]
 OGS = [load_ontology.load(ont_id)[0] for ont_id in ONT_IDS]
