@@ -59,7 +59,6 @@ class OneVsRestClassifier:
         classif_type, 
         ngram_vec_scaffold, 
         term_vec_scaffold, 
-        cvcl_og, 
         num_features_per_class=50, 
         use_predicted_term_rules=True):
 
@@ -71,7 +70,6 @@ class OneVsRestClassifier:
         self.feature_cutoff = -1 * num_features_per_class
 
         self.use_predicted_term_rules = use_predicted_term_rules
-        self.cvcl_og = cvcl_og
 
     def _features(self, feature_v):
         new_feature_v = []
@@ -129,7 +127,7 @@ class OneVsRestClassifier:
 
         
 
-    def predict(self, q_feature_v, predicted_terms, real_value_props):
+    def predict(self, q_feature_v, predicted_terms, real_value_props, cvcl_og):
 
         all_types = set([
             "cell_line", 
@@ -211,7 +209,7 @@ class OneVsRestClassifier:
             if not is_xenograft:
                 for pred_term in predicted_terms:
                     if pred_term.split(":")[0] == "CVCL":
-                        for subset in self.cvcl_og.id_to_term[pred_term].subsets:
+                        for subset in cvcl_og.id_to_term[pred_term].subsets:
                             if subset in cellosaurus_subset_to_possible_types:
                                 #print ( # TODO REMOVE
                                 #    "This sample mapped to " + str(pred_term)

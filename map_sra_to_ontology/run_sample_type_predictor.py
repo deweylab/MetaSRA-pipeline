@@ -14,10 +14,9 @@ from .predict_sample_type.learn_classifier import *
 sys.path.append(pr.resource_filename(__name__, "predict_sample_type"))
 
 class SampleTypePredictor:
-    # The constructor accepts a CVCL ontology graph to allow for use of more recent
-    # versions of the Cellosaurus. The default is None, which will use the
-    # Cellosaurus version that was used to train the classifier.
-    def __init__(self, cvcl_og=None):
+    # The constructor requires a CVCL (Cellosaurus) ontology graph, ideally the one
+    # used to predict the ontology terms for the metadata.
+    def __init__(self, cvcl_og):
         vectorizer_f = pr.resource_filename(__name__, join("predict_sample_type", "sample_type_vectorizer.pickle"))
         classifier_f = pr.resource_filename(__name__, join("predict_sample_type", "sample_type_classifier.pickle"))
         with open(vectorizer_f, "rb") as f:
@@ -27,8 +26,7 @@ class SampleTypePredictor:
                 self.model = pickle.load(f)
             else:
                 self.model = pickle.load(f, encoding='latin1')
-        if cvcl_og is not None:
-            self.model.cvcl_og = cvcl_og
+        self.cvcl_og = cvcl_og
     
     def predict(self, tag_to_val, mapped_terms, real_props):
         # Make sample-type prediction
@@ -38,7 +36,8 @@ class SampleTypePredictor:
         predicted, confidence = self.model.predict(
             feat_v,
             mapped_terms,
-            real_props)
+            real_props,
+            self.cvcl_og)
         return predicted, confidence
 
 def run_sample_type_prediction(tag_to_val, mapped_terms, real_props):

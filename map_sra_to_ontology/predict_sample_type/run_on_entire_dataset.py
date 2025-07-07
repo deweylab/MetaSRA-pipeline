@@ -94,6 +94,8 @@ def main():
         mapping_f
     )
 
+    cvcl_og = OGS[ONT_IDS.index("4")]
+
     vectorizer_f = pr.resource_filename(
         __name__, 
         "sample_type_vectorizer.pickle"
@@ -139,7 +141,8 @@ def main():
         predicted, confidence = model.predict(
             feat_v, 
             sample_to_predicted_terms_all[sample_acc], 
-            sample_to_real_val_props_all[sample_acc]
+            sample_to_real_val_props_all[sample_acc],
+            cvcl_og
         )
         if predicted == None or confidence == None:
             #print "HUH? Sample %s was predicted as None..." % sample_acc

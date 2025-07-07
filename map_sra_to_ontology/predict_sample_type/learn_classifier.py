@@ -220,7 +220,6 @@ def learn_model(
         "logistic_regression_l1", 
         ngram_vec_scaffold, 
         term_vec_scaffold, 
-        cvcl_og, 
         num_features_per_class=num_features_per_class, 
         use_predicted_term_rules=True
     )
