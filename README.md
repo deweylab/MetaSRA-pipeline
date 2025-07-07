@@ -8,7 +8,7 @@ The MetaSRA can be searched and downloaded from: http://metasra.biostat.wisc.edu
 
 ## Dependencies
 
-This project is currently compatible with both Python 3 and Python 2.7 and requires the following Python libraries:
+This project is currently compatible with Python 3 and requires the following Python libraries:
 - numpy (http://www.numpy.org)
 - scipy (https://www.scipy.org/scipylib/)
 - scikit-learn (http://scikit-learn.org/stable/)
@@ -20,7 +20,7 @@ This project is currently compatible with both Python 3 and Python 2.7 and requi
 
 ### Installation of dependencies
 
-A conda environment specification is provided in the `environment.yml` file for Python 3 and `environment-py2.yml` for Python 2.7. To create the environment, run the following (for Python 3) from the root directory of the repository:
+A conda environment specification is provided in the `environment.yml` file. To create the environment, run the following from the root directory of the repository:
 
 ```bash
 mamba env create -n metasra -f environment.yml
@@ -33,16 +33,10 @@ mamba activate metasra
 
 #### NLTK setup
 
-The nltk library requires the punkt tokenizer to be downloaded.  To do this, for Python 3, run:
+The nltk library requires the punkt tokenizer to be downloaded.  To do this, run:
 
 ```bash
 python -c "import nltk; nltk.download('punkt_tab')"
-```
-
-For Python 2.7, run:
-
-```bash
-python -c "import nltk; nltk.download('punkt')"
 ```
 
 #### Environment variable setup
@@ -52,13 +46,6 @@ Finally, the PYTHONPATH environment variable must be set to include the current 
 ```bash
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 ```
-
-For Python 2.7, additionally run the following command so that UTF-8 encodings are handled correctly:
-
-```bash
-export PYTHONIOENCODING=UTF-8
-```
-
 
 ## Setup
 

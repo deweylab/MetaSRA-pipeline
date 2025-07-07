@@ -2,9 +2,9 @@ channels:
   - conda-forge
 dependencies:
   - python
-  - numpy<1.20.0
+  - numpy
   - scipy
-  - scikit-learn<0.23.0
+  - scikit-learn
   - setuptools
   - marisa-trie
   - nltk

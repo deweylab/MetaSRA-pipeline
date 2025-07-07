@@ -22,10 +22,7 @@ class SampleTypePredictor:
         with open(vectorizer_f, "rb") as f:
             self.vectorizer = pickle.load(f)
         with open(classifier_f, "rb") as f:
-            if sys.version_info[0] == 2:
-                self.model = pickle.load(f)
-            else:
-                self.model = pickle.load(f, encoding='latin1')
+            self.model = pickle.load(f)
         self.cvcl_og = cvcl_og
     
     def predict(self, tag_to_val, mapped_terms, real_props):
