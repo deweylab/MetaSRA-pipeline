@@ -412,7 +412,8 @@ def parse_obo(obo_file, restrict_to_idspaces=None, include_obsolete=False):
 
     return id_to_term, name_to_ids    
 
-
+syn_pattern = re.compile(r'"((?:\\.|[^"\\])*)"\s+(.+?)\s+\[([^\]]*)\]')
+prop_val_pattern = re.compile('\".+\"')
 
 def parse_entity(lines, restrict_to_idspaces):
     def parse_term_attrs(lines):
@@ -465,7 +466,7 @@ def parse_entity(lines, restrict_to_idspaces):
             the second element is the synonym type (e.g. 'EXACT' or 'NARROW')
         """
         synonyms = set()
-        syn_pattern = re.compile(r'"((?:\\.|[^"\\])*)"\s+(.+?)\s+\[([^\]]*)\]')
+        
         for syn in raw_syns:
             m = syn_pattern.match(syn)
             if m:
@@ -520,7 +521,7 @@ def parse_entity(lines, restrict_to_idspaces):
         prop_vals = set()
         for prop_val in raw_prop_vals:
             if "\"" in prop_val:
-                m = re.search('\".+\"', prop_val)
+                m = prop_val_pattern.search(prop_val)
                 if m:
                     prop = prop_val.split('"')[0].strip()
                     val = m.group(0)[1:-1].strip()
