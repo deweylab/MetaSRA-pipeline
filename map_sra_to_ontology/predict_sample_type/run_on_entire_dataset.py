@@ -13,6 +13,7 @@ import pkg_resources as pr
 
 from map_sra_to_ontology.predict_sample_type import learn_classifier as lc
 from map_sra_to_ontology import load_ontology
+from map_sra_to_ontology.predict_sample_type.learn_classifier import *
 
 ONT_IDS = ["12", "1", "2", "16", "4"]
 OGS = [load_ontology.load(ont_id)[0] for ont_id in ONT_IDS]
