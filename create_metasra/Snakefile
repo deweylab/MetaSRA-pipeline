@@ -316,6 +316,7 @@ rule build_database_files:
         CONDA_ENV
     shell:
         (
+            f'PYTHONPATH={METASRA_REPO} '
             f'python {CREATE_METASRA_SRC}/build_metasra_database_files.py'
             ' {input.mappings} {input.predictions} {output.json_f} {output.sql_f}'
         )
