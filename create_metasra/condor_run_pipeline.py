@@ -9,6 +9,7 @@ import json
 import sys
 import traceback
 import  os
+import nltk
 from os.path import realpath
 from optparse import OptionParser
 
@@ -61,6 +62,9 @@ def main():
 
 
 def run_pipeline(pipeline_func, sample_accs, sample_to_metadata):
+    # Download NLTK tokenizer if needed
+    nltk.download('punkt_tab')
+    
     sample_acc_to_matches = {}
     c = 1
     for sample_acc in sample_accs:
