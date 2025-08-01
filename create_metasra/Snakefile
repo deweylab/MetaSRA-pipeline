@@ -40,7 +40,7 @@ PIPELINE_SRC_LOC = f'{METASRA_REPO}/map_sra_to_ontology'
 CREATE_METASRA_SRC = f'{METASRA_REPO}/create_metasra'
 
 # Location of the Condor work directory
-CONDOR_WORK_LOC = f'{PRESISTENT_DIR}/condor_work'
+CONDOR_WORK_LOC = f'{PRESISTENT_DIR}/chunk_results'
 
 # Location of the output files
 OUTPUT_LOC = f'{PRESISTENT_DIR}/create_metasra_output'
@@ -59,9 +59,6 @@ PER_JOB_OUTPUT_FILENAME = 'metasra_mappings.json'
 
 # Name of the Condor submit file
 SUBMIT_FILENAME = 'create_metasra.submit'
-
-# Name of the file that Condor has terminated
-FINISH_FILENAME = 'finished.txt'
 
 # The name of the file storing the raw output from all Condor jobs
 RAW_MAPPINGS_FILENAME = 'metasra_raw_mappings.{}.json'.format(VERSION)
@@ -203,7 +200,7 @@ rule run_term_mapping:
         samples_list=f'{CONDOR_INPUT_LOC}/sample_chunks.{{assay}}.{{species}}/chunk_{{chunk}}.json',
         sample_to_raw_metadata=f'{SRA_DB_DESTINATION}/sample_to_raw_metadata.{{assay}}.{{species}}.json'
     output:
-        f'{CONDOR_WORK_LOC}/{{assay}}.{{species}}.{{chunk}}/{FINISH_FILENAME}'
+        f'{CONDOR_WORK_LOC}/{{assay}}.{{species}}.{{chunk}}.json'
     conda:
         CONDA_ENV
     shell:
@@ -227,7 +224,7 @@ rule run_term_mapping:
 def gather_term_mappings_input(wildcards):
     chunks_dir = checkpoints.compute_chunks.get(**wildcards).output[0]
     return expand(
-        f'{CONDOR_WORK_LOC}/{{assay}}.{{species}}.{{chunk}}/{FINISH_FILENAME}',
+        f'{CONDOR_WORK_LOC}/{{assay}}.{{species}}.{{chunk}}.json',
         chunk=glob_wildcards(f'{chunks_dir}/chunk_{{chunk}}.json').chunk,
         **wildcards
     )
