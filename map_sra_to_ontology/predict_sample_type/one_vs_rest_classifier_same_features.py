@@ -211,18 +211,23 @@ class OneVsRestClassifier:
             if not is_xenograft:
                 for pred_term in predicted_terms:
                     if pred_term.split(":")[0] == "CVCL":
-                        for subset in self.cvcl_og.id_to_term[pred_term].subsets:
-                            if subset in cellosaurus_subset_to_possible_types:
-                                #print ( # TODO REMOVE
-                                #    "This sample mapped to " + str(pred_term)
-                                #    "which is a " + str(subset) + " type of cell line."
-                                #) # TODO REMOVE
-                                zero_types = all_types.difference(set(
-                                    cellosaurus_subset_to_possible_types[subset]
-                                ))
-                                for typ in zero_types:
-                                    class_to_confidence[typ] = 0.0
-                                found_cell_line_type = True    
+                        # CVCL version mismatch between trained model and input terms
+                        # can lead to failure to look up CVCL terms. This skips terms
+                        # that have a CVCL ID but aren't in the model's ontology.
+                        cvcl_term = self.cvcl_og.id_to_term.get(pred_term)
+                        if cvcl_term is not None:
+                            for subset in cvcl_term.subsets:
+                                if subset in cellosaurus_subset_to_possible_types:
+                                    #print ( # TODO REMOVE
+                                    #    "This sample mapped to " + str(pred_term)
+                                    #    "which is a " + str(subset) + " type of cell line."
+                                    #) # TODO REMOVE
+                                    zero_types = all_types.difference(set(
+                                        cellosaurus_subset_to_possible_types[subset]
+                                    ))
+                                    for typ in zero_types:
+                                        class_to_confidence[typ] = 0.0
+                                    found_cell_line_type = True    
                             
             # If the cell-line type is not found, then rule out possible 
             # categories based on mapped ontology terms
