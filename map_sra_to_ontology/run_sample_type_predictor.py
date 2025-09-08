@@ -6,12 +6,7 @@ import os
 from os.path import join
 import pkg_resources as pr
 
-from . import predict_sample_type
-from .predict_sample_type.learn_classifier import *
-
-# The pickled objects need the python path to point to the predict_sample_type
-# directory
-sys.path.append(pr.resource_filename(__name__, "predict_sample_type"))
+from .predict_sample_type.learn_classifier import get_ngrams_from_tag_to_val
 
 class SampleTypePredictor:
     # The constructor requires a CVCL (Cellosaurus) ontology graph, ideally the one

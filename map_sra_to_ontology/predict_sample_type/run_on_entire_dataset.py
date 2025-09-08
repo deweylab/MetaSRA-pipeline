@@ -10,8 +10,7 @@ from collections import Counter, defaultdict
 
 import numpy as np
 import pkg_resources as pr
-resource_package = __name__
-sys.path.append(pr.resource_filename(resource_package, ".."))
+
 from . import learn_classifier as lc
 import load_ontology
 

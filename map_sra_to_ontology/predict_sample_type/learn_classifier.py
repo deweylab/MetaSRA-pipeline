@@ -12,8 +12,6 @@ import os
 from os.path import join
 import sys
 import pkg_resources as pr
-resource_package = __name__
-sys.path.append(pr.resource_filename(resource_package, ".."))
 
 from .one_vs_rest_classifier_same_features import OneVsRestClassifier
 from map_sra_to_ontology import load_ontology

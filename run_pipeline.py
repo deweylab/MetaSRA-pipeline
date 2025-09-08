@@ -19,7 +19,6 @@ from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import config
 from map_sra_to_ontology import run_sample_type_predictor
 from map_sra_to_ontology import jsonio
-from predict_sample_type.learn_classifier import *
 from map_sra_to_ontology.pipeline_components import *
 
 def main():
