@@ -46,14 +46,13 @@ def gather_mappable_terms():
     return sorted(list(mappable_terms))
 
 def gather_mapped_terms(mappings_f):
-    sample_to_mapped_terms = defaultdict(lambda: set())
-    sample_to_real_val_props = defaultdict(lambda: [])
+    sample_to_directly_mapped_terms = defaultdict(set)
+    sample_to_consequent_mapped_terms = defaultdict(set)
+    sample_to_real_val_props = defaultdict(list)
     #for fname in os.listdir(matches_file_dir):
     with open(mappings_f, 'r') as f:
         j = json.load(f)
         for sample_acc, mapping_data in j.items():
-            sample_to_mapped_terms[sample_acc] = set()
-            sample_to_real_val_props[sample_acc] = []
             if len(mapping_data["mapped_terms"]) == 0:
                 #print "Sample %s has mapped to no terms." % sample_acc
                 pass
@@ -61,7 +60,10 @@ def gather_mapped_terms(mappings_f):
                 term_id = mapped_term_data["term_id"]
                 for ont in ONT_ID_TO_OG.values():
                     if term_id in ont.get_mappable_term_ids():
-                        sample_to_mapped_terms[sample_acc].add(term_id)
+                        if mapped_term_data.get('consequent'):
+                            sample_to_consequent_mapped_terms[sample_acc].add(term_id)
+                        else:
+                            sample_to_directly_mapped_terms[sample_acc].add(term_id)
                         break
             for real_val_data in mapping_data["real_value_properties"]:
                 real_val_prop = {
@@ -73,13 +75,14 @@ def gather_mapped_terms(mappings_f):
 
     # Why was this assert here?
     #assert 'SRS440532' in sample_to_mapped_terms
-    if 'SRS440532' not in sample_to_mapped_terms:
-        print('SRS440532 is not in our mapped terms!')
-    return sample_to_mapped_terms, sample_to_real_val_props
+    return sample_to_directly_mapped_terms, sample_to_consequent_mapped_terms, sample_to_real_val_props
 
 def build_metasra_json(mappings_f, sample_type_predictions_f, out_f, date_str=None):
-    sample_to_mapped_terms, sample_to_real_val_props = gather_mapped_terms(mappings_f)
-    print("Gathered %d samples" % len(sample_to_mapped_terms))  
+    sample_to_directly_mapped_terms, sample_to_consequent_mapped_terms, sample_to_real_val_props = gather_mapped_terms(mappings_f)
+
+    sample_set = sample_to_directly_mapped_terms.keys() | sample_to_consequent_mapped_terms.keys()
+
+    print("Gathered %d samples" % len(sample_set))  
  
     raw_pred_to_sample_type = {
         "cell_line":"cell line",
@@ -90,31 +93,42 @@ def build_metasra_json(mappings_f, sample_type_predictions_f, out_f, date_str=No
         "tissue":"tissue"}
     with open(sample_type_predictions_f, "r") as f:
         sample_to_predictions = json.load(f)
-    mod_sample_to_predictions = defaultdict(lambda: [None, None])
-    for sample, prediction in sample_to_predictions.items():
-        mod_sample_to_predictions[sample] = (
-            raw_pred_to_sample_type[prediction[0]], 
+    mod_sample_to_predictions = {
+        sample: (
+            raw_pred_to_sample_type[prediction[0]],
             prediction[1]
         )
+        for sample, prediction in sample_to_predictions.items()
+    }
     sample_to_predictions = mod_sample_to_predictions 
 
     print("Hmm... now there are %d samples" % len(sample_to_predictions))
 
     sample_to_annotated_data = {
         x: {
-            "mapped ontology terms": list(sample_to_mapped_terms[x]), 
+            "mapped ontology terms": list(
+                sample_to_directly_mapped_terms.get(x, set())
+                | sample_to_consequent_mapped_terms.get(x, set())
+            ),
+            "directly mapped ontology terms": list(sample_to_directly_mapped_terms.get(x, set())),
+            "consequent mapped ontology terms": list(sample_to_consequent_mapped_terms.get(x, set())), 
             "real-value properties": sample_to_real_val_props[x], 
             "sample type": sample_to_predictions[x][0], 
             "sample-type confidence": sample_to_predictions[x][1]
-        } 
-        for x in sample_to_mapped_terms
+        }
+        for x in sample_set
     }
 
     with open(out_f, 'w') as f:
         f.write(jsonio.dumps(sample_to_annotated_data))
 
 def build_metasra_sqlite(mappings_f, sample_type_predictions_f, out_f):
-    sample_to_mapped_terms, sample_to_real_val_props = gather_mapped_terms(mappings_f)
+    sample_to_directly_mapped_terms, sample_to_consequent_mapped_terms, sample_to_real_val_props = gather_mapped_terms(mappings_f)
+
+    sample_to_mapped_terms = defaultdict(set)
+    for mapping in (sample_to_directly_mapped_terms, sample_to_consequent_mapped_terms):
+        for sample, terms in mapping:
+            sample_to_mapped_terms[sample] |= terms
 
     raw_pred_to_sample_type = {
         "cell_line":"cell line",
