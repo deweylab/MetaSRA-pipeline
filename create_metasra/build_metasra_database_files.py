@@ -127,7 +127,7 @@ def build_metasra_sqlite(mappings_f, sample_type_predictions_f, out_f):
 
     sample_to_mapped_terms = defaultdict(set)
     for mapping in (sample_to_directly_mapped_terms, sample_to_consequent_mapped_terms):
-        for sample, terms in mapping:
+        for sample, terms in mapping.items():
             sample_to_mapped_terms[sample] |= terms
 
     raw_pred_to_sample_type = {
