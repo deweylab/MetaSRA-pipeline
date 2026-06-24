@@ -4,7 +4,7 @@ This repository contains the code implementing the pipeline used to construct th
 
 This pipeline re-annotates key-value descriptions of biological samples using biomedical ontologies.
 
-The MetaSRA can be searched and downloaded from: http://metasra.biostat.wisc.edu/
+The MetaSRA can be searched and downloaded from: https://metasra.platformx.wisc.edu/
 
 ## Dependencies
 
