@@ -8,6 +8,7 @@ import json
 from collections import defaultdict, deque
 import re
 import pickle
+import logging
 
 import numpy as np
 import nltk
@@ -47,6 +48,8 @@ TERM_ARTIFACT_COMBOS_JSON = pr.resource_filename(resource_package, join("metadat
 TOKEN_SCORING_STRATEGY = defaultdict(lambda: 1) # TODO We want an explicit score dictionary
 
 VERBOSE = False
+
+logger = logging.getLogger()
 
 class MappedTerm:
     def __init__(self, term_id, consequent, orig_key, orig_val, mapping_path):
@@ -689,6 +692,105 @@ class Delimit_Stage:
 
         return text_mining_graph
 
+class DelimitRE_Stage:
+    """
+    Delimits each artifact by a given regex and sequence
+    of delimited substrings are used to generate new
+    set of artifacts.
+    """
+
+    def __init__(self, pattern):
+        self.pattern = pattern
+
+    def run(self, text_mining_graph):
+        logger.info(f"Delimiting artifacts on regular expression '{self.pattern}'...")
+        node_to_next_nodes = defaultdict(list)
+        for t_node in text_mining_graph.token_nodes:
+            split_result = re.split(f'({self.pattern})', str(t_node.token_str))
+            if len(split_result) < 3:
+                continue
+            split_t_strs = split_result[0::2]
+            split_t_delims = split_result[1::2]
+
+            curr_interval_begin = t_node.origin_gram_start
+            edge_str = 'Delim'
+            for i, split_t_str in enumerate(split_t_strs):
+                new_t_node = TokenNode(split_t_str, curr_interval_begin, curr_interval_begin + len(split_t_str))
+                if i < len(split_t_delims):
+                    curr_interval_begin += len(split_t_delims[i])
+                    edge_str = f'Delim {split_t_delims[i]}'
+                edge = DerivesInto(edge_str)
+                node_to_next_nodes[t_node].append((edge, new_t_node))
+                curr_interval_begin += len(split_t_str)
+                
+        for s_node, next_nodes in node_to_next_nodes.items():
+            for edge, t_node in next_nodes:
+                text_mining_graph.add_edge(s_node, t_node, edge)
+
+        return text_mining_graph
+
+class CamelCut_Stage:
+    """
+    Cut up CamelCase words
+    """
+
+    def __init__(self):
+        pass
+    
+    def run(self, text_mining_graph):
+
+        logger.info("Cutting CamelCase words")
+        edge = Inference("CamelCut")
+
+        new_edges = []
+
+        for t_node in text_mining_graph.token_nodes:
+            for word, (start, end) in zip(*get_ngrams(t_node.token_str, 1)):
+                if not any(c.islower() for c in word) and not any(c.isupper() for c in word):
+                    continue
+                new_token = ""
+                new_idxs = []
+                for c, i in zip(word, t_node.char_indices[start:end]):
+                    if new_token and (
+                        (c.isupper() and not new_token[-1].isupper()) or
+                        (c.isnumeric() and not new_token[-1].isnumeric())
+                    ):
+                        new_token += " "
+                        new_idxs.append(i)
+                    new_token += c
+                    new_idxs.append(i)
+
+                new_edges.append((
+                    t_node,
+                    TokenNode(new_token, char_indices=new_idxs),
+                    edge
+                ))
+
+        # Adding this loop because the graph cannot be modified during iteration
+        for node, new_node, new_edge in new_edges:
+            text_mining_graph.add_edge(node, new_node, new_edge)
+
+        return text_mining_graph
+
+
+class StopWord_Stage:
+    """
+    Remove tokens that are stopwords
+    """
+
+    def __init__(self, language='english'):
+        self.stopwords = set(nltk.corpus.stopwords.words(language))
+        # Add capitalized versions
+        self.stopwords |= {word[0].upper() + word[1:] for word in self.stopwords}
+
+    def run(self, text_mining_graph):
+
+        logger.info('Cleaning up stopwords')
+        delete_list = [t_node for t_node in text_mining_graph.token_nodes if t_node.token_str in self.stopwords]
+        for t_node in delete_list:
+            text_mining_graph.delete_node(t_node)
+        
+        return text_mining_graph
 
 class FilterOntologyMatchesByPriority_Stage:
     """
@@ -947,6 +1049,111 @@ class FuzzyStringMatching_Stage:
 
         return text_mining_graph
 
+class FuzzyStringMatchingCandidateMention_Stage:
+    """
+    Use a pre-constructed BK-tree to perform fuzzy matching
+    for all artifacts against the ontologies.
+    """
+
+    def __init__(
+        self,
+        str_to_terms,
+        bk_tree,
+        thresh,
+        query_len_thresh=None,
+        max_edit_distance=2,
+        match_numeric=False,
+        match_only_best=True,
+        edit_distance_function=edit_distance):
+        """
+        Perform fuzzy matching to the ontologies.
+
+        :param str_to_terms: A str-to-list-of-lists dictionary mapping strings to their possible ontology
+            entries
+        :param bk_tree: The BK tree
+        :param thresh: Maximum edit distance for fuzzy match
+        """   
+        self.str_to_terms = str_to_terms
+        self.bk_tree = bk_tree        
+        self.query_len_thresh = query_len_thresh
+        self.thresh = thresh
+        self.match_numeric = match_numeric
+        self.max_edit_distance = max_edit_distance
+        self.match_only_best = match_only_best
+
+        self.edit_distance = edit_distance_function
+
+
+    def _edit_below_thresh(self, query):
+
+        matched = []
+
+        try:
+            within_edit_thresh = self.bk_tree.find(query, self.max_edit_distance)
+        except UnicodeDecodeError:
+            logger.warning(f"Encoding error querying BK-tree for query: '{query}'")        
+            return matched
+
+        str1 = query
+        for result in within_edit_thresh:
+            
+            str2 = result[1]
+            #dist = result[0]
+            dist = self.edit_distance(str1, str2)
+            if dist > self.max_edit_distance:
+                continue
+        
+            logger.debug(f"Retrieved '{str2.encode('utf-8')}' from BK-tree. It has edit distance of {dist:f}")
+            len1 = len(str1)
+            len2 = len(str2)
+            max_len = max([len1, len2])
+
+            norm_dist = float(dist)/float(max_len)
+            if norm_dist <= self.thresh:
+                for term_id, match_type in self.str_to_terms[str2]:
+                    matched.append((str2, dist, term_id, match_type))
+        return matched
+
+    def run(self, text_mining_graph):
+
+        logger.info("Performing fuzzy string matching...")
+
+        logger.debug(f"{len(text_mining_graph.token_nodes):d} total nodes to be matched")
+
+        for c, t_node in enumerate(text_mining_graph.token_nodes):
+            
+            logger.debug(f"Searching {c:d}th node in the BK-tree: '{t_node.token_str}'")
+
+            # Skip matching tokens according to fuzzy-matching parameters
+            if self.query_len_thresh and len(t_node.token_str) <= self.query_len_thresh:
+                continue
+            if not self.match_numeric and is_number(t_node.token_str):
+                continue
+
+            matched = self._edit_below_thresh(t_node.token_str)
+            if len(matched) == 0:
+                continue
+            min_edit = min([m[1] for m in matched])
+            for matched_str, edit_dist, term_id, match_type in matched:
+                
+                # Only map to the best matches
+                if self.match_only_best and edit_dist > min_edit:
+                    continue
+
+                match_node = OntologyTermNode(term_id)
+                logger.debug(f"Mapping artifact '{matched_str}' to term '{term_id}'")
+                text_mining_graph.add_edge(
+                    t_node, 
+                    match_node, 
+                    FuzzyStringMatch(
+                        t_node.token_str, 
+                        matched_str, 
+                        match_type, 
+                        edit_dist=edit_dist
+                    )
+                )
+
+        return text_mining_graph
 
 class TermArtifactCombinations_Stage:
     """

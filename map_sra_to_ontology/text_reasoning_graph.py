@@ -160,11 +160,19 @@ class KeyValueNode(ENode):
 
 @py2_unicode_compatible
 class TokenNode(ENode):
-    def __init__(self, token_str, origin_gram_start, origin_gram_end):
+    def __init__(self, token_str, origin_gram_start=None, origin_gram_end=None, char_indices=None):
         super(TokenNode, self).__init__()
         self.token_str = token_str
-        self.origin_gram_start = origin_gram_start
-        self.origin_gram_end = origin_gram_end
+        if char_indices is None:
+            assert origin_gram_start is not None
+            assert origin_gram_end is not None
+            self.origin_gram_start = origin_gram_start
+            self.origin_gram_end = origin_gram_end
+            self.char_indices = list(range(self.origin_gram_start, self.origin_gram_end))
+        else:
+            self.char_indices = char_indices
+            self.origin_gram_start = self.char_indices[0]
+            self.origin_gram_end = self.char_indices[-1] + 1
 
     def __eq__(self, other):
         if isinstance(other, TokenNode):

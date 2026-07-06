@@ -35,8 +35,14 @@ def main():
     print("Building the BK-Tree...")
     bk_tree = BKTree(string_metrics.bag_dist_multiset, string_identifiers)
 
+    print("Building the BK-Tree for candidate mentions pipeline...")
+    bk_tree_candidate_mentions = BKTree(string_metrics.CasePermissiveAlnumWeightedBagDistance(0.2, 0.2), string_identifiers)
+
     with open("fuzzy_match_bk_tree.pickle", "wb") as f:
         pickle.dump(bk_tree, f)
+
+    with open("fuzzy_match_bk_tree_candidate_mentions.pickle", "wb") as f:
+        pickle.dump(bk_tree_candidate_mentions, f)
 
     with open("fuzzy_match_string_data.json", "w") as f:
         f.write(jsonio.dumps(str_to_terms))

@@ -33,10 +33,10 @@ mamba activate metasra
 
 #### NLTK setup
 
-The nltk library requires the punkt tokenizer to be downloaded.  To do this, run:
+The nltk library requires the punkt tokenizer and stopwords to be downloaded.  To do this, run:
 
 ```bash
-python -c "import nltk; nltk.download('punkt_tab')"
+python -c "import nltk; nltk.download('punkt_tab'); nltk.download('stopwords')"
 ```
 
 #### Environment variable setup

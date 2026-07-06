@@ -14,12 +14,20 @@ from collections import defaultdict, deque
 import json
 import os
 from os.path import join
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import config
 from map_sra_to_ontology import run_sample_type_predictor
 from map_sra_to_ontology import jsonio
 from map_sra_to_ontology.pipeline_components import *
+from map_sra_to_ontology.string_metrics import CasePermissiveAlnumWeightedEditDistance
 
 def main():
     parser = OptionParser()
@@ -28,6 +36,8 @@ def main():
                       help="Output file to which to write results (default: stdout)")
     parser.add_option("-f", "--fine_grained", dest="fine_grained", default=False,
                       action="store_true", help="Output mappings stratified by explicit and consequent")
+    parser.add_option("-c", "--candidate_mentions", dest="candidate_mentions", default=False,
+                      action="store_true", help="Output candidate mentions only")
     (options, args) = parser.parse_args()
    
     input_f = args[0]
@@ -44,26 +54,39 @@ def main():
         "EFO":"16",
         "CVCL":"4"}
     ont_id_to_og = {x:load_ontology.load(x)[0] for x in ont_name_to_ont_id.values()}
-    pipeline = p_53()
+    pipeline = p_53() if not options.candidate_mentions else candidate_mentions_pipeline()
 
-    # Initialize sample type predictor
-    predictor = run_sample_type_predictor.SampleTypePredictor(cvcl_og=ont_id_to_og["4"])
+    if not options.candidate_mentions:
+        # Initialize sample type predictor
+        predictor = run_sample_type_predictor.SampleTypePredictor(cvcl_og=ont_id_to_og["4"])
 
     all_mappings = []
     for tag_to_val in tag_to_vals:
+        print("Running pipeline on sample: ", tag_to_val)
         sample_acc_to_matches = {}
         mapped_terms, real_props = pipeline.run(tag_to_val)
         mappings = {
             "mapped_terms":[x.to_dict() for x in mapped_terms],
             "real_value_properties": [x.to_dict() for x in real_props]
         }
+        for mapping in mappings["mapped_terms"]:
+            print(mapping)
         all_mappings.append(mappings)
 
     outputs = []
     for tag_to_val, mappings in zip(tag_to_vals, all_mappings):
-        outputs.append(
-            run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings, predictor, options.fine_grained)
-        )
+        if options.candidate_mentions:
+            candidate_mentions = [{"term_id": x["term_id"], 
+                                   "mapping_path": x["path_to_mapping"]} 
+                                   for x in mappings["mapped_terms"]]
+            outputs.append({
+                "candidate_mentions": candidate_mentions,
+            })
+        else:
+            outputs.append(
+                run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings, predictor, options.fine_grained)
+            )
+    
     output_string = jsonio.dumps(outputs)
     if options.output:
         with open(options.output, "w") as f:
@@ -209,6 +232,43 @@ def p_53():
         prioritize_exact
     ]
     return Pipeline(stages, defaultdict(lambda: 1.0))
+
+def candidate_mentions_pipeline():
+    """
+    Candidate string matching pipeline (v8)
+    """
+    spec_lex = SpecialistLexicon(config.specialist_lex_location())
+
+    fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_string_data.json"))
+    with open(fname, "r") as f:
+        str_to_terms = json.load(f)
+
+    fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_bk_tree_candidate_mentions.pickle"))
+    with open(fname, "rb") as f:
+        bk_tree = pickle.load(f)
+
+    pipeline = Pipeline(
+        [
+            InitKeyValueTokens_Stage(),
+            CamelCut_Stage(),
+            NGram_Stage(),
+            Lowercase_Stage(),
+            DelimitRE_Stage(r'[^\s\w]'),
+            StopWord_Stage(),
+            SPECIALISTLexInflectionalVariants(spec_lex),
+            SPECIALISTSpellingVariants(spec_lex),
+            FuzzyStringMatchingCandidateMention_Stage(
+                str_to_terms, bk_tree, 0.1,
+                query_len_thresh=2, max_edit_distance=2, match_only_best=False,
+                edit_distance_function=CasePermissiveAlnumWeightedEditDistance(0.2, 0.2)),
+            PrioritizeExactMatchOverFuzzyMatch(),
+            FilterOntologyMatchesByPriority_Stage()
+            #TermArtifactCombinations_Stage()
+        ],
+        defaultdict(lambda: 1.0)
+    )
+    
+    return pipeline
 
 if __name__ == "__main__":
     main()

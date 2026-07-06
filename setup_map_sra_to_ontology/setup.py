@@ -39,8 +39,9 @@ def main():
     build_bk_tree.main()
     
     os.replace('fuzzy_match_bk_tree.pickle', os.path.join(fuzzy_index_path, 'fuzzy_match_bk_tree.pickle'))
+    os.replace('fuzzy_match_bk_tree_candidate_mentions.pickle', os.path.join(fuzzy_index_path, 'fuzzy_match_bk_tree_candidate_mentions.pickle'))
     os.replace('fuzzy_match_string_data.json', os.path.join(fuzzy_index_path, 'fuzzy_match_string_data.json'))
-
+ 
     # Link the terms between ontologies
     print("Linking ontologies...")
     link_ontologies.main()
