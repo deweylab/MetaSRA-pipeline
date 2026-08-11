@@ -61,12 +61,11 @@ class MappedTerm:
         self.consequent = consequent
 
     def to_dict(self):
-        path = str(self.mapping_path)
         return {"term_id": self.term_id, 
             "original_key":self.orig_key,
             "original_value": self.orig_val,
             "consequent": self.consequent,
-            "path_to_mapping": path}
+            "path_to_mapping": self.mapping_path}
       
     def __str__(self):
         return str(self.to_dict())  
@@ -91,13 +90,12 @@ class RealValueProperty:
         self.mapping_path = mapping_path
 
     def to_dict(self):
-        path = str(self.mapping_path)
         return {"property_id": self.property_id,
             "value": self.value,
             "unit_id": self.unit_id,
             "original_key":self.orig_key,
             "original_value": self.orig_val,
-            "path_to_mapping": path,
+            "path_to_mapping": self.mapping_path,
             "consequent": self.consequent}
 
     def __str__(self):

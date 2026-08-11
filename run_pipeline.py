@@ -26,6 +26,7 @@ from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import config
 from map_sra_to_ontology import run_sample_type_predictor
 from map_sra_to_ontology import jsonio
+from map_sra_to_ontology import mapping_path
 from map_sra_to_ontology.pipeline_components import *
 from map_sra_to_ontology.string_metrics import CasePermissiveAlnumWeightedEditDistance
 
@@ -77,7 +78,7 @@ def main():
     for tag_to_val, mappings in zip(tag_to_vals, all_mappings):
         if options.candidate_mentions:
             candidate_mentions = [{"term_id": x["term_id"], 
-                                   "mapping_path": x["path_to_mapping"]} 
+                                   "mapping_path": mapping_path.triples_to_list(x["path_to_mapping"])} 
                                    for x in mappings["mapped_terms"]]
             outputs.append({
                 "candidate_mentions": candidate_mentions,
