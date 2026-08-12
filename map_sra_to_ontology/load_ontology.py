@@ -3,10 +3,9 @@ from io import open # Python 2/3 compatibility
 import pkg_resources as pr
 import json
 
-from . import config
 from . import ontology_graph
 
-def load(ontology_index):
+def load(ontology_index, config):
     resource_package = __name__
     config_f = pr.resource_filename(resource_package, "./ontology_configurations.json")
     with open(config_f, "r") as f:

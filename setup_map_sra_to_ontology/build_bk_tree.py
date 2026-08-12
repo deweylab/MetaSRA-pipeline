@@ -1,5 +1,6 @@
 from __future__ import print_function
 from io import open # Python 2/3 compatibility
+import os
 from pybktree import BKTree
 from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import string_metrics
@@ -9,8 +10,14 @@ import json
 import pickle
 from collections import defaultdict
 
-def main():
-    
+def main(config):
+    fuzzy_index_path = config.ref_path / 'fuzzy_matching_index'
+    os.makedirs(fuzzy_index_path, exist_ok=True)
+
+    fuzzy_match_bk_tree_filename = fuzzy_index_path / 'fuzzy_match_bk_tree.pickle'
+    fuzzy_match_bk_tree_candidate_mentions_filename = fuzzy_index_path / 'fuzzy_match_bk_tree_candidate_mentions.pickle'
+    fuzzy_match_string_data_filename = fuzzy_index_path / 'fuzzy_match_string_data.json'
+
     og_ids = [
         "1", 
         "2", 
@@ -19,7 +26,7 @@ def main():
         "7", 
         "9"
     ]
-    ogs = [load_ontology.load(x)[0] for x in og_ids]
+    ogs = [load_ontology.load(x, config)[0] for x in og_ids]
     str_to_terms = defaultdict(lambda: [])
 
     print("Gathering all term string identifiers in ontologies...")
@@ -38,16 +45,11 @@ def main():
     print("Building the BK-Tree for candidate mentions pipeline...")
     bk_tree_candidate_mentions = BKTree(string_metrics.CasePermissiveAlnumWeightedBagDistance(0.2, 0.2), string_identifiers)
 
-    with open("fuzzy_match_bk_tree.pickle", "wb") as f:
+    with open(fuzzy_match_bk_tree_filename, "wb") as f:
         pickle.dump(bk_tree, f)
 
-    with open("fuzzy_match_bk_tree_candidate_mentions.pickle", "wb") as f:
+    with open(fuzzy_match_bk_tree_candidate_mentions_filename, "wb") as f:
         pickle.dump(bk_tree_candidate_mentions, f)
 
-    with open("fuzzy_match_string_data.json", "w") as f:
+    with open(fuzzy_match_string_data_filename, "w") as f:
         f.write(jsonio.dumps(str_to_terms))
-
-
-if __name__ == "__main__":
-    main() 
-

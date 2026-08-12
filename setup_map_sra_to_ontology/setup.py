@@ -1,6 +1,7 @@
 import os
 import shutil
 import sys
+from pathlib import Path
 
 # Add the parent directory to the python path to allow imports of other modules
 # This replaces the need to manually set PYTHONPATH
@@ -16,44 +17,48 @@ import link_ontologies
 import superterm_linked_terms
 import generate_implications
 
+from map_sra_to_ontology.config import Config
+
 def main():
     """Runs the setup process for the map_sra_to_ontology pipeline."""
+    # this script takes one optional argument, the path to where all reference files should be stored.
+    # use argparse to handle this argument which does not require a flag
+    import argparse
+    parser = argparse.ArgumentParser(description="Setup the map_sra_to_ontology pipeline.")
+    parser.add_argument("ref_path", nargs="?", type=Path,
+                        default="../metasra_ref", 
+                        help="Path to where all reference files should be stored.")
+    args = parser.parse_args()
+
+    os.makedirs(args.ref_path, exist_ok=True)
+
+    # Create a config object
+    config = Config(args.ref_path)
 
     # Download ontologies
     print("Downloading ontologies...")
-    download_ontologies.main()
+    download_ontologies.main(config)
 
     # Reformat Cellosaurus
     print("Reformatting Cellosaurus...")
-    reformat_cellosaurus.main()
+    reformat_cellosaurus.main(config)
 
     # Download SPECIALIST Lexicon
     print("Downloading SPECIALIST Lexicon...")
-    download_specialist_lexicon.main()
+    download_specialist_lexicon.main(config)
 
     # Build BK-tree for fuzzy string matching
     print("Building the BK-tree from the ontologies...")
-    fuzzy_index_path = '../map_sra_to_ontology/fuzzy_matching_index'
-    os.makedirs(fuzzy_index_path, exist_ok=True)
-    
-    build_bk_tree.main()
-    
-    os.replace('fuzzy_match_bk_tree.pickle', os.path.join(fuzzy_index_path, 'fuzzy_match_bk_tree.pickle'))
-    os.replace('fuzzy_match_bk_tree_candidate_mentions.pickle', os.path.join(fuzzy_index_path, 'fuzzy_match_bk_tree_candidate_mentions.pickle'))
-    os.replace('fuzzy_match_string_data.json', os.path.join(fuzzy_index_path, 'fuzzy_match_string_data.json'))
- 
+    build_bk_tree.main(config)
+
     # Link the terms between ontologies
     print("Linking ontologies...")
-    link_ontologies.main()
-    superterm_linked_terms.main()
+    link_ontologies.main(config)
+    superterm_linked_terms.main(config)
     
-    metadata_path = '../map_sra_to_ontology/metadata'
-    shutil.copy('term_to_superterm_linked_terms.json', metadata_path)
-
     # Generate cell-line to disease implications
     print("Generating cell-line to disease implications...")
-    generate_implications.main()
-    shutil.copy('cellline_to_disease_implied_terms.json', metadata_path)
+    generate_implications.main(config)
 
     print("Setup complete.")
 

@@ -93,16 +93,15 @@ class SpecialistLexicon:
 
 def load_lexicon(lex_loc):
     lexicon = parse_LEXICON(lex_loc)
-    lexicon = add_spelling_variants(lexicon)
-    lexicon = add_inflection_variants(lexicon)
-    lexicon = add_nominalization(lexicon)
-    lexicon = add_trademarks(lexicon)
+    lexicon = add_spelling_variants(lex_loc, lexicon)
+    lexicon = add_inflection_variants(lex_loc, lexicon)
+    lexicon = add_nominalization(lex_loc, lexicon)
+    lexicon = add_trademarks(lex_loc, lexicon)
 
     return lexicon
 
-def add_trademarks(lexicon):
-
-    f_name = pr.resource_filename(resource_package, join("LEX", "LRTRM"))
+def add_trademarks(lex_loc, lexicon):
+    f_name = lex_loc / "LRTRM"
     with open(f_name, "r") as f:
         for l in f:
             vals = l.strip().split('|')
@@ -119,9 +118,8 @@ def add_trademarks(lexicon):
     return lexicon
 
 
-def add_nominalization(lexicon):
-
-    f_name = pr.resource_filename(resource_package, join("LEX", "LRNOM"))
+def add_nominalization(lex_loc, lexicon):
+    f_name = lex_loc / "LRNOM"
     with open(f_name, "r") as f:
         for l in f:
             vals = l.strip().split('|')
@@ -138,9 +136,8 @@ def add_nominalization(lexicon):
     return lexicon
 
 
-def add_spelling_variants(lexicon):
-
-    f_name = pr.resource_filename(resource_package, join("LEX", "LRSPL"))
+def add_spelling_variants(lex_loc, lexicon):
+    f_name = lex_loc / "LRSPL"
     with open(f_name, "r") as f:
         for l in f:
             vals = l.strip().split('|')
@@ -156,9 +153,8 @@ def add_spelling_variants(lexicon):
             lexicon[eui]["spelling variants"].append(spell_var)
     return lexicon
 
-def add_inflection_variants(lexicon):
-
-    f_name = pr.resource_filename(resource_package, join("LEX", "LRAGR"))
+def add_inflection_variants(lex_loc, lexicon):
+    f_name = lex_loc / "LRAGR"
     with open(f_name, "r") as f:
         for l in f:
             vals = l.strip().split('|')

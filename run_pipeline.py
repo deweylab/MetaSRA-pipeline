@@ -9,6 +9,7 @@ from __future__ import print_function
 from io import open # Python 2/3 compatibility
 from optparse import OptionParser
 import json
+from pathlib import Path
 import sys
 from collections import defaultdict, deque
 import json
@@ -27,12 +28,15 @@ from map_sra_to_ontology import config
 from map_sra_to_ontology import run_sample_type_predictor
 from map_sra_to_ontology import jsonio
 from map_sra_to_ontology import mapping_path
+from map_sra_to_ontology.config import Config
 from map_sra_to_ontology.pipeline_components import *
 from map_sra_to_ontology.string_metrics import CasePermissiveAlnumWeightedEditDistance
 
 def main():
     parser = OptionParser()
     #parser.add_option("-f", "--key_value_file", help="JSON file storing key-value pairs describing sample")
+    parser.add_option("-r", "--ref_path", default="metasra_ref", 
+                      help="Path to where reference files are stored.")
     parser.add_option("-o", "--output", dest="output", default=None,
                       help="Output file to which to write results (default: stdout)")
     parser.add_option("-f", "--fine_grained", dest="fine_grained", default=False,
@@ -42,6 +46,8 @@ def main():
     (options, args) = parser.parse_args()
    
     input_f = args[0]
+
+    config = Config(Path(options.ref_path))
      
     # Map key-value pairs to ontologies
     with open(input_f, "r") as f:
@@ -54,8 +60,8 @@ def main():
         "DOID":"2",
         "EFO":"16",
         "CVCL":"4"}
-    ont_id_to_og = {x:load_ontology.load(x)[0] for x in ont_name_to_ont_id.values()}
-    pipeline = p_53() if not options.candidate_mentions else candidate_mentions_pipeline()
+    ont_id_to_og = {x:load_ontology.load(x, config)[0] for x in ont_name_to_ont_id.values()}
+    pipeline = p_53(config) if not options.candidate_mentions else candidate_mentions_pipeline(config)
 
     if not options.candidate_mentions:
         # Initialize sample type predictor
@@ -156,33 +162,33 @@ def run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mapping_data, predictor, 
 #    return mappings
     
 
-def p_53():
+def p_53(config):
     spec_lex = SpecialistLexicon(config.specialist_lex_location())
     inflec_var = SPECIALISTLexInflectionalVariants(spec_lex)
     spell_var = SPECIALISTSpellingVariants(spec_lex)
-    key_val_filt = KeyValueFilter_Stage()
+    key_val_filt = KeyValueFilter_Stage(config)
     init_tokens_stage = InitKeyValueTokens_Stage()
     ngram = NGram_Stage()
     lower_stage = Lowercase_Stage()
-    man_at_syn = ManuallyAnnotatedSynonyms_Stage()
-    infer_cell_line = InferCellLineTerms_Stage()
-    prop_spec_syn = PropertySpecificSynonym_Stage()
+    man_at_syn = ManuallyAnnotatedSynonyms_Stage(config)
+    infer_cell_line = InferCellLineTerms_Stage(config)
+    prop_spec_syn = PropertySpecificSynonym_Stage(config)
     infer_dev_stage = ImpliedDevelopmentalStageFromAge_Stage()
-    linked_super = LinkedTermsOfSuperterms_Stage()
+    linked_super = LinkedTermsOfSuperterms_Stage(config)
     cell_culture = ConsequentCulturedCell_Stage()
     filt_match_priority = FilterOntologyMatchesByPriority_Stage()
-    real_val = ExtractRealValue_Stage()
-    match_cust_targs = ExactMatchCustomTargets_Stage()
-    cust_conseq = CustomConsequentTerms_Stage()
+    real_val = ExtractRealValue_Stage(config)
+    match_cust_targs = ExactMatchCustomTargets_Stage(config)
+    cust_conseq = CustomConsequentTerms_Stage(config)
     delimit_plus = Delimit_Stage('+')
     delimit_underscore = Delimit_Stage('_')
     delimit_dash = Delimit_Stage('-')
     delimit_slash = Delimit_Stage('/')
-    block_cell_line_key = BlockCellLineNonCellLineKey_Stage()
+    block_cell_line_key = BlockCellLineNonCellLineKey_Stage(config)
     subphrase_linked = RemoveSubIntervalOfMatchedBlockAncestralLink_Stage()
-    cellline_to_implied_disease = CellLineToImpliedDisease_Stage()
-    acr_to_expan = AcronymToExpansion_Stage()
-    exact_match = ExactStringMatching_Stage(
+    cellline_to_implied_disease = CellLineToImpliedDisease_Stage(config)
+    acr_to_expan = AcronymToExpansion_Stage(config)
+    exact_match = ExactStringMatching_Stage(config,
         [
             "1",
             "2",
@@ -194,11 +200,11 @@ def p_53():
         ],
         query_len_thresh=3
     )
-    fuzzy_match = FuzzyStringMatching_Stage(0.1, query_len_thresh=3)
-    two_char_match = TwoCharMappings_Stage()
+    fuzzy_match = FuzzyStringMatching_Stage(config, 0.1, query_len_thresh=3)
+    two_char_match = TwoCharMappings_Stage(config)
     time_unit = ParseTimeWithUnit_Stage()
     prioritize_exact = PrioritizeExactMatchOverFuzzyMatch()
-    artifact_term_combo = TermArtifactCombinations_Stage()
+    artifact_term_combo = TermArtifactCombinations_Stage(config)
 
     stages = [
         key_val_filt,
@@ -234,17 +240,17 @@ def p_53():
     ]
     return Pipeline(stages, defaultdict(lambda: 1.0))
 
-def candidate_mentions_pipeline():
+def candidate_mentions_pipeline(config):
     """
     Candidate string matching pipeline (v8)
     """
     spec_lex = SpecialistLexicon(config.specialist_lex_location())
 
-    fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_string_data.json"))
+    fname = config.ref_path / "fuzzy_matching_index" / "fuzzy_match_string_data.json"
     with open(fname, "r") as f:
         str_to_terms = json.load(f)
 
-    fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_bk_tree_candidate_mentions.pickle"))
+    fname = config.ref_path / "fuzzy_matching_index" / "fuzzy_match_bk_tree_candidate_mentions.pickle"
     with open(fname, "rb") as f:
         bk_tree = pickle.load(f)
 

@@ -15,18 +15,18 @@ import map_sra_to_ontology
 from map_sra_to_ontology import load_ontology
 from map_sra_to_ontology import jsonio
 
-def main():
-    efo_celltype_og, x,y = load_ontology.load("11")
-    cl_celltype_og, x,y = load_ontology.load("1")
+def main(config):
+    efo_celltype_og, x,y = load_ontology.load("11", config)
+    cl_celltype_og, x,y = load_ontology.load("1", config)
 
-    doid_disease_og, x,y = load_ontology.load("2")
-    efo_disease_og, x,y = load_ontology.load("3")
+    doid_disease_og, x,y = load_ontology.load("2", config)
+    efo_disease_og, x,y = load_ontology.load("3", config)
 
-    efo_anatomy_og, x,y = load_ontology.load("14")
-    uberon_anatomy_og, x,y = load_ontology.load("5")
+    efo_anatomy_og, x,y = load_ontology.load("14", config)
+    uberon_anatomy_og, x,y = load_ontology.load("5", config)
 
-    efo_cellline_og, x,y = load_ontology.load("10")
-    cvcl_og, x,y = load_ontology.load("4")
+    efo_cellline_og, x,y = load_ontology.load("10", config)
+    cvcl_og, x,y = load_ontology.load("4", config)
 
     term_to_linked_terms = {}
     term_to_linked_terms.update(linked_terms(efo_celltype_og, cl_celltype_og))
@@ -38,7 +38,7 @@ def main():
     term_to_linked_terms.update(linked_terms(efo_cellline_og, cvcl_og, link_syn_types=["EXACT", "RELATED"]))
     term_to_linked_terms.update(linked_terms(cvcl_og, efo_cellline_og, link_syn_types=["EXACT", "RELATED"]))
 
-    with open("term_to_linked_terms.json", "w") as f:
+    with open(config.ref_path / "term_to_linked_terms.json", "w") as f:
         f.write(jsonio.dumps(term_to_linked_terms))
     
 
@@ -90,7 +90,3 @@ def linked_terms(og_a, og_b, link_syn_types=None):
                 print("LINKING terms: %s=%s: '%s' '%s'='%s'" % (b_term.id, a_term.id, b_str, b_term.name, a_term.name))
                 b_to_a[b_term.id].add(a_term.id)
     return {k:list(v) for k,v in b_to_a.items()}
-
-
-if __name__ == "__main__":
-    main()

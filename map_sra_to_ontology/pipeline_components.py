@@ -16,7 +16,6 @@ from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
 from nltk.metrics.distance import edit_distance
 
-import pkg_resources as pr
 import os
 from os.path import join
 
@@ -30,20 +29,7 @@ import pybktree
 from pybktree import BKTree
 import marisa_trie as mt
 
-# Relative paths to resources
-resource_package = __name__
-FILTER_KEYS_JSON = pr.resource_filename(resource_package, join("metadata", "filter_key_val_rules.json"))
-CELL_LINE_FILTER_KEYS_JSON = pr.resource_filename(resource_package, join("metadata", "cell_line_filter_key_val_rules.json"))
-PROPERTY_SPECIFIC_SYNONYMS_JSON = pr.resource_filename(resource_package, join("metadata", "has_val_syn_term_ids.json"))
-TERM_TO_LINKED_ANCESTOR_JSON =  pr.resource_filename(resource_package, join("metadata", "term_to_superterm_linked_terms.json"))
-NOUN_PHRASES_JSON = pr.resource_filename(resource_package, join("metadata", "noun_phrases.json"))
-CELL_LINE_TO_IMPLIED_DISEASE_JSON = pr.resource_filename(resource_package, join("metadata", "cellline_to_disease_implied_terms.json"))
-ACRONYM_TO_EXPANSION_JSON = pr.resource_filename(resource_package, join("metadata", "acronym_to_expansions.json"))
-REAL_VALUE_PROPERTIES = pr.resource_filename(resource_package, join("metadata", "real_valued_properties.json"))
-CUST_TERM_TO_CONSEQ_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "custom_term_to_consequent_terms.json"))
-CELL_LINE_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "cvcl_mappings.json"))
-TWO_CHAR_MAPPINGS_JSON = pr.resource_filename(resource_package, join("metadata", "two_char_mappings.json"))
-TERM_ARTIFACT_COMBOS_JSON = pr.resource_filename(resource_package, join("metadata", "term_artifact_combo.json"))
+
 
 TOKEN_SCORING_STRATEGY = defaultdict(lambda: 1) # TODO We want an explicit score dictionary
 
@@ -265,10 +251,11 @@ class InitKeyValueTokens_Stage:
 class KeyValueFilter_Stage:
     def __init__(
         self, 
+        config,
         perform_filter_keys=True, 
-        perform_filter_values=True
+        perform_filter_values=True,
     ):
-        with open(FILTER_KEYS_JSON, "r") as f:
+        with open(config.FILTER_KEYS_JSON, "r") as f:
             j = json.load(f)
             self.filter_keys = set(j["filter_keys"])
             self.filter_values = set(j["filter_values"])
@@ -297,8 +284,8 @@ class KeyValueFilter_Stage:
 
 
 class TwoCharMappings_Stage():
-    def __init__(self):
-        with open(TWO_CHAR_MAPPINGS_JSON, "r") as f:
+    def __init__(self, config):
+        with open(config.TWO_CHAR_MAPPINGS_JSON, "r") as f:
             self.str_to_mappings = json.load(f)
     
     def run(self, text_mining_graph):
@@ -322,12 +309,10 @@ class TwoCharMappings_Stage():
         
 
 class Synonyms_Stage(object):
-    def __init__(self, syn_set_name, syn_f):
+    def __init__(self, config, syn_set_name, syn_f):
         self.syn_set_name = syn_set_name
-        syn_sets_f = pr.resource_filename(
-            resource_package, 
-            join("synonym_sets", syn_f)
-        )
+        syn_sets_f = config.SYN_SETS_PATH / syn_f
+
         with open(syn_sets_f, "r") as f:
             self.syn_sets = [set(x) for x in json.load(f)]
 
@@ -355,13 +340,13 @@ class Synonyms_Stage(object):
 
 
 class CellosaurusSynonyms_Stage(Synonyms_Stage):
-    def __init__(self):
-        super(CellosaurusSynonyms_Stage, self).__init__("Cellosaurus", "cvcl_syn_sets.json")
+    def __init__(self, config):
+        super().__init__(config, "Cellosaurus", "cvcl_syn_sets.json")
 
 
 class ManuallyAnnotatedSynonyms_Stage(Synonyms_Stage):
-    def __init__(self):
-        super(ManuallyAnnotatedSynonyms_Stage, self).__init__("Manually Annotated", "custom_syn_sets.json")
+    def __init__(self, config):
+        super().__init__(config, "Manually Annotated", "custom_syn_sets.json")
 
 
 class NGram_Stage:
@@ -414,8 +399,8 @@ class Lowercase_Stage:
 
 
 class PropertySpecificSynonym_Stage:
-    def __init__(self):
-        with open(PROPERTY_SPECIFIC_SYNONYMS_JSON, 'r') as f:
+    def __init__(self, config):
+        with open(config.PROPERTY_SPECIFIC_SYNONYMS_JSON, 'r') as f:
             self.property_id_to_syn_sets = json.load(f)
 
     def run(self, text_mining_graph):
@@ -463,7 +448,7 @@ class PropertySpecificSynonym_Stage:
 
 
 class BlockCellLineNonCellLineKey_Stage:
-    def __init__(self):
+    def __init__(self, config):
         self.cell_line_keys = set([
             "EFO:0000322", 
             "EFO:0000324"
@@ -471,12 +456,12 @@ class BlockCellLineNonCellLineKey_Stage:
         #self.cell_line_phrases = set(["source_name"])
         self.cell_line_phrases = set()
 
-        cvcl_og, x,y = load_ontology.load("4") 
+        cvcl_og, x,y = load_ontology.load("4", config) 
 
         # Cell line terms are all CVCL terms and those terms in the EFO 
         # they link to
         self.cell_line_terms = set(cvcl_og.id_to_term.keys())
-        with open(TERM_TO_LINKED_ANCESTOR_JSON, 'r') as f:
+        with open(config.TERM_TO_LINKED_ANCESTOR_JSON, 'r') as f:
             term_to_suplinked = json.load(f)
             for t_id in cvcl_og.id_to_term:
                 if t_id in term_to_suplinked:
@@ -858,6 +843,7 @@ class ExactStringMatching_Stage:
     """
     def __init__(
         self, 
+        config,
         target_og_ids, 
         query_len_thresh=None, 
         match_numeric=False
@@ -874,7 +860,7 @@ class ExactStringMatching_Stage:
         curr_i = 0
 
         ontology_graphs = [
-            load_ontology.load(x)[0] 
+            load_ontology.load(x, config)[0] 
             for x in target_og_ids
         ]
         for og in ontology_graphs:
@@ -948,13 +934,12 @@ class FuzzyStringMatching_Stage:
     Use a pre-constructed BK-tree to perform fuzzy matching
     for all artifacts against the ontologies.
     """
-    def __init__(self, thresh, query_len_thresh=None, match_numeric=False):
-       
-        fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_string_data.json"))
+    def __init__(self, config, thresh, query_len_thresh=None, match_numeric=False):
+        fname = config.ref_path / "fuzzy_matching_index" / "fuzzy_match_string_data.json"
         with open(fname, "r") as f:
             self.str_to_terms = json.load(f)
 
-        fname = pr.resource_filename(resource_package, join("fuzzy_matching_index", "fuzzy_match_bk_tree.pickle"))
+        fname = config.ref_path / "fuzzy_matching_index" / "fuzzy_match_bk_tree.pickle"
         with open(fname, "rb") as f:
             self.bk_tree = pickle.load(f)
         
@@ -1163,8 +1148,8 @@ class TermArtifactCombinations_Stage:
     a specific ontology term may be distributed over the key value 
     pairs. 
     """   
-    def __init__(self):
-        with open(TERM_ARTIFACT_COMBOS_JSON, 'r') as f:
+    def __init__(self, config):
+        with open(config.TERM_ARTIFACT_COMBOS_JSON, 'r') as f:
             self.term_artifact_combos = json.load(f)
  
     def run(self, text_mining_graph):
@@ -1292,8 +1277,8 @@ class RemoveSubIntervalOfMatchedBlockAncestralLink_Stage:
 
 
 class ExactMatchCustomTargets_Stage:
-    def __init__(self):
-        with open(NOUN_PHRASES_JSON, "r") as f:
+    def __init__(self, config):
+        with open(config.NOUN_PHRASES_JSON, "r") as f:
             self.noun_phrases = set(json.load(f)) 
      
     def run(self, text_mining_graph):
@@ -1312,8 +1297,8 @@ class ExactMatchCustomTargets_Stage:
         
 
 class CellLineToImpliedDisease_Stage:
-    def __init__(self):
-        with open(CELL_LINE_TO_IMPLIED_DISEASE_JSON, "r") as f:
+    def __init__(self, config):
+        with open(config.CELL_LINE_TO_IMPLIED_DISEASE_JSON, "r") as f:
             self.term_to_implied_terms = json.load(f)
 
     def run(self, text_mining_graph):
@@ -1338,8 +1323,8 @@ class AcronymToExpansion_Stage:
     'iPSC' will be expanded to 'induced pluripotent
     stem cell'. 
     """
-    def __init__(self):
-        with open(ACRONYM_TO_EXPANSION_JSON, "r") as f:
+    def __init__(self, config):
+        with open(config.ACRONYM_TO_EXPANSION_JSON, "r") as f:
             self.acr_to_expansions = json.load(f)
 
     def run(self, text_mining_graph):
@@ -1367,10 +1352,11 @@ class AcronymToExpansion_Stage:
 class ATCCKeyValueFilter_Stage:
     def __init__(
         self, 
+        config,
         perform_filter_keys=True, 
         perform_filter_values=True
     ):
-        with open(CELL_LINE_FILTER_KEYS_JSON, "r") as f:
+        with open(config.CELL_LINE_FILTER_KEYS_JSON, "r") as f:
             j = json.load(f)
             self.filter_keys = set(j["filter_keys"])
             self.filter_values = set(j["filter_values"])
@@ -1412,8 +1398,8 @@ class ExtractRealValue_Stage:
     and for a unit ontology term. 
     """
 
-    def __init__(self):
-        with open(REAL_VALUE_PROPERTIES, "r") as f:
+    def __init__(self, config):
+        with open(config.REAL_VALUE_PROPERTIES, "r") as f:
             j = json.load(f)
             self.real_val_tids = j["property_term_ids"]
             self.default_units = j["default_units"]
@@ -1639,8 +1625,8 @@ class ParseTimeWithUnit_Stage:
 ###################################################################################
 
 class CustomConsequentTerms_Stage:
-    def __init__(self):
-        with open(CUST_TERM_TO_CONSEQ_TERMS_JSON, "r") as f:
+    def __init__(self, config):
+        with open(config.CUST_TERM_TO_CONSEQ_TERMS_JSON, "r") as f:
             self.term_to_consequent = json.load(f)
 
     def run(self, text_mining_graph):
@@ -1661,8 +1647,8 @@ class CustomConsequentTerms_Stage:
  
 
 class LinkedTermsOfSuperterms_Stage:
-    def __init__(self):
-        with open(TERM_TO_LINKED_ANCESTOR_JSON, "r") as f:
+    def __init__(self, config):
+        with open(config.TERM_TO_LINKED_ANCESTOR_JSON, "r") as f:
             self.term_to_implied_terms = json.load(f)
 
     def run(self, text_mining_graph):
@@ -1720,8 +1706,8 @@ class ImpliedDevelopmentalStageFromAge_Stage:
 
 
 class InferCellLineTerms_Stage:
-    def __init__(self):
-        with open(CELL_LINE_TERMS_JSON, "r") as f:
+    def __init__(self, config):
+        with open(config.CELL_LINE_TERMS_JSON, "r") as f:
             self.cvcl_to_mappings = json.load(f)
 
     def run(self, text_mining_graph):
