@@ -23,12 +23,12 @@ This project is currently compatible with Python 3 and requires the following Py
 A conda environment specification is provided in the `environment.yml` file. To create the environment, run the following from the root directory of the repository:
 
 ```bash
-mamba env create -n metasra -f environment.yml
+conda create -n metasra -f environment.yml
 ```
 This will create a conda environment named `metasra` with the required dependencies.  To activate the environment, run:
 
 ```bash
-mamba activate metasra
+conda activate metasra
 ```
 
 #### NLTK setup
