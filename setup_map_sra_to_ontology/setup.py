@@ -1,14 +1,5 @@
 import os
-import shutil
-import sys
-from pathlib import Path
 
-# Add the parent directory to the python path to allow imports of other modules
-# This replaces the need to manually set PYTHONPATH
-#sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# It is assumed that the following imported scripts can be run by calling a main() function.
-# If they run on import, the .main() calls can be removed.
 from . import (download_ontologies, 
                reformat_cellosaurus,
                download_specialist_lexicon,
@@ -20,21 +11,12 @@ from . import (download_ontologies,
 
 from map_sra_to_ontology.config import Config
 
-def main():
+def generate_metasra_reference(ref_path):
     """Runs the setup process for the map_sra_to_ontology pipeline."""
-    # this script takes one optional argument, the path to where all reference files should be stored.
-    # use argparse to handle this argument which does not require a flag
-    import argparse
-    parser = argparse.ArgumentParser(description="Setup the map_sra_to_ontology pipeline.")
-    parser.add_argument("ref_path", nargs="?", type=Path,
-                        default="./metasra_ref", 
-                        help="Path to where all reference files should be stored.")
-    args = parser.parse_args()
-
-    os.makedirs(args.ref_path, exist_ok=True)
+    os.makedirs(ref_path, exist_ok=True)
 
     # Create a config object
-    config = Config(args.ref_path)
+    config = Config(ref_path)
 
     # Download ontologies
     print("Downloading ontologies...")
@@ -62,6 +44,3 @@ def main():
     generate_implications.main(config)
 
     print("Setup complete.")
-
-if __name__ == "__main__":
-    main()
