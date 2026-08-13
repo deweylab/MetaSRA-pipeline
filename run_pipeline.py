@@ -76,8 +76,6 @@ def main():
             "mapped_terms":[x.to_dict() for x in mapped_terms],
             "real_value_properties": [x.to_dict() for x in real_props]
         }
-        for mapping in mappings["mapped_terms"]:
-            print(mapping)
         all_mappings.append(mappings)
 
     outputs = []
