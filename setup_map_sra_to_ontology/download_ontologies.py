@@ -6,6 +6,7 @@ import subprocess
 import json
 import os
 from os.path import join
+from importlib import resources
 from map_sra_to_ontology import jsonio
 
 def main(config):
@@ -14,7 +15,8 @@ def main(config):
     
     prefix_to_filename = {}
     date_str = datetime.datetime.now().strftime("%y-%m-%d")
-    with open("ontology_name_to_url.json", "r") as f:
+    ontology_name_to_url_f = resources.files(__package__) / "ontology_name_to_url.json"
+    with ontology_name_to_url_f.open() as f:
         for ont_prefix, url in json.load(f).items():
             obo_f_name = join(obo_rel_loc, "%s.%s.obo" % (ont_prefix, date_str))
             output_f = open(obo_f_name, "w")

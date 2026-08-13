@@ -9,13 +9,14 @@ from pathlib import Path
 
 # It is assumed that the following imported scripts can be run by calling a main() function.
 # If they run on import, the .main() calls can be removed.
-import download_ontologies
-import reformat_cellosaurus
-import download_specialist_lexicon
-import build_bk_tree
-import link_ontologies
-import superterm_linked_terms
-import generate_implications
+from . import (download_ontologies, 
+               reformat_cellosaurus,
+               download_specialist_lexicon,
+               build_bk_tree,
+               link_ontologies,
+               superterm_linked_terms,
+               generate_implications,
+               )
 
 from map_sra_to_ontology.config import Config
 
@@ -26,7 +27,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description="Setup the map_sra_to_ontology pipeline.")
     parser.add_argument("ref_path", nargs="?", type=Path,
-                        default="../metasra_ref", 
+                        default="./metasra_ref", 
                         help="Path to where all reference files should be stored.")
     args = parser.parse_args()
 

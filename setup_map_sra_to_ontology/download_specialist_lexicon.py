@@ -6,13 +6,15 @@ import subprocess
 import json
 import os
 from os.path import join
+from importlib import resources
 
 def main(config):
     lex_rel_loc = config.LEX_DIR
     os.makedirs(lex_rel_loc, exist_ok=True)
 
     date_str = datetime.datetime.now().strftime("%y-%m-%d")
-    with open("lex_file_to_url.json", "r") as f:
+    lex_file_to_url_f = resources.files(__package__) / "lex_file_to_url.json"
+    with lex_file_to_url_f.open() as f:
         for lex_f, url in json.load(f).items():
             lex_f_name = lex_rel_loc / lex_f
             output_f = open(lex_f_name, "w")

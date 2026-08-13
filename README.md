@@ -49,19 +49,18 @@ export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 ## Setup
 
-In order to run the pipeline, a few external resources must be downloaded and configured.  First, set up the PYTHONPATH environment variable as described above.  Then, to set up the pipeline, run the following commands:
+In order to run the pipeline, a few external resources must be downloaded and configured.  First, set up the PYTHONPATH environment variable as described above.  Then, to set up the pipeline, run the following command:
   
-    cd ./setup_map_sra_to_ontology
-    ./setup.sh
+    python setup.py metasra_ref
 
-This script will download the latest ontology OBO files, the SPECIALIST Lexicon files, and configure the ontologies to work with the pipeline.
+Where `metasra_ref` is the name (of your choice) of the directory into which the resources will be downloaded.  This script will download the latest ontology OBO files, the SPECIALIST Lexicon files, and configure the ontologies to work with the pipeline.
 
 ## Usage
 
 The pipeline can be run on a set of sample-specific key-value pairs
 using the run_pipeline.py script. This script is used as follows:
 
-    python run_pipeline.py <input key-value pairs JSON file>
+    python run_pipeline.py -r metasra_ref <input key-value pairs JSON file>
 
 The script accepts as input a JSON file storing a list of sets of key-value pairs.
 For example, the pipeline will accept a file with the following content:
