@@ -4,7 +4,7 @@ import pickle
 import sys
 import os
 from os.path import join
-import pkg_resources as pr
+from importlib import resources
 
 from .predict_sample_type.learn_classifier import get_ngrams_from_tag_to_val
 
@@ -12,8 +12,8 @@ class SampleTypePredictor:
     # The constructor requires a CVCL (Cellosaurus) ontology graph, ideally the one
     # used to predict the ontology terms for the metadata.
     def __init__(self, cvcl_og):
-        vectorizer_f = pr.resource_filename(__name__, join("predict_sample_type", "sample_type_vectorizer.pickle"))
-        classifier_f = pr.resource_filename(__name__, join("predict_sample_type", "sample_type_classifier.pickle"))
+        vectorizer_f = resources.files(__package__) / "predict_sample_type" / "sample_type_vectorizer.pickle"
+        classifier_f = resources.files(__package__) / "predict_sample_type" / "sample_type_classifier.pickle"
         with open(vectorizer_f, "rb") as f:
             self.vectorizer = pickle.load(f)
         with open(classifier_f, "rb") as f:

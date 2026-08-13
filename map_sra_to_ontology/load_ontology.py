@@ -1,13 +1,13 @@
 from __future__ import print_function
 from io import open # Python 2/3 compatibility
-import pkg_resources as pr
+from importlib import resources
 import json
 
 from . import ontology_graph
 
 def load(ontology_index, config):
     resource_package = __name__
-    config_f = pr.resource_filename(resource_package, "./ontology_configurations.json")
+    config_f = resources.files(__package__) / "ontology_configurations.json"
     with open(config_f, "r") as f:
         j = json.load(f)
     ont_config = j[ontology_index] 

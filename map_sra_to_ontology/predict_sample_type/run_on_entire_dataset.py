@@ -9,7 +9,7 @@ import pickle
 from collections import Counter, defaultdict
 
 import numpy as np
-import pkg_resources as pr
+from importlib import resources
 
 from . import learn_classifier as lc
 import load_ontology
@@ -95,14 +95,9 @@ def main():
 
     cvcl_og = OGS[ONT_IDS.index("4")]
 
-    vectorizer_f = pr.resource_filename(
-        __name__, 
-        "sample_type_vectorizer.pickle"
-    )
-    classifier_f = pr.resource_filename(
-        __name__, 
-        "sample_type_classifier.pickle"
-    ) 
+    vectorizer_f = resources.files(__package__) / "sample_type_vectorizer.pickle"
+    classifier_f = resources.files(__package__) / "sample_type_classifier.pickle"
+
     with open(vectorizer_f, 'rb') as f:
         vectorizer = pickle.load(f)
     with open(classifier_f, 'rb') as f:

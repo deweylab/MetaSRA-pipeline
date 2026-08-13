@@ -14,7 +14,7 @@ except:
     print("Unable to import pygraphviz. Visualization is disabled.")
 from map_sra_to_ontology import config
 
-import pkg_resources as pr
+from importlib import resources
 import os
 from os.path import join
 import json
@@ -191,10 +191,7 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
         include_obsolete=include_obsolete)
 
     # Add enriched synonyms
-    cvcl_syns_f = pr.resource_filename(
-        resource_package, 
-        join("metadata", "term_to_extra_synonyms.json")
-    )
+    cvcl_syns_f = resources.files(__package__) / "metadata" / "term_to_extra_synonyms.json"
     term_to_syns = None
     with open(cvcl_syns_f, "r") as f:
         term_to_syns = json.load(f)
@@ -204,10 +201,7 @@ def build_ontology(ont_to_loc, restrict_to_idspaces=None,
                 term.synonyms.add(Synonym(syn, "ENRICHED"))
 
     # Remove specified synonyms
-    term_to_remove_syns_f = pr.resource_filename(
-        resource_package, 
-        join("metadata", "term_to_remove_synonyms.json")
-    )
+    term_to_remove_syns_f = resources.files(__package__) / "metadata" / "term_to_remove_synonyms.json"
     term_remove_syns = None
     with open(term_to_remove_syns_f, "r") as f:
         term_remove_syns = json.load(f)

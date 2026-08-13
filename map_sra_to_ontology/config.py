@@ -3,8 +3,7 @@ from io import open # Python 2/3 compatibility
 import json
 from os.path import join
 from pathlib import Path
-import pkg_resources as pr
-
+from importlib import resources
 
 class Config:
     def __init__(self, ref_path):
@@ -17,18 +16,18 @@ class Config:
     
         # Relative paths to resources
         resource_package = __name__
-        self.FILTER_KEYS_JSON = pr.resource_filename(resource_package, join("metadata", "filter_key_val_rules.json"))
-        self.CELL_LINE_FILTER_KEYS_JSON = pr.resource_filename(resource_package, join("metadata", "cell_line_filter_key_val_rules.json"))
-        self.PROPERTY_SPECIFIC_SYNONYMS_JSON = pr.resource_filename(resource_package, join("metadata", "has_val_syn_term_ids.json"))
-        self.NOUN_PHRASES_JSON = pr.resource_filename(resource_package, join("metadata", "noun_phrases.json"))
-        self.ACRONYM_TO_EXPANSION_JSON = pr.resource_filename(resource_package, join("metadata", "acronym_to_expansions.json"))
-        self.REAL_VALUE_PROPERTIES = pr.resource_filename(resource_package, join("metadata", "real_valued_properties.json"))
-        self.CUST_TERM_TO_CONSEQ_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "custom_term_to_consequent_terms.json"))
-        self.CELL_LINE_TERMS_JSON = pr.resource_filename(resource_package, join("metadata", "cvcl_mappings.json"))
-        self.TWO_CHAR_MAPPINGS_JSON = pr.resource_filename(resource_package, join("metadata", "two_char_mappings.json"))
-        self.TERM_ARTIFACT_COMBOS_JSON = pr.resource_filename(resource_package, join("metadata", "term_artifact_combo.json"))        
-
-        self.SYN_SETS_PATH = Path(pr.resource_filename(resource_package, "synonym_sets"))
+        self.FILTER_KEYS_JSON = resources.files(__package__) / "metadata" / "filter_key_val_rules.json"
+        self.CELL_LINE_FILTER_KEYS_JSON = resources.files(__package__) / "metadata" / "cell_line_filter_key_val_rules.json"
+        self.PROPERTY_SPECIFIC_SYNONYMS_JSON = resources.files(__package__) / "metadata" / "has_val_syn_term_ids.json"
+        self.NOUN_PHRASES_JSON = resources.files(__package__) / "metadata" / "noun_phrases.json"
+        self.ACRONYM_TO_EXPANSION_JSON = resources.files(__package__) / "metadata" / "acronym_to_expansions.json"
+        self.REAL_VALUE_PROPERTIES = resources.files(__package__) / "metadata" / "real_valued_properties.json"
+        self.CUST_TERM_TO_CONSEQ_TERMS_JSON = resources.files(__package__) / "metadata" / "custom_term_to_consequent_terms.json"
+        self.CELL_LINE_TERMS_JSON = resources.files(__package__) / "metadata" / "cvcl_mappings.json"
+        self.TWO_CHAR_MAPPINGS_JSON = resources.files(__package__) / "metadata" / "two_char_mappings.json"
+        self.TERM_ARTIFACT_COMBOS_JSON = resources.files(__package__) / "metadata" / "term_artifact_combo.json"
+        
+        self.SYN_SETS_PATH = resources.files(__package__) / "synonym_sets"
 
     def ontology_name_to_location(self):
         prefix_to_location = {}

@@ -12,9 +12,6 @@ from os.path import join
 from collections import deque, defaultdict
 import json
 import marisa_trie
-import pkg_resources as pr
-
-resource_package = __name__
 
 def main():
     # Test that module is functioning
