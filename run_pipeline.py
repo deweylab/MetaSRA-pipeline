@@ -47,6 +47,12 @@ def main():
    
     input_f = args[0]
 
+    # check that reference path exists
+    if not Path(options.ref_path).exists():
+        logging.error(f"Reference path {options.ref_path} does not exist."
+                      " Please check that you have specified the path correctly"
+                      " or run setup.py to create the reference files.")
+        sys.exit(1)
     config = Config(Path(options.ref_path))
      
     # Map key-value pairs to ontologies
