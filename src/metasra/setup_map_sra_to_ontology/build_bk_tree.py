@@ -2,9 +2,9 @@ from __future__ import print_function
 from io import open # Python 2/3 compatibility
 import os
 from pybktree import BKTree
-from map_sra_to_ontology import load_ontology
-from map_sra_to_ontology import string_metrics
-from map_sra_to_ontology import jsonio
+from metasra.map_sra_to_ontology import load_ontology
+from metasra.map_sra_to_ontology import string_metrics
+from metasra.map_sra_to_ontology import jsonio
 
 import json
 import pickle

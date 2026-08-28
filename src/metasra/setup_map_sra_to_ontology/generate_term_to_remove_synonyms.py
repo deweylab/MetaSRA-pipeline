@@ -11,9 +11,8 @@ from collections import defaultdict
 import json
 from collections import deque
 
-import map_sra_to_ontology
-from map_sra_to_ontology import load_ontology
-from map_sra_to_ontology import jsonio
+from metasra.map_sra_to_ontology import load_ontology
+from metasra.map_sra_to_ontology import jsonio
 
 def main():
     og, x, y = load_ontology.load("13")

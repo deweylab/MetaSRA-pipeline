@@ -9,7 +9,7 @@ from . import (download_ontologies,
                generate_implications,
                )
 
-from map_sra_to_ontology.config import Config
+from metasra.map_sra_to_ontology.config import Config
 
 def generate_metasra_reference(ref_path):
     """Runs the setup process for the map_sra_to_ontology pipeline."""

@@ -23,14 +23,14 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
-from map_sra_to_ontology import load_ontology
-from map_sra_to_ontology import config
-from map_sra_to_ontology import run_sample_type_predictor
-from map_sra_to_ontology import jsonio
-from map_sra_to_ontology import mapping_path
-from map_sra_to_ontology.config import Config
-from map_sra_to_ontology.pipeline_components import *
-from map_sra_to_ontology.string_metrics import CasePermissiveAlnumWeightedEditDistance
+from metasra.map_sra_to_ontology import load_ontology
+from metasra.map_sra_to_ontology import config
+from metasra.map_sra_to_ontology import run_sample_type_predictor
+from metasra.map_sra_to_ontology import jsonio
+from metasra.map_sra_to_ontology import mapping_path
+from metasra.map_sra_to_ontology.config import Config
+from metasra.map_sra_to_ontology.pipeline_components import *
+from metasra.map_sra_to_ontology.string_metrics import CasePermissiveAlnumWeightedEditDistance
 
 def main():
     parser = OptionParser()

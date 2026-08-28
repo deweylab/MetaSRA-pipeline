@@ -13,7 +13,7 @@ from os.path import join
 import sys
 
 from .one_vs_rest_classifier_same_features import OneVsRestClassifier
-from map_sra_to_ontology import load_ontology
+from metasra.map_sra_to_ontology import load_ontology
 
 
 USE_ONTOLOGY_TERMS = True

@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metasra-pipeline"
+version = "0.1.0"
+description = "MetaSRA pipeline"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "MetaSRA contributors" },
+]
+license = { text = "MIT" }
+keywords = ["metasra", "bioinformatics", "pipeline"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+dependencies = [
+    "numpy",
+    "scipy",
+    "scikit-learn",
+    "setuptools",
+    "marisa-trie",
+    "nltk",
+    "pybktree"
+]
+
+[project.scripts]
+setup_metasra = "metasra.setup_metasra:main"
+run_pipeline = "metasra.run_pipeline:main"
+
+[tool.setuptools]
+include-package-data = true
+
+

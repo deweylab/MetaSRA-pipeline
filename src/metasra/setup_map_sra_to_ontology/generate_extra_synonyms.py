@@ -8,9 +8,8 @@ from optparse import OptionParser
 from collections import defaultdict
 import json
 
-import map_sra_to_ontology
-from map_sra_to_ontology import load_ontology
-from map_sra_to_ontology import jsonio
+from metasra.map_sra_to_ontology import load_ontology
+from metasra.map_sra_to_ontology import jsonio
 
 def main():
     uncaps_id_to_syns = uncaps_EFO_syns()

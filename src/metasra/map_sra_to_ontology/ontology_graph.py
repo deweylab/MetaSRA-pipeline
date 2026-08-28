@@ -12,7 +12,7 @@ try:
     import pygraphviz as pgv
 except:
     print("Unable to import pygraphviz. Visualization is disabled.")
-from map_sra_to_ontology import config
+from metasra.map_sra_to_ontology import config
 
 from importlib import resources
 import os

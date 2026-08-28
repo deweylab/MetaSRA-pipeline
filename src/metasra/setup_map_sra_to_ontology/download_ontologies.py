@@ -7,7 +7,7 @@ import json
 import os
 from os.path import join
 from importlib import resources
-from map_sra_to_ontology import jsonio
+from metasra.map_sra_to_ontology import jsonio
 
 def main(config):
     obo_rel_loc = config.OBO_DIR

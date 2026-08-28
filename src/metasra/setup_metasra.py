@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from setup_map_sra_to_ontology.setup import generate_metasra_reference
+from metasra.setup_map_sra_to_ontology.setup import generate_metasra_reference
 
 def main():
     """Runs the setup process for the map_sra_to_ontology pipeline."""
