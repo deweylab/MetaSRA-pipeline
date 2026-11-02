@@ -728,9 +728,17 @@ class CamelCut_Stage:
         new_edges = []
 
         for t_node in text_mining_graph.token_nodes:
+            # Loops over individual words in the token
             for word, (start, end) in zip(*get_ngrams(t_node.token_str, 1)):
+                # Only consider non-empty words
+                if not word:
+                    continue
+                # Only consider words with at least one uppercase and one lowercase letter
                 if not any(c.islower() for c in word) and not any(c.isupper() for c in word):
                     continue
+
+                # Build out a new token by inserting spaces before runs of numeric or uppercase
+                # letters
                 new_token = ""
                 new_idxs = []
                 for c, i in zip(word, t_node.char_indices[start:end]):
@@ -743,11 +751,13 @@ class CamelCut_Stage:
                     new_token += c
                     new_idxs.append(i)
 
-                new_edges.append((
-                    t_node,
-                    TokenNode(new_token, char_indices=new_idxs),
-                    edge
-                ))
+                # Only add tokens to the graph if we've actually found cuts
+                if new_token and new_token != word:
+                    new_edges.append((
+                        t_node,
+                        TokenNode(new_token, char_indices=new_idxs),
+                        edge
+                    ))
 
         # Adding this loop because the graph cannot be modified during iteration
         for node, new_node, new_edge in new_edges:
