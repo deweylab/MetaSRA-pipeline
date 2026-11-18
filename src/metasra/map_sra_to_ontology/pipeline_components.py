@@ -12,7 +12,7 @@ import logging
 
 import numpy as np
 import nltk
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize, NLTKWordTokenizer
 from nltk.util import ngrams
 from nltk.metrics.distance import edit_distance
 
@@ -29,7 +29,7 @@ import pybktree
 from pybktree import BKTree
 import marisa_trie as mt
 
-
+tokenizer = NLTKWordTokenizer()
 
 TOKEN_SCORING_STRATEGY = defaultdict(lambda: 1) # TODO We want an explicit score dictionary
 
@@ -397,6 +397,55 @@ class Lowercase_Stage:
             text_mining_graph.add_edge(source_node, target_node, edge)
         return text_mining_graph
 
+class NGram_Stage_Candidate_Mentions:
+    def __init__(self):
+        self.n_thresh = 8
+
+    def run(self, text_mining_graph):
+        logger.info("Generating N-grams...")
+        edge = DerivesInto("N-Gram") # All edges will be of this type
+        tnode_to_edges = defaultdict(lambda: []) # Buffer to store new edges
+
+        # Compute the length of each gram
+        for t_node in text_mining_graph.token_nodes:
+            grams, intervals = get_ngrams_candidate_mentions(t_node.token_str, 1)
+            max_n = min(self.n_thresh, len(grams))
+            for n in range(1, max_n):
+                n_gram_strs, intervals = get_ngrams_candidate_mentions(t_node.token_str, n)
+                for i in range(len(n_gram_strs)):
+                    g_str = n_gram_strs[i]
+                    interval = intervals[i]
+                    new_t_node = TokenNode(
+                        g_str, 
+                        char_indices = t_node.char_indices[interval[0]:interval[1]]
+                    )
+                    tnode_to_edges[t_node].append(new_t_node)
+        
+        for source_node, target_nodes in tnode_to_edges.items():
+            for target_node in target_nodes:
+                text_mining_graph.add_edge(source_node, target_node, edge)
+
+        return text_mining_graph
+
+      
+class Lowercase_Stage_Candidate_Mentions:
+    def run(self, text_mining_graph):
+        logger.info("Generating lower-cased artifacts...")
+        edge = DerivesInto("Lowercase")
+        tnode_to_edges = defaultdict(lambda: [])
+        for t_node in text_mining_graph.token_nodes:
+            if len(t_node.char_indices) > 0:
+                lower_str = t_node.token_str.lower()
+                if lower_str != t_node.token_str:
+                    tnode_to_edges[t_node] = TokenNode(
+                        lower_str, 
+                        char_indices = t_node.char_indices
+                    )
+ 
+        for source_node, target_node in tnode_to_edges.items():
+            text_mining_graph.add_edge(source_node, target_node, edge)
+        return text_mining_graph
+
 
 class PropertySpecificSynonym_Stage:
     def __init__(self, config):
@@ -728,7 +777,7 @@ class CamelCut_Stage:
         new_edges = []
 
         for t_node in text_mining_graph.token_nodes:
-            for word, (start, end) in zip(*get_ngrams(t_node.token_str, 1)):
+            for word, (start, end) in zip(*get_ngrams_candidate_mentions(t_node.token_str, 1)):
                 if not any(c.islower() for c in word) and not any(c.isupper() for c in word):
                     continue
                 new_token = ""
@@ -1784,7 +1833,11 @@ def get_ngrams(text, n):
 
     return n_grams, intervals    
 
-
+def get_ngrams_candidate_mentions(text, n):
+    spans = list(tokenizer.span_tokenize(text))
+    intervals = [(spans[i][0], spans[i+n-1][1]) for i in range(0, len(spans)-n+1)]
+    n_grams = [text[start:end] for start, end in intervals]
+    return n_grams, intervals
 
 def nltk_n_grams(in_str, n):
     result_grams = []

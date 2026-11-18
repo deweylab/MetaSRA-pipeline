@@ -240,8 +240,8 @@ def candidate_mentions_pipeline(config):
         [
             InitKeyValueTokens_Stage(),
             CamelCut_Stage(),
-            NGram_Stage(),
-            Lowercase_Stage(),
+            NGram_Stage_Candidate_Mentions(),
+            Lowercase_Stage_Candidate_Mentions(),
             DelimitRE_Stage(r'[^\s\w]'),
             StopWord_Stage(),
             SPECIALISTLexInflectionalVariants(spec_lex),
