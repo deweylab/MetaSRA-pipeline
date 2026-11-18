@@ -6,63 +6,59 @@ This pipeline re-annotates key-value descriptions of biological samples using bi
 
 The MetaSRA can be searched and downloaded from: https://metasra.platformx.wisc.edu/
 
-## Dependencies
+## Installation
 
-This project is currently compatible with Python 3 and requires the following Python libraries:
+### Dependencies
+
+This project requires Python 3.10 or later and the following Python libraries:
 - numpy (http://www.numpy.org)
 - scipy (https://www.scipy.org/scipylib/)
 - scikit-learn (http://scikit-learn.org/stable/)
 - setuptools (https://pypi.python.org/pypi/setuptools)
 - marisa-trie (https://pypi.python.org/pypi/marisa-trie)
 - nltk (http://www.nltk.org/)
-- singledispatch (https://pypi.python.org/pypi/singledispatch)
 - pybktree (https://pypi.python.org/pypi/pybktree)
 
-### Installation of dependencies
+The `metasra setup` command also requires `curl` to be available on `PATH`.
 
-A conda environment specification is provided in the `environment.yml` file. To create the environment, run the following from the root directory of the repository:
+### Installation with pip
 
-```bash
-conda create -n metasra -f environment.yml
-```
-This will create a conda environment named `metasra` with the required dependencies.  To activate the environment, run:
+From the repository root, install the package to make the `metasra` command available:
 
 ```bash
-conda activate metasra
+python -m pip install .
 ```
 
-#### NLTK setup
+For development purposes, use the -e option to install the package in "editable" mode:
 
-The nltk library requires the punkt tokenizer and stopwords to be downloaded.  To do this, run:
+```bash
+python -m pip install -e .
+```
+
+### NLTK setup
+
+The NLTK library requires the `punkt_tab` tokenizer data and stopwords to be downloaded. To do this, run:
 
 ```bash
 python -c "import nltk; nltk.download('punkt_tab'); nltk.download('stopwords')"
 ```
 
-#### Environment variable setup
-
-Finally, the PYTHONPATH environment variable must be set to include the current directory.  This can be done by running:
-
-```bash
-export PYTHONPATH=$PYTHONPATH:$(pwd)
-```
-
 ## Setup
 
-In order to run the pipeline, a few external resources must be downloaded and configured.  First, set up the PYTHONPATH environment variable as described above.  Then, to set up the pipeline, run the following command:
+In order to run the pipeline, a few external resources must be downloaded and configured.  To set up the pipeline, run the following command:
   
-    python setup.py metasra_ref
+    metasra setup metasra_ref
 
 Where `metasra_ref` is the name (of your choice) of the directory into which the resources will be downloaded.  This script will download the latest ontology OBO files, the SPECIALIST Lexicon files, and configure the ontologies to work with the pipeline.
 
 ## Usage
 
 The pipeline can be run on a set of sample-specific key-value pairs
-using the run_pipeline.py script. This script is used as follows:
+using the `metasra run` command:
 
-    python run_pipeline.py -r metasra_ref <input key-value pairs JSON file>
+    metasra run -r metasra_ref <input key-value pairs JSON file>
 
-The script accepts as input a JSON file storing a list of sets of key-value pairs.
+The command accepts a JSON file containing a list of sample metadata objects, each represented as key-value pairs.
 For example, the pipeline will accept a file with the following content:
 
     [

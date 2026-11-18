@@ -36,8 +36,7 @@ dependencies = [
 ]
 
 [project.scripts]
-setup_metasra = "metasra.setup_metasra:main"
-run_pipeline = "metasra.run_pipeline:main"
+metasra = "metasra.cli:main"
 
 [tool.setuptools]
 include-package-data = true
