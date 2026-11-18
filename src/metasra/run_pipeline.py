@@ -47,13 +47,22 @@ def main():
    
     input_f = args[0]
 
+    run_pipeline(
+        input_f, 
+        ref_path=options.ref_path, 
+        output=options.output, 
+        fine_grained=options.fine_grained, 
+        candidate_mentions=options.candidate_mentions
+    )
+
+def run_pipeline(input_f, ref_path="metasra_ref", output=None, fine_grained=False, candidate_mentions=False):
     # check that reference path exists
-    if not Path(options.ref_path).exists():
-        logging.error(f"Reference path {options.ref_path} does not exist."
+    if not Path(ref_path).exists():
+        logging.error(f"Reference path {ref_path} does not exist."
                       " Please check that you have specified the path correctly"
                       " or run setup.py to create the reference files.")
         sys.exit(1)
-    config = Config(Path(options.ref_path))
+    config = Config(Path(ref_path))
      
     # Map key-value pairs to ontologies
     with open(input_f, "r") as f:
@@ -67,9 +76,9 @@ def main():
         "EFO":"16",
         "CVCL":"4"}
     ont_id_to_og = {x:load_ontology.load(x, config)[0] for x in ont_name_to_ont_id.values()}
-    pipeline = p_53(config) if not options.candidate_mentions else candidate_mentions_pipeline(config)
+    pipeline = p_53(config) if not candidate_mentions else candidate_mentions_pipeline(config)
 
-    if not options.candidate_mentions:
+    if not candidate_mentions:
         # Initialize sample type predictor
         predictor = run_sample_type_predictor.SampleTypePredictor(cvcl_og=ont_id_to_og["4"])
 
@@ -86,7 +95,7 @@ def main():
 
     outputs = []
     for tag_to_val, mappings in zip(tag_to_vals, all_mappings):
-        if options.candidate_mentions:
+        if candidate_mentions:
             candidate_mentions = [{"term_id": x["term_id"], 
                                    "mapping_path": mapping_path.triples_to_list(x["path_to_mapping"])} 
                                    for x in mappings["mapped_terms"]]
@@ -95,12 +104,12 @@ def main():
             })
         else:
             outputs.append(
-                run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings, predictor, options.fine_grained)
+                run_pipeline_on_key_vals(tag_to_val, ont_id_to_og, mappings, predictor, fine_grained)
             )
     
     output_string = jsonio.dumps(outputs)
-    if options.output:
-        with open(options.output, "w") as f:
+    if output:
+        with open(output, "w") as f:
             f.write(output_string)
     else:
         print(output_string)
