@@ -792,11 +792,13 @@ class CamelCut_Stage:
                     new_token += c
                     new_idxs.append(i)
 
-                new_edges.append((
-                    t_node,
-                    TokenNode(new_token, char_indices=new_idxs),
-                    edge
-                ))
+                # Only add tokens to the graph if we've actually found cuts
+                if new_token and new_token != word:
+                    new_edges.append((
+                        t_node,
+                        TokenNode(new_token, char_indices=new_idxs),
+                        edge
+                    ))
 
         # Adding this loop because the graph cannot be modified during iteration
         for node, new_node, new_edge in new_edges:
