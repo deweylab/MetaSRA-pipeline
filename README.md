@@ -14,7 +14,6 @@ This project requires Python 3.10 or later and the following Python libraries:
 - numpy (http://www.numpy.org)
 - scipy (https://www.scipy.org/scipylib/)
 - scikit-learn (http://scikit-learn.org/stable/)
-- setuptools (https://pypi.python.org/pypi/setuptools)
 - marisa-trie (https://pypi.python.org/pypi/marisa-trie)
 - nltk (http://www.nltk.org/)
 - pybktree (https://pypi.python.org/pypi/pybktree)

@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,14 +9,15 @@ description = "MetaSRA pipeline"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
-  { name = "MetaSRA contributors" },
+  { name = "Matthew Bernstein" },
+  { name = "Colin Dewey" },
+  { name = "Yuriy Sverchkov" },
 ]
-license = { text = "MIT" }
+license = "BSD-3-Clause"
 keywords = ["metasra", "bioinformatics", "pipeline"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
@@ -29,11 +30,15 @@ dependencies = [
     "numpy",
     "scipy",
     "scikit-learn",
-    "setuptools",
     "marisa-trie",
     "nltk",
     "pybktree"
 ]
+
+[project.urls]
+Repository = "https://github.com/deweylab/MetaSRA-pipeline"
+Issues = "https://github.com/deweylab/MetaSRA-pipeline/issues"
+Website = "https://github.com/deweylab/MetaSRA-pipeline"
 
 [project.scripts]
 metasra = "metasra.cli:main"
@@ -41,4 +46,12 @@ metasra = "metasra.cli:main"
 [tool.setuptools]
 include-package-data = true
 
-
+[tool.setuptools.package-data]
+"metasra.setup_map_sra_to_ontology" = ["*.json"]
+"metasra.map_sra_to_ontology" = [
+    "*.json",
+    "metadata/*.json",
+    "synonym_sets/*.json",
+    "predict_sample_type/*.json",
+    "predict_sample_type/*.pickle",
+]
